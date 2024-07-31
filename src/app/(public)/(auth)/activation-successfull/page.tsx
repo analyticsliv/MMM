@@ -12,7 +12,7 @@ const Page = () => {
           Great news! Your account activation is complete.
         </h1>
         <p className="text-gray-600 mb-6 text-center text-lg">
-          Welcome to Kreomart
+          Welcome to MMM
         </p>
         <p className="text-gray-600 mb-6 text-center text-lg">
           Ready, set, shop!{" "}

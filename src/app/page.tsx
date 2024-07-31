@@ -1,4 +1,4 @@
-
+import HomePage from '@/components/Home/home'
 
 const Home = async () => {
 
@@ -6,7 +6,7 @@ const Home = async () => {
 
   return (
     <>
-      Home page
+    <HomePage/>
     </>
   );
 };

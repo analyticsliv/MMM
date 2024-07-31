@@ -5,10 +5,10 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import FormInput from "./FormInput";
 import SuccessPage from "./SuccessPage";
-import Icon from "@/components/shared/Icon";
+// import Icon from "@/components/shared/Icon";
 import Link from "next/link";
 import route from "@/routes";
-import { toast } from "@/components/ui/use-toast";
+// import { toast } from "@/components/ui/use-toast";
 
 const Registration = () => {
   const [phone, setphone] = useState("");
@@ -216,14 +216,14 @@ const Registration = () => {
 
   useEffect(() => {
     if (session.status === "authenticated") {
-      toast({
-        title: " You Are Successfully registerd , You're logged In",
-        description: "Welcome to kreomart",
-      });
+      // toast({
+      //   title: " You Are Successfully registerd , You're logged In",
+      //   description: "Welcome to kreomart",
+      // });
       console.log("Toast message:", "Successfully Logged In");
       router.push("/");
     }
-  }, [session.status, router, toast]);
+  }, [session.status, router]);
 
   const BASE_API_URL = "https://api.kreomart.com/api/accounts/";
   // const BASE_API_URL = "http://127.0.0.1:8000/api/accounts/";
@@ -299,7 +299,7 @@ const Registration = () => {
             />
           </div>
           <h2 className="text-2xl font-bold text-[#030822] text-center pb-4 ">
-            Create your kreomart account
+            Create your MMM account
           </h2>
           {/* <button
             type="button"
@@ -397,14 +397,14 @@ const Registration = () => {
               </div>
               {passwordError && <div className=" text-sm">{passwordError}</div>}
               <p className="text-gray-600 mt-4 text-sm">
-                By creating an account, you’re agreeing to the Kreomart{" "}
+                By creating an account, you’re agreeing to the MMM{" "}
                 <Link
                   href={route.TermsAndConditions}
                   className="text-secondary-500"
                 >
                   terms & conditions
                 </Link>{" "}
-                and Kreomart{" "}
+                and MMM{" "}
                 <Link href={route.PrivacyPolicy} className="text-secondary-500">
                   privacy policy
                 </Link>

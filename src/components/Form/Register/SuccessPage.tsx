@@ -46,7 +46,7 @@ const SuccessPage: React.FC<SuccessPageProps> = ({ email }) => {
           Registration Successful!!
         </h1>
         <p className="text-gray-600 text-center text-lg">
-          Thank you for registering with Kreomart. Your account has been
+          Thank you for registering with MMM. Your account has been
           successfully created.
         </p>
         <p className="text-gray-600 text-lg text-center">

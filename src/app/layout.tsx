@@ -18,8 +18,8 @@ import NextAuthProvider from "@/utils/nextProvider";
 // });
 
 export const metadata = {
-  title: "Kreomart",
-  description: "One stop for all your need. ",
+  title: "MMM",
+  description: "A tool for multi solutions",
 };
 
 export default function RootLayout({

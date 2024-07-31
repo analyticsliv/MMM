@@ -5,7 +5,7 @@ import Image from "next/image";
 import { signIn, getCsrfToken, useSession } from "next-auth/react";
 import { CtxOrReq } from "next-auth/client/_utils";
 import Link from "next/link";
-// import route from "@/routes";
+import route from "@/routes";
 // import { useToast } from "@/components/ui/use-toast";
 // import Spinner from "@/components/shared/Spinner/Spinner";
 // import { postApis } from "@/api/client";
@@ -112,11 +112,13 @@ const Login = () => {
   const handleLogin = async () => {
     setLoading(true);
 
-    const signInResponse = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
+    // const signInResponse = signIn("credentials", {
+    //   email,
+    //   password,
+    //   redirect: false,
+    // });
+
+    const signInResponse = await signIn('google')
 
     if (
       (signInResponse && signInResponse.error === null) ||
@@ -124,6 +126,22 @@ const Login = () => {
     ) {
       setLoading(false);
       await customApiLogin();
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setLoading(true);
+
+    const signInResponse = await signIn('google')
+   
+
+    if (
+      (signInResponse && signInResponse.error === null) ||
+      signInResponse?.error === undefined
+    ) {
+      setLoading(false);
+      router.push(callBack || "");
+      // await customApiLogin();
     }
   };
 
@@ -202,7 +220,7 @@ const Login = () => {
 
             <div className="text-right mt-2">
               <Link
-                href={''}
+                href={route.ForgetPassword}
                 className="text-sm font-semibold hover:text-primary-800 focus:text-blue-700 underline  underline-offset-8"
               >
                 Forgot Password?
@@ -235,7 +253,16 @@ const Login = () => {
             >
               Sign In
             </button>
-            <Link href={''}>
+            <button
+              onClick={() => handleGoogleLogin()}
+              disabled={loading} // Disable only when loading
+              className={`w-full bg-primary hover:bg-primary-700 focus:bg-primary-400 text-base text-white font-semibold px-4 py-3 mt-6 ${
+                loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+            >
+              Sign In with google
+            </button>
+            <Link href={route.Register}>
               <button className="w-full border text-base border-black font-semibold py-3 mt-3 ">
                 Create my account
               </button>
