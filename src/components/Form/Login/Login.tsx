@@ -182,11 +182,11 @@ const Login = () => {
                 onClick={handlePasswordToggle}
                 className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500"
               >
-                {/* {showPassword ? (
+                {showPassword ? (
                   <Image src="/assets/Eye Open.png" alt="Show password" width={20} height={20} />
                 ) : (
                   <Image src="/assets/Eye cross.png" alt="Hide password" width={20} height={20} />
-                )} */}
+                )}
               </button>
             </div>
           </div>
