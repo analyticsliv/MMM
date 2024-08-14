@@ -12,7 +12,6 @@ const GA4ConnectorPage = () => {
       try {
         const response = await fetch('/api/ga4-auth-url');
         const data = await response.json();
-        console.log('auth urllll',data.authUrl)
         setAuthUrl(data.authUrl);
       } catch (error) {
         console.error('Error fetching auth URL:', error);
@@ -36,9 +35,9 @@ const GA4ConnectorPage = () => {
 
   return (
     <div>
-      <h1>Authorize Google Analytics Access</h1>
-      <button onClick={handleAuth}>Authorize</button>
-      {/* <Modal isOpen={isModalOpen} onClose={closeModal} authUrl={authUrl} /> */}
+      {/* <h1>Authorize Google Analytics Access</h1>
+      <button onClick={handleAuth}>Authorize</button> */}
+      <a href = {authUrl}>  Authorize</a>
     </div>
   );
 };

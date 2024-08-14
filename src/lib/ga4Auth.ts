@@ -16,5 +16,6 @@ export function generateAuthUrl() {
   return oAuth2Client.generateAuthUrl({
     access_type: 'offline',
     scope: scopes,
+    prompt: 'consent',
   });
 }
