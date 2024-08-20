@@ -177,7 +177,7 @@ const Login = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-3 mt-2 text-lg border border-primary-500 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
               />
-              <button
+              {/* <button
                 type="button"
                 onClick={handlePasswordToggle}
                 className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500"
@@ -187,7 +187,7 @@ const Login = () => {
                 ) : (
                   <Image src="/assets/Eye cross.png" alt="Hide password" width={20} height={20} />
                 )}
-              </button>
+              </button> */}
             </div>
           </div>
           {invalidCredentialError && (

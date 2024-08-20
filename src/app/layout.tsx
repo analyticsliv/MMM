@@ -35,9 +35,9 @@ export default function RootLayout({
             <SplashScreen />
             <Header />
             <Promotion /> */}
-            {/* <PromotionOne /> */}
-            <main className="max-w-screen-2xl mx-auto">{children}</main>
-            {/* <Toaster />
+          {/* <PromotionOne /> */}
+          <main className="mx-auto">{children}</main>
+          {/* <Toaster />
             <Footer />
           </ReactQueryProvider> */}
         </NextAuthProvider>
