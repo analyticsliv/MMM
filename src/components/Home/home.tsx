@@ -63,13 +63,13 @@ const HomePage = () => {
         <div className="flex flex-col gap-5">
           <button
             onClick={handleFeature}
-            className="w-full bg-primary-600 text-base hover:bg-primary-700 focus:ring-2 focus:ring-primary-500 text-white font-semibold px-4 py-3 rounded-md"
+            className="w-full bg-indigo-900 text-base hover:bg-indigo-950 focus:ring-2 focus:ring-primary-500 text-white font-semibold px-4 py-1.5 rounded-md"
           >
             Feature
           </button>
           <button
             onClick={handleSignOut}
-            className="w-full bg-primary-600 text-base hover:bg-primary-700 focus:ring-2 focus:ring-primary-500 text-white font-semibold px-4 py-3 rounded-md"
+            className="w-full bg-indigo-900 text-base hover:bg-indigo-950 focus:ring-2 focus:ring-primary-500 text-white font-semibold px-4 py-1.5 rounded-md"
           >
             Sign Out
           </button>

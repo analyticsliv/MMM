@@ -9,7 +9,7 @@ import { useSession, signOut } from "next-auth/react";
 export default function Layout({ children }: { children: React.ReactNode }) {
     const menuItems = [
         { label: "Connectors", path: "/feature/connectors" },
-        { label: "Facebook Connectors", path: "/feature/facebookConnectors" },
+        // { label: "Facebook Connectors", path: "/feature/facebookConnectors" },
         // Add more subpages here
     ];
     const { data: session, status } = useSession();
@@ -47,8 +47,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                             <Link key={item.path} href={item.path}>
                                 <div
                                     className={`p-2 px-4 w-full mt-2 text-sm rounded-[5px] ${isActive
-                                            ? "bg-primary-700 text-white"
-                                            : "text-gray-300 hover:bg-gray-700"
+                                            ? "bg-gray-500 text-white"
+                                            : "text-white hover:bg-gray-900"
                                         }`}
                                 >
                                     {item.label}
@@ -58,7 +58,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     })}
                     <div
                         onClick={handleSignOut}
-                        className="p-2 px-4 w-full mt-2 bg-primary-500 text-sm text-gray-300 rounded-[5px] hover:bg-gray-700"
+                        className="p-2 px-4 w-full mt-2 bg-primary-500 text-sm text-gray-300 rounded-[5px] hover:bg-gray-900"
                     >
                         Sign Out
                     </div>
