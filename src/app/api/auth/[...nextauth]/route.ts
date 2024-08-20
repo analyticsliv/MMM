@@ -5,19 +5,6 @@ import CredentialsProvider from "next-auth/providers/credentials";
 
 const handler = NextAuth({
   providers: [
-    // GithubProvider({
-    //   clientId: process.env.GITHUB_CLIENT_ID!,
-    //   clientSecret: process.env.GITHUB_CLIENT_SECRET!,
-    //   profile(profile) {
-    //     console.log(profile);
-    //     return {
-    //       id: profile.id,
-    //       name: profile.name,
-    //       email: profile.email,
-    //       image: profile.avatar_url,
-    //     };
-    //   },
-    // }),
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
@@ -50,7 +37,7 @@ const handler = NextAuth({
           password: credentials?.password,
         };
 
-        console.log("in manual login --",payload)
+        console.log("in manual login --", payload)
         const res = await fetch("https://api.kreomart.com/api/accounts/login/", {
           method: "POST",
           body: JSON.stringify(payload),
@@ -58,14 +45,14 @@ const handler = NextAuth({
             "Content-Type": "application/json"
           },
         });
-        
+
         console.log("Authentication response status:", res.status);
-        
+
         if (!res.ok) {
           console.error("Authentication failed:", res.statusText);
           return null;
         }
-        
+
         const user = await res.json();
         console.log("Authenticated user:", user);
         return user;
@@ -88,13 +75,13 @@ const handler = NextAuth({
   //     return token;
   //   },
 
-    // async session({ session, token }) {
-    //     if(session.user){
-    //         session.user = token.accessToken;
-    //     }
+  // async session({ session, token }) {
+  //     if(session.user){
+  //         session.user = token.accessToken;
+  //     }
 
-    //   return session;
-    // },
+  //   return session;
+  // },
   // },
 });
 
