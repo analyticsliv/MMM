@@ -11,7 +11,7 @@ const HomePage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log("object",session)
+    console.log("object", session)
 
     if (status === "loading") {
       // Wait for session status to load
@@ -30,6 +30,11 @@ const HomePage = () => {
     setLoading(true);
     await signOut({ redirect: false });
     router.push("/login");
+  };
+
+  const handleFeature = async () => {
+    // setLoading(true);
+    router.push("/feature");
   };
 
   if (loading) {
@@ -55,12 +60,20 @@ const HomePage = () => {
           />
           <h2 className="text-3xl font-bold text-gray-800">Welcome, {session?.user?.name}</h2>
         </div>
-        <button
-          onClick={handleSignOut}
-          className="w-full bg-primary-600 text-base hover:bg-primary-700 focus:ring-2 focus:ring-primary-500 text-white font-semibold px-4 py-3 rounded-md"
-        >
-          Sign Out
-        </button>
+        <div className="flex flex-col gap-5">
+          <button
+            onClick={handleFeature}
+            className="w-full bg-indigo-900 text-base hover:bg-indigo-950 focus:ring-2 focus:ring-primary-500 text-white font-semibold px-4 py-1.5 rounded-md"
+          >
+            Feature
+          </button>
+          <button
+            onClick={handleSignOut}
+            className="w-full bg-indigo-900 text-base hover:bg-indigo-950 focus:ring-2 focus:ring-primary-500 text-white font-semibold px-4 py-1.5 rounded-md"
+          >
+            Sign Out
+          </button>
+        </div>
       </div>
     </div>
   );

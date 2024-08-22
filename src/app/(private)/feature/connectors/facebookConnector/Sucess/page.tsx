@@ -47,12 +47,12 @@ const SuccessPage: React.FC = () => {
 
   return (
     <div>
-      <h1 className='pb-2'>Account Summaries</h1>
+      <h1>Account Summaries</h1>
       {accountsLoading && <p>Loading accounts...</p>}
       {accountsError && <p>Error: {accountsError}</p>}
 
       {!accountsLoading && !accountsError && (
-        <select onChange={handleAccountChange} value={selectedAccount || ''} className='p-2 border border-black rounded-sm'>
+        <select onChange={handleAccountChange} value={selectedAccount || ''}>
           <option value="" disabled>Select an account</option>
           {accountSummaries.map((account: Account, index) => (
             <option key={index} value={account.name}>
@@ -63,7 +63,7 @@ const SuccessPage: React.FC = () => {
       )}
 
       {selectedAccount && (
-        <div className='pt-3'>
+        <div>
           <h2>Properties for {selectedAccount}</h2>
           {propertiesLoading && <p>Loading properties...</p>}
           {propertiesError && <p>Error: {propertiesError}</p>}

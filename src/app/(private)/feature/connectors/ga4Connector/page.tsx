@@ -37,7 +37,8 @@ const GA4ConnectorPage = () => {
     <div>
       {/* <h1>Authorize Google Analytics Access</h1>
       <button onClick={handleAuth}>Authorize</button> */}
-      <a href = {authUrl}>  Authorize</a>
+      <h1 className='pb-5 text-base'>Authorize Google Analytics Access</h1>
+      <a href={authUrl} className='border border-indigo-900 p-2 cursor-pointer hover:bg-blue-950 hover:text-white font-medium'> &gt; Authorize</a>
     </div>
   );
 };

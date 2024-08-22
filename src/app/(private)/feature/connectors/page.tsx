@@ -6,17 +6,16 @@ import React from "react";
 // import { generateAuthUrl } from '@/lib/ga4Auth';
 
 const Subpage1 = () => {
-//  const authUrl = generateAuthUrl();
- 
+  //  const authUrl = generateAuthUrl();
+
   return (
     <>
-      <div>
-        <h2>Subpage 1 Content</h2>
-      </div>
-      <div>
-        <h1>Authorize Google Analytics Access</h1>
-        <Link href={'/feature/connectors/ga4Connector'}>
-        Ga4 connector
+      <div className="flex flex-col gap-2 text-gray-700 ">
+        <Link href={'/feature/connectors/ga4Connector'} className="hover:text-gray-950">
+          Ga4 connector
+        </Link>
+        <Link href={'/feature/connectors/facebookConnector'} className="hover:text-gray-950">
+          Facebook connector
         </Link>
       </div>
     </>

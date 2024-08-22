@@ -3,10 +3,10 @@ import { useCheckAuth } from "@/components/hooks/useCheckAuth";
 import React from "react";
 
 const page = ({ }: any) => {
-    const  { loading, session } = useCheckAuth()
+  const { loading, session } = useCheckAuth()
   return (
     <>
-      <h1>iIn feature screen if user is logedin</h1>
+      <h1>In feature screen if user is logedin</h1>
 
       <div className="md:hidden">
         <div className="flex flex-row items-center justify-center my-8 text-lg font-medium">
