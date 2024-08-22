@@ -146,36 +146,39 @@ const Login = () => {
   };
 
   return (
-    <div className="flex items-center max-md:p-5 justify-center min-h-screen bg-gray-100">
-      <div className="w-full md:w-[50%] lg:w-[30%] max-md:p-5 p-10 bg-white rounded-lg shadow-lg border border-gray-300">
-        <div className="flex flex-col text-center justify-center items-center mb-6">
-          <Image
+    <div className="flex lg:h-[100dvh] justify-center items-center bg-white min-h-screen ">
+      <div className="h-[70%] md:w-[50%] rounded-[20px] max-md:p-5 px-[8%] flex flex-col justify-center gap-10 bg-background shadow-lg border border-gray-300">
+        <div className="flex flex-col md:gap-10 2xl:gap-28 justify-center items-start">
+          <img
             className="mb-4"
-            src="./assets/logo-mobo.svg"
+            src="./assets/AnalyticsLiv_Logo_Perfact_Space.png"
             alt="Logo"
-            width={100}
-            height={100}
+            height={180}
+            width={180}
           />
-          <h2 className="text-3xl font-bold text-gray-800">Sign In User</h2>
         </div>
-        <form className="space-y-6">
+        <form className="space-y-6 flex flex-col md:gap-3 2xl:gap-6">
           <div>
-            <label className="block text-lg font-medium text-gray-700">Email</label>
+            <label className="block text-2xl font-medium text-textcolor">Email</label>
             <input
               type="email"
               value={email}
+              placeholder="Enter your email"
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 mt-2 text-lg border border-primary-500 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full h-16 py-5 px-7 mt-2 bg-transparent text-xl font-medium text-textcolor placeholder-[#BEBEBE] 
+              border border-[#C2C2C2] border-primary-500 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
           </div>
           <div>
-            <label className="block text-lg font-medium text-gray-700">Password</label>
+            <label className="block text-2xl font-medium text-textcolor ">Password</label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
                 value={password}
+                placeholder="Enter your password"
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 mt-2 text-lg border border-primary-500 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full h-16 py-5 px-7 mt-2 bg-transparent text-xl font-medium text-textcolor placeholder-[#BEBEBE] 
+                border border-[#C2C2C2] rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
               />
               {/* <button
                 type="button"
@@ -201,42 +204,46 @@ const Login = () => {
                 className="mr-2 rounded-sm border-gray-300 accent-primary-600"
                 onChange={handleKeepSignedInChange}
               />
-              <label htmlFor="keepSignedIn" className="text-lg text-gray-700">Keep me signed in</label>
+              <label htmlFor="keepSignedIn" className="text-2xl font-medium text-textcolor">Remember me</label>
             </div>
-            <Link href={route.ForgetPassword} className="text-sm font-semibold text-primary-600 hover:text-primary-800">
+            <Link href={route.ForgetPassword} className="text-xl font-medium text-[#30486A]">
               Forgot Password?
             </Link>
 
           </div>
-          <p className="text-gray-600 text-base">
+          {/* <p className="text-gray-600 text-base">
             By checking this box, you won’t have to sign in as often on this device. For your security, we recommend only checking this box on your personal devices.
-          </p>
+          </p> */}
           <button
             onClick={() => handleLogin()}
             disabled={loading} // Disable only when loading
-            className={`w-full bg-primary-600 text-base hover:bg-primary-700 focus:ring-2 focus:ring-primary-500 text-white font-semibold px-4 py-3 rounded-md ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
+            className={`w-full bg-primary h-14 text-2xl rounded-lg font-medium text-white ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
           >
-            Sign In
+            Log In
           </button>
+          {/* <Link href={route.Register} className="block w-full text-base mt-3 text-center border border-gray-600 text-gray-700 font-semibold py-2.5 rounded-md hover:bg-gray-100">
+            Create my account
+          </Link> */}
+          <div className="text-2xl font-medium text-textcolor">
+          Not registered yet? <Link href={route.Register} className="text-xl font-medium text-primary"> Create account </Link>
+          </div>
           <button
             onClick={() => handleGoogleLogin()}
             disabled={loading} // Disable only when loading
-            className={`w-full bg-[#4285F4] text-base hover:bg-[#357ae8] text-white font-semibold px-4 py-2.5 rounded-md flex items-center justify-center space-x-2`}
+            className={`w-full bg-primary text-2xl font-medium  text-white h-14 rounded-lg flex items-center justify-center space-x-2`}
           >
-            <Image src="/assets/google-logo.png" className="bg-white p-1 mr-1" alt="Google" width={22} height={22} />
-            <span>Sign In with Google</span>
+            <Image src="/assets/google-logo.png" className="bg-white p-1 mr-1 rounded-full" alt="Google" width={22} height={22} />
+            <span>Log In with Google</span>
           </button>
-          {/* <button
-            onClick={handleGoogleLogin}
-            disabled={loading}
-            className={`w-full bg-secondary-500 text-base hover:bg-secondary-600 focus:ring-2 focus:ring-secondary-400 text-white font-semibold px-4 py-3 rounded-md ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
-          >
-            Sign In with Google
-          </button> */}
-          <Link href={route.Register} className="block w-full text-base mt-3 text-center border border-gray-600 text-gray-700 font-semibold py-2.5 rounded-md hover:bg-gray-100">
-            Create my account
-          </Link>
         </form>
+      </div>
+      <div className="h-[70%] md:w-[50%] bg-primary rounded-[20px]">
+        <div className="leading-[75px]">
+        <div className="text-5xl text-white font-semibold">Welcome Back to</div>
+        <div className="flex items-center text-5xl text-white font-semibold">AnalyticsLiv<img alt="AnalyticsLiv" src="assets/AnalyticsLiv_Logo_Short_Right (1).png" /></div>
+        <img className="absolute" src="/assets/Vector (1).png" alt="Vector" /></div>
+
+          <img className="relative h-[300px]" src="/assets/Gentleman (1).png" alt="gentleman" />
       </div>
     </div>
   );
