@@ -6,6 +6,9 @@ import { signIn, getCsrfToken, useSession } from "next-auth/react";
 import { CtxOrReq } from "next-auth/client/_utils";
 import Link from "next/link";
 import route from "@/routes";
+import useToast from '../../hooks/toast';
+import { toast, ToastContainer } from "react-toastify";
+
 // import { useToast } from "@/components/ui/use-toast";
 // import Spinner from "@/components/shared/Spinner/Spinner";
 // import { postApis } from "@/api/client";
@@ -15,6 +18,7 @@ import route from "@/routes";
 const Login = () => {
   const searchParams = useSearchParams();
   // const { setIsLoggedIn } = useStore(UserData);
+  const notify = useToast();
 
   const router = useRouter();
 
@@ -55,6 +59,7 @@ const Login = () => {
       //   description: "Welcome to kreomart",
       // });
       router.push(callBack || "/");
+      notify("You have been signed out.", 'info'); // Show sign-out toast
       setLoading(false);
     }
   }, [session.status, router]);
@@ -147,8 +152,9 @@ const Login = () => {
 
   return (
     <div className="flex lg:h-[100dvh] justify-center items-center bg-white min-h-screen ">
-      <div className="h-[70%] md:w-[50%] rounded-[20px] max-md:p-5 px-[8%] flex flex-col justify-center gap-10 bg-background shadow-lg border border-gray-300">
-        <div className="flex flex-col md:gap-10 2xl:gap-28 justify-center items-start">
+      <ToastContainer />
+      <div className="h-[72%] 2xl:h-[70%] md:w-[50%] rounded-[20px] max-md:p-5 px-[8%] flex flex-col justify-center gap-10 bg-background shadow-lg border border-gray-300">
+        <div className="">
           <img
             className="mb-4"
             src="./assets/AnalyticsLiv_Logo_Perfact_Space.png"
@@ -157,7 +163,7 @@ const Login = () => {
             width={180}
           />
         </div>
-        <form className="space-y-6 flex flex-col md:gap-3 2xl:gap-6">
+        <form className="space-y-6 flex flex-col md:gap-2 xl:gap-1 2xl:gap-6">
           <div>
             <label className="block text-2xl font-medium text-textcolor">Email</label>
             <input
@@ -217,7 +223,7 @@ const Login = () => {
           <button
             onClick={() => handleLogin()}
             disabled={loading} // Disable only when loading
-            className={`w-full bg-primary h-14 text-2xl rounded-lg font-medium text-white ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
+            className={`w-full bg-primary xl:h-16 md:h-12 text-2xl rounded-lg font-medium text-white ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
           >
             Log In
           </button>
@@ -225,25 +231,41 @@ const Login = () => {
             Create my account
           </Link> */}
           <div className="text-2xl font-medium text-textcolor">
-          Not registered yet? <Link href={route.Register} className="text-xl font-medium text-primary"> Create account </Link>
+            Not registered yet? <Link href={route.Register} className="text-xl font-medium text-primary"> Create account </Link>
           </div>
           <button
             onClick={() => handleGoogleLogin()}
             disabled={loading} // Disable only when loading
-            className={`w-full bg-primary text-2xl font-medium  text-white h-14 rounded-lg flex items-center justify-center space-x-2`}
+            className={`w-full bg-primary text-2xl font-medium  text-white xl:h-16 md:h-12 rounded-lg flex items-center justify-center space-x-2`}
           >
             <Image src="/assets/google-logo.png" className="bg-white p-1 mr-1 rounded-full" alt="Google" width={22} height={22} />
             <span>Log In with Google</span>
           </button>
         </form>
       </div>
-      <div className="h-[70%] md:w-[50%] bg-primary rounded-[20px]">
-        <div className="leading-[75px]">
-        <div className="text-5xl text-white font-semibold">Welcome Back to</div>
-        <div className="flex items-center text-5xl text-white font-semibold">AnalyticsLiv<img alt="AnalyticsLiv" src="assets/AnalyticsLiv_Logo_Short_Right (1).png" /></div>
-        <img className="absolute" src="/assets/Vector (1).png" alt="Vector" /></div>
-
-          <img className="relative h-[300px]" src="/assets/Gentleman (1).png" alt="gentleman" />
+      <div className="relative flex flex-col w-[50%] py-6 bg-primary rounded-[20px] mx-auto h-[72%] 2xl:h-[70%]">
+        <div className="flex flex-col text-center z-10">
+          <div className="text-[25px] xl:text-[45px] text-white font-semibold text-left px-20">Welcome Back to</div>
+          <div className="flex text-[25px] xl:text-[45px] text-white font-semibold text-left px-20">
+            AnalyticsLiv
+            <img alt="AnalyticsLiv" className="p-0 h-[40px] xl:h-[60px]" src="assets/AnalyticsLiv_Logo_Short_Right (1).png" />
+          </div>
+        </div>
+        <img
+          className="absolute right-0 bottom-[5%] 2xl:bottm-[15%]"
+          src="/assets/LOGO_BG_BLUR_RIGHT (1).png"
+          alt="Vector"
+        />
+        <img
+          className="absolute h-[100px] xl:h-[120px] top-[45%] 2xl:top-[50%] left-[20%] 2xl:left-[22%]"
+          src="/assets/Vector (1).png"
+          alt="Vector"
+        />
+        <img
+          className="absolute bottom-0 h-[350px] 2xl:h-[450px] left-[25%]"
+          src="/assets/Gentleman (1).png"
+          alt="gentleman"
+        />
       </div>
     </div>
   );
