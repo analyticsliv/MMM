@@ -2,7 +2,7 @@
 
 const clientId = process.env.FACEBOOK_CLIENT_ID;
 const clientSecret = process.env.FACEBOOK_CLIENT_SECRET;
-const redirectUri = 'http://localhost:3000/api/auth/facebook-callback';
+const redirectUri = 'https://127.0.0.1:3000/api/facebook-callback';
 
 export const generateFacebookAuthUrl = () => {
     const scope = 'public_profile,email,pages_show_list,pages_read_engagement,business_management';

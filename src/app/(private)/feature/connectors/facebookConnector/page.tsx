@@ -1,5 +1,5 @@
 // src/components/FacebookAuthButton.tsx
-
+"use client";
 import React, { useEffect, useState } from 'react';
 
 const FacebookAuthButton = () => {
@@ -19,19 +19,11 @@ const FacebookAuthButton = () => {
     fetchAuthUrl();
   }, []);
 
-  const handleAuth = () => {
-    if (authUrl) {
-      const popup = window.open(authUrl, 'authPopup', 'width=600,height=600');
-      if (popup) {
-        popup.focus();
-      }
-    }
-  };
 
   return (
-    <button onClick={handleAuth} style={styles.authButton}>
-      Authorize with Facebook
-    </button>
+    // <button style={styles.authButton}>
+    <a href={authUrl} style={styles.authButton}>Authorize with Facebook</a>
+    // </button>
   );
 };
 
