@@ -1,84 +1,22 @@
-"use client";
+// src/pages/success.tsx
+import { useRouter } from 'next/router';
+import React, { useEffect } from 'react';
 
-import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
-import useAccountSummaries from '@/components/hooks/connectors/ga4AccountList';
-import useAccountProperties from '@/components/hooks/connectors/ga4PropertyList';
-
-interface Account {
-  name: string;
-  displayName: string;
-}
-
-interface Property {
-  name: string;
-  displayName: string;
-}
-
-const SuccessPage: React.FC = () => {
-  const searchParams = useSearchParams();
-  const code = searchParams.get('code');
-  const [accessToken, setAccessToken] = useState<string | null>(null);
-  const { accountSummaries, loading: accountsLoading, error: accountsError } = useAccountSummaries(accessToken);
-  const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
-  const { properties, loading: propertiesLoading, error: propertiesError } = useAccountProperties(selectedAccount,accountSummaries,accessToken);
+const SuccessPage = () => {
+  const router = useRouter();
+  const { accessToken } = router.query;
 
   useEffect(() => {
-    async function getTokenFromCode(code: string) {
-      try {
-        const response = await fetch(`/api/auth/ga4-auth?code=${code}`);
-        const data = await response.json();
-        if (!accessToken) {
-          setAccessToken(data?.access_token || null);
-        }
-      } catch (error) {
-        console.error('Error getting tokens:', error);
-      }
+    if (accessToken) {
+      console.log('Access Token:', accessToken);
+      // Store the token securely or pass it to your microservice
     }
-
-    if (code && !accessToken) {
-      getTokenFromCode(code);
-    }
-  }, [code, accessToken]);
-
-  const handleAccountChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedAccount(event.target.value);
-  };
+  }, [accessToken]);
 
   return (
     <div>
-      <h1>Account Summaries</h1>
-      {accountsLoading && <p>Loading accounts...</p>}
-      {accountsError && <p>Error: {accountsError}</p>}
-
-      {!accountsLoading && !accountsError && (
-        <select onChange={handleAccountChange} value={selectedAccount || ''}>
-          <option value="" disabled>Select an account</option>
-          {accountSummaries.map((account: Account, index) => (
-            <option key={index} value={account.name}>
-              {account.displayName}
-            </option>
-          ))}
-        </select>
-      )}
-
-      {selectedAccount && (
-        <div>
-          <h2>Properties for {selectedAccount}</h2>
-          {propertiesLoading && <p>Loading properties...</p>}
-          {propertiesError && <p>Error: {propertiesError}</p>}
-
-          {!propertiesLoading && !propertiesError && (
-            <ul>
-              {properties?.map((property: Property, index) => (
-                <li key={index}>
-                  <strong>{property.displayName}</strong> - {property.name}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      )}
+      <h1>Authentication Successful</h1>
+      <p>Access Token: {accessToken}</p>
     </div>
   );
 };
