@@ -18,9 +18,13 @@ const config = {
       },
     },
     extend: {
+      backgroundImage: {
+        'custom-gradient': 'linear-gradient(to right, #01A2FC 100%, #36D2EF 100%)',
+      },
       colors:{
         background:"#F0F0F9",
         foreground:"#020044",
+        homeGray:"#EDF4FF",
         primary:"#30486A",
         homebg:"#FFF4EE",
         textcolor:"#202020",

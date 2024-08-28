@@ -1,19 +1,16 @@
 "use client";
 import { useCheckAuth } from "@/components/hooks/useCheckAuth";
+import SearchBar from "@/components/searchbar/search";
 import React from "react";
 
 const page = ({ }: any) => {
   const { loading, session } = useCheckAuth()
   return (
     <>
-      <h1>In feature screen if user is logedin</h1>
-
-      <div className="md:hidden">
-        <div className="flex flex-row items-center justify-center my-8 text-lg font-medium">
-          {/* <Breadcrumbs paths={[{ label: "Home" }, { label: "My Account" }]} /> */}
-          <h1>In feature screen if user is logedin </h1>
+      <div>
+        <div className="w-full flex items-center pl-20 h-[70px] bg-[#F6F8FE]">
+          <SearchBar />
         </div>
-        {/* <PhoneSideBar activeTab={"Profile"} /> */}
       </div>
     </>
   );
