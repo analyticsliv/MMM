@@ -17,7 +17,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
     const [loading, setLoading] = useState(true);
     const pathname = usePathname();
-    const [currentLabel, setCurrentLabel] = useState("Feature Section");
+    const [currentLabel, setCurrentLabel] = useState("Connectors");
 
     const handleSignOut = async () => {
         setLoading(true);
@@ -30,7 +30,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         if (currentItem) {
             setCurrentLabel(currentItem.label);
         } else {
-            setCurrentLabel("Feature Section");
+            setCurrentLabel("Connectors");
         }
     }, [pathname, menuItems]);
 
