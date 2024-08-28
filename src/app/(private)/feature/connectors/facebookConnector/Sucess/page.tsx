@@ -1,84 +1,51 @@
 "use client";
-
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import useAccountSummaries from '@/components/hooks/connectors/ga4AccountList';
-import useAccountProperties from '@/components/hooks/connectors/ga4PropertyList';
 
-interface Account {
-  name: string;
-  displayName: string;
-}
-
-interface Property {
-  name: string;
-  displayName: string;
-}
-
-const SuccessPage: React.FC = () => {
+const SuccessPage = () => {
   const searchParams = useSearchParams();
-  const code = searchParams.get('code');
-  const [accessToken, setAccessToken] = useState<string | null>(null);
-  const { accountSummaries, loading: accountsLoading, error: accountsError } = useAccountSummaries(accessToken);
-  const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
-  const { properties, loading: propertiesLoading, error: propertiesError } = useAccountProperties(selectedAccount,accountSummaries,accessToken);
+  const accessToken = searchParams.get('accessToken');
+  const [accounts, setAccounts] = useState<any[]>([]);
+  const [selectedAccount, setSelectedAccount] = useState<string>('');
 
   useEffect(() => {
-    async function getTokenFromCode(code: string) {
-      try {
-        const response = await fetch(`/api/auth/ga4-auth?code=${code}`);
-        const data = await response.json();
-        if (!accessToken) {
-          setAccessToken(data?.access_token || null);
-        }
-      } catch (error) {
-        console.error('Error getting tokens:', error);
-      }
+    if (accessToken) {
+      console.log('Access Token:', accessToken);
+      fetchUserAccounts(accessToken);
     }
+  }, [accessToken]);
 
-    if (code && !accessToken) {
-      getTokenFromCode(code);
+  const fetchUserAccounts = async (accessToken:string) => {
+    try {
+      const response = await fetch(`https://graph.facebook.com/v11.0/me/accounts?access_token=${accessToken}`);
+      const data = await response.json();
+      setAccounts(data.data || []);
+    } catch (error) {
+      console.error('Error fetching accounts:', error);
     }
-  }, [code, accessToken]);
+  };
 
-  const handleAccountChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedAccount(event.target.value);
+  const handleAccountSelect = async (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const accountId = event.target.value;
+    setSelectedAccount(accountId);
+    console.log("ghjkl",accountId)
   };
 
   return (
     <div>
-      <h1>Account Summaries</h1>
-      {accountsLoading && <p>Loading accounts...</p>}
-      {accountsError && <p>Error: {accountsError}</p>}
+      <h1>Authentication Successful</h1>
+      {/* <p>Access Token: {accessToken}</p> */}
 
-      {!accountsLoading && !accountsError && (
-        <select onChange={handleAccountChange} value={selectedAccount || ''}>
-          <option value="" disabled>Select an account</option>
-          {accountSummaries.map((account: Account, index) => (
-            <option key={index} value={account.name}>
-              {account.displayName}
-            </option>
-          ))}
-        </select>
-      )}
+      <h2>Select an Account</h2>
+      <select onChange={handleAccountSelect} value={selectedAccount}>
+        <option value="">Select Account</option>
+        {accounts.map((account) => (
+          <option key={account.id} value={account.id}>
+            {account.name}
+          </option>
+        ))}
+      </select>
 
-      {selectedAccount && (
-        <div>
-          <h2>Properties for {selectedAccount}</h2>
-          {propertiesLoading && <p>Loading properties...</p>}
-          {propertiesError && <p>Error: {propertiesError}</p>}
-
-          {!propertiesLoading && !propertiesError && (
-            <ul>
-              {properties?.map((property: Property, index) => (
-                <li key={index}>
-                  <strong>{property.displayName}</strong> - {property.name}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      )}
     </div>
   );
 };
