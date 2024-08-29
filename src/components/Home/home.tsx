@@ -58,7 +58,7 @@ const HomePage = () => {
   return (
     <>
     <ToastContainer />
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex flex-col items-center justify-center min-h-screen">
       <div className="w-full md:w-[50%] lg:w-[40%] p-10 bg-white rounded-lg shadow-lg border border-gray-300">
         <div className="flex flex-col text-center justify-center items-center mb-6">
           <Image
