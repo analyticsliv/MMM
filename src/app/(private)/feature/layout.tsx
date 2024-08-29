@@ -8,11 +8,11 @@ import { useSession, signOut } from "next-auth/react";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     const menuItems = [
-        {imgUrl:"/assets/nav1.png", label: "Home", path: "/feature" },
-        {imgUrl:"/assets/nav2.png", label: "Custom Connectors", path: "/feature/connectors", arrow:"/assets/triangle.png" },
-        {imgUrl:"/assets/nav3.png", label: "MMM", path: "/feature/mmm", arrow:"/assets/triangle.png" },
-        {imgUrl:"/assets/nav4.png", label: "Reports", path: "/feature/reports", arrow:"/assets/triangle.png" },
-        {imgUrl:"/assets/nav5.png", label: "Admin", path: "/feature/admin" },
+        { imgUrl: "/assets/nav1.png", label: "Home", path: "/feature" },
+        { imgUrl: "/assets/nav2.png", label: "Custom Connectors", path: "/feature/connectors", arrow: "/assets/triangle.png" },
+        { imgUrl: "/assets/nav3.png", label: "MMM", path: "/feature/mmm", arrow: "/assets/triangle.png" },
+        { imgUrl: "/assets/nav4.png", label: "Reports", path: "/feature/reports", arrow: "/assets/triangle.png" },
+        { imgUrl: "/assets/nav5.png", label: "Admin", path: "/feature/admin" },
     ];
     const { data: session, status } = useSession();
     const router = useRouter();
@@ -44,18 +44,18 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 </div>
                 <nav className="flex text-xl flex-col">
                     {menuItems.map((item) => {
-                        const isActive = pathname === item.path;
+                        const isActive = pathname === item.path || (pathname.startsWith(item.path) && item.path !== "/feature");
                         return (
                             <Link key={item.path} href={item.path} className="w-full">
-                                <div className= {`w-full border-b border-b-[#3F5D88] py-5 px-4 flex items-center justify-between text-start gap-3 text-xl font-bold ${isActive
-                                        ? " text-white bg-custom-gradient"
+                                <div className={`w-full border-b border-b-[#3F5D88] py-5 px-4 flex items-center justify-between text-start gap-3 text-xl font-bold
+                                    ${isActive ? " text-white bg-custom-gradient"
                                         : "text-white hover:bg-gray-900"
-                                        }`}>
-                                <div className="flex items-center justify-between text-start gap-6"
-                                ><img src={item.imgUrl} className="h-8 w-8" />
-                                    {item.label}
-                                </div>
-                                <img src={`${item.arrow ? item.arrow : ''}`} className="mr-5" />
+                                    }`}>
+                                    <div className="flex items-center justify-between text-start gap-6"
+                                    ><img src={item.imgUrl} className="h-8 w-8" />
+                                        {item.label}
+                                    </div>
+                                    <img src={`${item.arrow ? item.arrow : ''}`} className="mr-5" />
                                 </div>
                             </Link>
                         );
