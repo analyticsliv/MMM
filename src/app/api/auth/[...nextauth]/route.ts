@@ -1,6 +1,8 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
+import connectToDatabase from "@/lib/mongodb";
+import { compare } from "bcryptjs"
 
 const handler = NextAuth({
   providers: [
@@ -30,32 +32,28 @@ const handler = NextAuth({
         },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials, req) {
-        const payload = {
-          email: credentials?.email,
-          password: credentials?.password,
-        };
+      async authorize(credentials) {
+        try {
+          await connectToDatabase();
 
-        console.log("in manual login --", payload)
-        const res = await fetch("https://api.kreomart.com/api/accounts/login/", {
-          method: "POST",
-          body: JSON.stringify(payload),
-          headers: {
-            "Content-Type": "application/json"
-          },
-        });
+          // Find the user by email
+          const user = null
+          // await User.findOne({ email: credentials.email });
+          if (!user) {
+            throw new Error('No user found with the entered email');
+          }
 
-        console.log("Authentication response status:", res.status);
+          // Validate the password
+          const isValid = await compare(credentials.password, user.password);
+          if (!isValid) {
+            throw new Error('Invalid credentials');
+          }
 
-        if (!res.ok) {
-          console.error("Authentication failed:", res.statusText);
-          return null;
+          return user;
         }
-
-        const user = await res.json();
-        console.log("Authenticated user:", user);
-        return user;
-
+        catch (err) {
+          return err;
+        }
       },
     }),
   ],
