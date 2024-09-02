@@ -1,7 +1,6 @@
 // src/app/feature/connectors/ga4Connector/page.tsx
 "use client";
 import React, { useEffect, useState } from 'react';
-import Modal from '@/components/Modal'; // Adjust path as needed
 
 const GA4ConnectorPage = () => {
   const [authUrl, setAuthUrl] = useState<string>('');
@@ -21,22 +20,8 @@ const GA4ConnectorPage = () => {
     fetchAuthUrl();
   }, []);
 
-  const handleAuth = () => {
-    if (authUrl) {
-      const popup = window.open(authUrl, 'authPopup', 'width=600,height=600');
-      if (popup) {
-        popup.focus();
-      }
-    }
-  };
-
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
-
   return (
     <div>
-      {/* <h1>Authorize Google Analytics Access</h1>
-      <button onClick={handleAuth}>Authorize</button> */}
       <h1 className='pb-5 text-base'>Authorize Google Analytics Access</h1>
       <a href={authUrl} className='border border-indigo-900 p-2 cursor-pointer hover:bg-blue-950 hover:text-white font-medium'> &gt; Authorize</a>
     </div>
