@@ -8,6 +8,7 @@ import SuccessPage from "./SuccessPage";
 // import Icon from "@/components/shared/Icon";
 import Link from "next/link";
 import route from "@/routes";
+import { ToastContainer } from "react-toastify";
 // import { toast } from "@/components/ui/use-toast";
 
 const Registration = () => {
@@ -124,12 +125,12 @@ const Registration = () => {
     const errorMessage = (
       <div>
         <div>Must contain:</div>
-        <ul>
-          <li>{requirements?.[0]}</li>
-          <li>{requirements?.[1]}</li>
-          <li>{requirements?.[2]}</li>
-          <li>{requirements?.[3]}</li>
-          <li>{requirements?.[4]}</li>
+        <ul className="flex flex-wrap">
+          <li className="flex">{requirements?.[0]}, &nbsp;</li>
+          <li className="flex">{requirements?.[1]}, &nbsp;</li>
+          <li className="flex">{requirements?.[2]}, &nbsp;</li>
+          <li className="flex">{requirements?.[3]}, &nbsp;</li>
+          <li className="flex">{requirements?.[4]}, &nbsp;</li>
         </ul>
       </div>
     );
@@ -143,7 +144,7 @@ const Registration = () => {
           </div>
         ) : (
           <>
-            <div className="text-red-600">Password too weak </div>
+            <div className="text-red-600">Password is too weak </div>
             <div>{errorMessage}</div>
           </>
         )}
@@ -243,21 +244,19 @@ const Registration = () => {
   return registrationSuccess ? (
     <SuccessPage email={email} />
   ) : (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 p-5">
-      <div className="w-full md:w-[50%] lg:w-[30%] p-8 bg-white rounded-lg shadow-lg border border-gray-300">
-        <div className="flex flex-col text-center justify-center items-center mb-3">
-          <Image
-            className="mb-4"
-            src="./assets/logo-mobo.svg"
-            alt="Logo"
-            width={100}
-            height={100}
-          />
-          <h2 className="text-xl font-bold text-gray-800">
-            Create your MMM account
-          </h2>
-        </div>
-        {/* <button
+<div className="flex lg:h-[100dvh] justify-center items-center bg-white min-h-screen relative">
+  <ToastContainer />
+  <div className="h-[85%] 2xl:h-[78%] md:w-[50%] rounded-[20px] max-md:p-5 px-[8%] flex flex-col justify-center gap-10 bg-background shadow-lg border border-gray-300">
+    <div className="text-center">
+      <img
+        className="mb-4"
+        src="./assets/AnalyticsLiv_Logo_Perfact_Space.png"
+        alt="Logo"
+        height={180}
+        width={180}
+      />
+    </div>
+     {/* <button
             type="button"
             onClick={() => handleSocialAuth("google")}
             className="w-full flex h-16 my-2 justify-center text-center items-center border border-black"
@@ -282,88 +281,125 @@ const Registration = () => {
             Continue with FaceBook
           </button>
           <div className=" text-center my-6">OR</div> */}
-        <form className="space-y-6" onSubmit={handleRegistration} method="POST">
-          <div>
-            <FormInput
-              label="First Name"
-              type="text"
-              value={firstname}
-              onChange={handleFirstnameChange}
-              placeholder="John"
-              error={firstnameError}
-            />
-            <FormInput
-              label="Last Name"
-              type="text"
-              value={lastname}
-              onChange={handleLastnameChange}
-              placeholder="Doe"
-              error={lastnameError}
-            />
-            <FormInput
-              label="Phone Number"
-              type="tel"
-              value={phone}
-              onChange={handlePhoneChange}
-              placeholder="Phone Number"
-              error={phoneError}
-            />
-            <FormInput
-              label="Email"
-              type="email"
-              value={email}
-              onChange={handleEmailChange}
-              placeholder="example@gmail.com"
-              error={emailError}
-            />
-            <div className="relative">
-              <FormInput
-                label="Password"
-                type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={handlePasswordChange}
-                placeholder="Enter Password"
-              />
-              <button
-                type="button"
-                onClick={handlePasswordToggle}
-                className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500"
-              >
-                {showPassword ? (
-                  <Image src="/assets/Eye Open.png" className="items-center pt-11" alt="Show password" width={20} height={20} />
-                ) : (
-                  <Image src="/assets/Eye cross.png" className="items-center pt-11" alt="Hide password" width={20} height={20} />
-                )}
-              </button>
-            </div>
-            {passwordError && <div className="text-red-600 text-sm">{passwordError}</div>}
-            <p className="text-gray-600 mt-4 text-sm">
-              By creating an account, you’re agreeing to the MMM{" "}
-              <Link
-                href={route.TermsAndConditions}
-                className="text-secondary-500"
-              >
-                terms & conditions
-              </Link>{" "}
-              and MMM{" "}
-              <Link href={route.PrivacyPolicy} className="text-secondary-500">
-                privacy policy
-              </Link>
-            </p>
-          </div>
-          <button
-            type="submit"
-            disabled={isRegistering}
-            className={`w-full bg-primary-600 text-base hover:bg-primary-700 focus:ring-2 focus:ring-primary-500 text-white font-semibold px-4 py-3 rounded-md ${isRegistering ? "opacity-50 cursor-not-allowed" : ""}`}
-          >
-            {isRegistering ? "Registering..." : "Register"}
-          </button>
-          <Link href={route.Login} className="block w-full text-base mt-3 text-center border border-gray-600 text-gray-700 font-semibold py-2.5 rounded-md hover:bg-gray-100">
-            Already have an account? Sign In
-          </Link>
-        </form>
+    <form className="space-y-2 flex flex-col gap-1" onSubmit={handleRegistration} method="POST">
+      <div>
+        <label className="block text-2xl font-medium text-textcolor">First Name</label>
+        <input
+          type="text"
+          value={firstname}
+          placeholder="John"
+          onChange={handleFirstnameChange}
+          className="w-full h-12 py-5 px-7 mt-2 bg-transparent text-xl font-medium text-textcolor placeholder-[#BEBEBE] 
+          border border-[#C2C2C2] rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+        />
+      </div>
+      <div>
+        <label className="block text-2xl font-medium text-textcolor">Last Name</label>
+        <input
+          type="text"
+          value={lastname}
+          placeholder="Doe"
+          onChange={handleLastnameChange}
+          className="w-full h-14 py-5 px-7 mt-2 bg-transparent text-xl font-medium text-textcolor placeholder-[#BEBEBE] 
+          border border-[#C2C2C2] rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+        />
+      </div>
+      <div>
+        <label className="block text-2xl font-medium text-textcolor">Phone Number</label>
+        <input
+          type="tel"
+          value={phone}
+          placeholder="Phone Number"
+          onChange={handlePhoneChange}
+          className="w-full h-14 py-5 px-7 mt-2 bg-transparent text-xl font-medium text-textcolor placeholder-[#BEBEBE] 
+          border border-[#C2C2C2] rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+        />
+      </div>
+      <div>
+        <label className="block text-2xl font-medium text-textcolor">Email</label>
+        <input
+          type="email"
+          value={email}
+          placeholder="example@gmail.com"
+          onChange={handleEmailChange}
+          className="w-full h-14 py-5 px-7 mt-2 bg-transparent text-xl font-medium text-textcolor placeholder-[#BEBEBE] 
+          border border-[#C2C2C2] rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+        />
+      </div>
+      <div className="relative">
+        <label className="block text-2xl font-medium text-textcolor">Password</label>
+        <input
+          type={showPassword ? "text" : "password"}
+          value={password}
+          placeholder="Enter Password"
+          onChange={handlePasswordChange}
+          className="w-full h-14 py-5 px-7 mt-2 bg-transparent text-xl font-medium text-textcolor placeholder-[#BEBEBE] 
+          border border-[#C2C2C2] rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+        />
+        <button
+          type="button"
+          onClick={handlePasswordToggle}
+          className="absolute inset-y-0 right-0 flex items-center mt-9 px-7 text-gray-500"
+        >
+          {showPassword ? (
+            <img src="/assets/Eye Open.png" alt="Show password" width={20} height={20} />
+          ) : (
+            <img src="/assets/Eye cross.png" alt="Hide password" width={20} height={20} />
+          )}
+        </button>
+      </div>
+      {passwordError && <div className="text-red-600 text-sm">{passwordError}</div>}
+      <p className="text-gray-600 mt-4 text-sm">
+        By creating an account, you’re agreeing to the MMM{" "}
+        <Link
+          href={route.TermsAndConditions}
+          className="text-secondary-500"
+        >
+          terms & conditions
+        </Link>{" "}
+        and MMM{" "}
+        <Link href={route.PrivacyPolicy} className="text-secondary-500">
+          privacy policy
+        </Link>
+      </p>
+      <button
+        type="submit"
+        disabled={isRegistering}
+        className={`w-full bg-primary xl:h-14 md:h-12 text-2xl rounded-lg font-medium text-white ${isRegistering ? "opacity-50 cursor-not-allowed" : ""}`}
+      >
+        {isRegistering ? "Registering..." : "Register"}
+      </button>
+      <Link href={route.Login} className="block w-full text-base mt-3 text-center border border-gray-600 text-gray-700 font-semibold py-2.5 rounded-md hover:bg-gray-100">
+        Already have an account? Sign In
+      </Link>
+    </form>
+  </div>
+  <div className="h-[85%] 2xl:h-[78%] md:w-[50%] relative flex flex-col w-[50%] py-6 bg-primary rounded-[20px] mx-auto">
+    <div className="flex flex-col text-center z-10">
+      <div className="text-[25px] xl:text-[45px] text-white font-semibold text-left px-20">Welcome Back to</div>
+      <div className="flex text-[25px] xl:text-[45px] text-white font-semibold text-left px-20">
+        AnalyticsLiv<img alt="AnalyticsLiv" className="p-0 h-[40px] xl:h-[60px]" src="assets/AnalyticsLiv_Logo_Short_Right (1).png" />
+
       </div>
     </div>
+    <img
+      className="absolute right-0 bottom-[5%] 2xl:bottom-[15%]"
+      src="/assets/LOGO_BG_BLUR_RIGHT (1).png"
+      alt="Vector"
+    />
+    <img
+      className="absolute h-[100px] xl:h-[120px] top-[45%] 2xl:top-[50%] left-[20%] 2xl:left-[22%]"
+      src="/assets/Vector (1).png"
+      alt="Vector"
+    />
+    <img
+      className="absolute bottom-0 h-[350px] 2xl:h-[450px] left-[25%]"
+      src="/assets/Gentleman (1).png"
+      alt="Gentleman"
+    />
+  </div>
+</div>
+
   );
 };
 
