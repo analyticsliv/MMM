@@ -77,9 +77,13 @@ const Login = () => {
 
     console.log("in cred login.......", signInResponse)
     if (
-      (signInResponse && signInResponse.error === null) ||
-      signInResponse?.error === undefined
+      (signInResponse && signInResponse.error !== null) ||
+      signInResponse?.error !== undefined
     ) {
+      // setLoading(false);
+      // router.push(callBack || "/");
+      setinvalidCredentialError(signInResponse?.error)
+      notify("There is some issue in sign in", 'error'); // Show sign-out toast
       setLoading(false);
     }
   };

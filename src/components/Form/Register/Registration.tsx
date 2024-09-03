@@ -183,24 +183,25 @@ const Registration = () => {
     }
   }, [session.status, router]);
 
-  const BASE_API_URL = "https://api.kreomart.com/api/accounts/";
-  // const BASE_API_URL = "http://127.0.0.1:8000/api/accounts/";
+  const BASE_API_URL = process.env.BASE_API_URL
 
   const handleRegistration = async (e: any) => {
     e.preventDefault();
+    setIsRegistering(true);
 
     try {
       const userData = {
-        first_name: firstname,
-        last_name: lastname,
+        name : `${firstname} ${lastname}`,
+        // first_name: firstname,
+        // last_name: lastname,
         email: email,
-        phone_number: phone,
-        password: password,
+        mobile: phone,
+        password: password
       };
 
       console.log("Registration data:", userData);
 
-      const response = await fetch(`${BASE_API_URL}registeration/`, {
+      const response = await fetch('api/auth/signup', {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userData),

@@ -14,7 +14,6 @@ const HomePage = () => {
   const notify = useToast();
 
   useEffect(() => {
-    console.log("object", session)
 
     if (status === "loading") {
       // Wait for session status to load

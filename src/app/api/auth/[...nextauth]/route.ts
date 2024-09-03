@@ -2,7 +2,8 @@ import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import connectToDatabase from "@/lib/mongodb";
-import { compare } from "bcryptjs"
+import { compare } from "bcryptjs";
+import User from "@/Models/User";
 
 const handler = NextAuth({
   providers: [
@@ -10,11 +11,6 @@ const handler = NextAuth({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       profile(profile) {
-        console.log(profile);
-        if (!profile.id) {
-          // Log the received profile and potentially investigate why the "id" field is missing
-          console.error('Google OAuthProfile is missing the "id" field:', profile);
-        }
         return {
           id: profile.id || profile.sub,
           name: profile.name,
@@ -26,10 +22,7 @@ const handler = NextAuth({
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: {
-          label: "email",
-          type: "email",
-        },
+        email: { label: "email", type: "email" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
@@ -37,8 +30,7 @@ const handler = NextAuth({
           await connectToDatabase();
 
           // Find the user by email
-          const user = null
-          // await User.findOne({ email: credentials.email });
+          const user = await User.findOne({ email: credentials.email });
           if (!user) {
             throw new Error('No user found with the entered email');
           }
@@ -49,10 +41,10 @@ const handler = NextAuth({
             throw new Error('Invalid credentials');
           }
 
-          return user;
-        }
-        catch (err) {
-          return err;
+          return user; 
+        } catch (error) {
+          // Throw the error to be caught by NextAuth
+          throw new Error(error.message);
         }
       },
     }),
@@ -61,25 +53,41 @@ const handler = NextAuth({
   pages: {
     signIn: "/login",
   },
-  // callbacks: {
-  //   async jwt({ token, user }) {
-  //     if (user) {
-  //       return {
-  //         ...token,
-  //       };
-  //     }
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      session.user.id = token.id;
+      return session;
+    },
+    async signIn({ account, profile, user }) {
+      await connectToDatabase();
 
-  //     return token;
-  //   },
+      const existingUser = await User.findOne({ email: user.email });
 
-  // async session({ session, token }) {
-  //     if(session.user){
-  //         session.user = token.accessToken;
-  //     }
+      if (account.provider === 'google') {
+        if (existingUser) {
+          return true;
+        }
 
-  //   return session;
-  // },
-  // },
+        const newUser = new User({
+          email: user.email,
+          name: profile.name,
+          image: profile.picture,
+        });
+
+        await newUser.save();
+        return true;
+      }
+
+      return true;
+    },
+  },
 });
 
 export { handler as GET, handler as POST };
+
