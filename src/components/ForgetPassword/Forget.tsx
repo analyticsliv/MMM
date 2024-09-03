@@ -58,53 +58,83 @@ const Forget = () => {
   return forgetresponse ? (
     <ForgetResponse />
   ) : (
-    <div className=" flex items-center justify-center">
-      <div className=" max-h-screen rounded-2xl items-center max-w-lg md:max-w-4xl justify-center mb-20">
-        <div className="items-center  text-sm md:text-md">
-          <form
-            className="mt-6 mx-20 "
-            onSubmit={handleSubmit}
-            action="#"
-            method="POST"
-          >
-            <div>
-              <div className="text-center justify-center">
-                <Image
-                  className="mx-auto p-2 "
-                  src="/assets/logo-mobo.svg"
-                  alt="Logo"
-                  width={40}
-                  height={40}
-                />
-              </div>
-              <h2 className="text-2xl font-bold text-[#030822] text-center mb-10">
-                Forgot password
-              </h2>
-            </div>
-            <div className=" text-center mb-5">
-              In order to change your password, we need to verify your identity.
-              Enter the email address or mobile phone number associated with
-              your Kreomart account.
-            </div>
-            <div>
-              <label className="block w-full text-gray-700">Email</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter Email Address"
-                className="w-full px-4 py-3 bg-gray-200 mt-2 border focus:border-blue-500 focus:bg-white focus:outline-none"
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="w-full  bg-[#020044] hover:bg-blue-400 focus:bg-blue-400 text-white font-semibold  px-4 py-3 mt-6"
-            >
-              continue
-            </button>
-          </form>
+    <div className="flex lg:h-[100dvh] justify-center items-center bg-white min-h-screen">
+      <div className="h-[72%] 2xl:h-[70%] md:w-[50%] rounded-[20px] max-md:p-5 px-[8%] flex flex-col justify-center gap-10 bg-background shadow-lg border border-gray-300">
+        <div>
+          <img
+            className="mb-4"
+            src="./assets/AnalyticsLiv_Logo_Perfact_Space.png"
+            alt="Logo"
+            height={180}
+            width={180}
+          />
         </div>
+        <form
+          className="space-y-6 flex flex-col md:gap-2 xl:gap-1 2xl:gap-6"
+          onSubmit={handleSubmit}
+          action="#"
+          method="POST"
+        >
+          <div>
+            <h2 className="text-2xl font-bold text-textcolor text-center mb-10">
+              Forgot password
+            </h2>
+          </div>
+          <div className="text-center mb-5 text-xl text-textcolor">
+            In order to change your password, we need to verify your identity.
+            Enter the email address or mobile phone number associated with your
+            MMM account.
+          </div>
+          <div>
+            <label className="block text-2xl font-medium text-textcolor">
+              Email
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter Email Address"
+              className="w-full h-16 py-5 px-7 mt-2 bg-transparent text-xl font-medium text-textcolor placeholder-[#BEBEBE] 
+            border border-[#C2C2C2] border-primary-500 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-primary xl:h-16 md:h-12 text-2xl rounded-lg font-medium text-white"
+          >
+            Continue
+          </button>
+        </form>
+      </div>
+      <div className="relative flex flex-col w-[50%] py-6 bg-primary rounded-[20px] mx-auto h-[72%] 2xl:h-[70%]">
+        <div className="flex flex-col text-center z-10">
+          <div className="text-[25px] xl:text-[45px] text-white font-semibold text-left px-20">
+            Welcome Back to
+          </div>
+          <div className="flex text-[25px] xl:text-[45px] text-white font-semibold text-left px-20">
+            AnalyticsLiv
+            <img
+              alt="AnalyticsLiv"
+              className="p-0 h-[40px] xl:h-[60px]"
+              src="assets/AnalyticsLiv_Logo_Short_Right (1).png"
+            />
+          </div>
+        </div>
+        <img
+          className="absolute right-0 bottom-[5%] 2xl:bottm-[15%]"
+          src="/assets/LOGO_BG_BLUR_RIGHT (1).png"
+          alt="Blur"
+        />
+        <img
+          className="absolute h-[100px] xl:h-[120px] top-[45%] 2xl:top-[50%] left-[20%] 2xl:left-[22%]"
+          src="/assets/Vector (1).png"
+          alt="Vector"
+        />
+        <img
+          className="absolute bottom-0 h-[350px] 2xl:h-[450px] left-[25%]"
+          src="/assets/Gentleman (1).png"
+          alt="gentleman"
+        />
       </div>
     </div>
   );
