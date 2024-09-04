@@ -8,6 +8,8 @@ import { Dialog } from "@headlessui/react";
 import { DateRangePicker, RangeKeyDict } from "react-date-range"; // Ensure react-date-range is installed
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
+import { useSession, signOut } from "next-auth/react";
+import useConnector from "@/components/hooks/connectors/useConnectors";
 
 interface Account {
   name: string;
@@ -20,8 +22,10 @@ interface Property {
 }
 
 const SuccessPage: React.FC = () => {
+  const { data: session, status } = useSession();
   const searchParams = useSearchParams();
   const code = searchParams.get("code");
+  const { updateOrCreateConnector, getConnectorData, error, loading } = useConnector();
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const {
     accountSummaries,
@@ -51,16 +55,22 @@ const SuccessPage: React.FC = () => {
         const data = await response.json();
         if (!accessToken) {
           setAccessToken(data?.access_token || null);
+          const connectorData = {
+            refreshToken:data?.refresh_token,
+            expriyTime:data?.expiry_date
+          }
+  
+          updateOrCreateConnector(session?.user?.email, 'ga4', connectorData);
         }
       } catch (error) {
         console.error("Error getting tokens:", error);
       }
     }
 
-    if (code && !accessToken) {
+    if (code && !accessToken && status ==='authenticated') {
       getTokenFromCode(code);
     }
-  }, [code, accessToken]);
+  }, [code, accessToken,status]);
 
   const handleAccountChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedAccount(event.target.value);

@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 
 const GA4ConnectorPage = () => {
   const [authUrl, setAuthUrl] = useState<string>('');
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
     async function fetchAuthUrl() {
