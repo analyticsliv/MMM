@@ -38,7 +38,8 @@ const useConnector = () => {
         setError(null);
 
         try {
-            const response = await fetch(`/api/connectors/connector-check?email=${encodeURIComponent(email)}&connectorName=${encodeURIComponent(connectorName)}`);
+            const response = await fetch(`/api/connectors/connectorCheck?email=${encodeURIComponent(email)}&connectorName=${encodeURIComponent(connectorName)}`);
+
             if (!response.ok) {
                 throw new Error('Failed to fetch connector data');
             }
