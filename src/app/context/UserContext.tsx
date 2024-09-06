@@ -31,9 +31,7 @@ interface UserProviderProps {
 
 // Create the UserProvider component to wrap around your app
 export const UserProvider = ({ children }:any) => {
-  const [user, setUser] = useState<Object | null>({
-    email : "data.analytics@analyticsliv.com"
-  });
+  const [user, setUser] = useState<Object | null>({});
 
   return (
     <UserContext.Provider value={{ user, setUser }}>

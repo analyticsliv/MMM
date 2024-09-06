@@ -2,8 +2,10 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation'; // Use `next/navigation` instead of `next/router`
 import { useSession } from 'next-auth/react';
+import { useUser } from '@/app/context/UserContext';
 
 export function useCheckAuth(redirectPath: string = '/login') {
+  const {setUser} = useUser();
   const router = useRouter();
   const { status, data: session } = useSession();
   const [loading, setLoading] = useState(true);
@@ -29,5 +31,10 @@ export function useCheckAuth(redirectPath: string = '/login') {
     }
   }, [status, session, router, redirectPath]);
 
+  useEffect(()=>{
+    if(session){
+      setUser(session?.user);
+    }
+  },[session])
   return { loading, session };
 }
