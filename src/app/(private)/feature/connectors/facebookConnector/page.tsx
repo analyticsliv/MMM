@@ -1,10 +1,14 @@
 // src/components/FacebookAuthButton.tsx
 "use client";
+import { useUser } from '@/app/context/UserContext';
+import useConnector from '@/components/hooks/connectors/useConnectors';
 import React, { useEffect, useState } from 'react';
 
 const FacebookAuthButton = () => {
+  const { getConnectorData, error, loading } = useConnector();
+  const [isAuthrozie, setIsAuthorize] = useState(null);
   const [authUrl, setAuthUrl] = useState('');
-
+  const {user} = useUser();
   useEffect(() => {
     async function fetchAuthUrl() {
       try {
@@ -18,6 +22,23 @@ const FacebookAuthButton = () => {
 
     fetchAuthUrl();
   }, []);
+
+  useEffect(() => {
+    async function toTestAuth() {
+      const data = await getConnectorData('facebook', user?.email);
+      setIsAuthorize(data)
+    }
+    if(user){
+      toTestAuth();
+    }
+  }, [user])
+
+  if (loading) {
+    return <h1>Its loading </h1>
+  }
+  else if (isAuthrozie){
+    return <h1>Allready authenticated</h1>
+  }
 
 
   return (

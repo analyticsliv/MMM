@@ -10,6 +10,7 @@ import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import { useSession, signOut } from "next-auth/react";
 import useConnector from "@/components/hooks/connectors/useConnectors";
+import { useUser } from "@/app/context/UserContext";
 
 interface Account {
   name: string;
@@ -22,7 +23,8 @@ interface Property {
 }
 
 const SuccessPage: React.FC = () => {
-  const { data: session, status } = useSession();
+  // const { data: session, status } = useSession();
+  const {user} = useUser();
   const searchParams = useSearchParams();
   const code = searchParams.get("code");
   const { updateOrCreateConnector, getConnectorData, error, loading } = useConnector();
@@ -56,21 +58,21 @@ const SuccessPage: React.FC = () => {
         if (!accessToken) {
           setAccessToken(data?.access_token || null);
           const connectorData = {
-            refreshToken:data?.refresh_token,
-            expriyTime:data?.expiry_date
+            refreshToken: data?.refresh_token,
+            expriyTime: data?.expiry_date
           }
-  
-          updateOrCreateConnector(session?.user?.email, 'ga4', connectorData);
+
+          updateOrCreateConnector(user?.email, 'ga4', connectorData);
         }
       } catch (error) {
         console.error("Error getting tokens:", error);
       }
     }
 
-    if (code && !accessToken && status ==='authenticated') {
+    if (code && !accessToken) {
       getTokenFromCode(code);
     }
-  }, [code, accessToken,status]);
+  }, [code, accessToken]);
 
   const handleAccountChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedAccount(event.target.value);
@@ -186,15 +188,15 @@ const SuccessPage: React.FC = () => {
               minDate={
                 dateRange.endDate
                   ? new Date(
-                      dateRange.endDate.getTime() - 30 * 24 * 60 * 60 * 1000
-                    )
+                    dateRange.endDate.getTime() - 30 * 24 * 60 * 60 * 1000
+                  )
                   : minDate
               }
               maxDate={
                 dateRange.startDate
                   ? new Date(
-                      dateRange.startDate.getTime() + 30 * 24 * 60 * 60 * 1000
-                    )
+                    dateRange.startDate.getTime() + 30 * 24 * 60 * 60 * 1000
+                  )
                   : undefined
               }
             />
