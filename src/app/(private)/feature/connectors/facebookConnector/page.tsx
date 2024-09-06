@@ -2,6 +2,7 @@
 "use client";
 import { useUser } from '@/app/context/UserContext';
 import useConnector from '@/components/hooks/connectors/useConnectors';
+import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 
 const FacebookAuthButton = () => {
@@ -9,6 +10,18 @@ const FacebookAuthButton = () => {
   const [isAuthrozie, setIsAuthorize] = useState(null);
   const [authUrl, setAuthUrl] = useState('');
   const {user} = useUser();
+
+
+  useEffect(() => {
+    if (isAuthrozie?.accessToken) {
+      const accessTokenParam = encodeURIComponent(isAuthrozie?.accessToken);
+      const successUrl = `http://127.0.0.1:3000/feature/connectors/facebookConnector/sucess?accessToken=${accessTokenParam}`;
+      
+      // Redirect to the success page with the access token
+      window.location.href = successUrl;
+    }
+  }, [isAuthrozie]);
+  
   useEffect(() => {
     async function fetchAuthUrl() {
       try {
@@ -37,6 +50,7 @@ const FacebookAuthButton = () => {
     return <h1>Its loading </h1>
   }
   else if (isAuthrozie){
+    console.log("isAuthrozieisAuthrozie",isAuthrozie)
     return <h1>Allready authenticated</h1>
   }
 
