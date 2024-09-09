@@ -12,7 +12,6 @@ export async function GET(request: Request) {
 
   try {
     const tokens = await getTokens(code);
-    console.log("token ",tokens)
     return NextResponse.json(tokens);
   } catch (error) {
     console.error('Error getting tokens:', error);

@@ -14,7 +14,6 @@ const HomePage = () => {
   const notify = useToast();
 
   useEffect(() => {
-    console.log("object", session)
 
     if (status === "loading") {
       // Wait for session status to load
@@ -23,6 +22,7 @@ const HomePage = () => {
 
     if (status === "unauthenticated") {
       // Redirect to login if unauthenticated
+      localStorage.removeItem('userSession');
       router.push("/login");
       // notify('You have been redirected to the login page', 'info');
 
@@ -37,6 +37,7 @@ const HomePage = () => {
     setLoading(true);
     await signOut({ redirect: false });
     notify("You have been signed out.", 'info'); // Show sign-out toast
+    localStorage.removeItem('userSession');
     router.push("/login");
   };
 

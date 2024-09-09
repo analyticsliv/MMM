@@ -1,3 +1,4 @@
+import { UserProvider } from "./context/UserContext";
 import "./globals.css";
 import SplashScreen from "./SplashScreen";
 
@@ -17,10 +18,13 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <NextAuthProvider>
-          <SplashScreen />
-          <main className="mx-auto">{children}</main>
+            <SplashScreen />
+            <UserProvider>
+               <main className="mx-auto">{children}</main>
+            </UserProvider>
         </NextAuthProvider>
       </body>
     </html>
   );
 }
+

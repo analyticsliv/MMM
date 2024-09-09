@@ -2,7 +2,6 @@
 import mongoose from 'mongoose';
 
 const MONGODB_URI = process.env.MONGODB_URI;
-console.log("fghjk",MONGODB_URI)
 
 if (!MONGODB_URI) {
     throw new Error(
@@ -23,8 +22,8 @@ async function connectToDatabase() {
 
     if (!cached.promise) {
         cached.promise = mongoose.connect(MONGODB_URI, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
+            // useNewUrlParser: true,
+            // useUnifiedTopology: true,
         }).then((mongoose) => {
             return mongoose;
         });
