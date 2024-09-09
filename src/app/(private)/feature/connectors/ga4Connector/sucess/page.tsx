@@ -27,6 +27,7 @@ const SuccessPage: React.FC = () => {
   const {user} = useUser();
   const searchParams = useSearchParams();
   const code = searchParams.get("code");
+  const refreshTokenParam = searchParams.get("refresh_token");
   const { updateOrCreateConnector, getConnectorData, error, loading } = useConnector();
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const {
@@ -51,28 +52,49 @@ const SuccessPage: React.FC = () => {
   });
 
   useEffect(() => {
+    // this function is responsible to genrate acesstoken if user comes first time...
     async function getTokenFromCode(code: string) {
       try {
         const response = await fetch(`/api/auth/ga4-auth?code=${code}`);
         const data = await response.json();
-        if (!accessToken) {
-          setAccessToken(data?.access_token || null);
-          const connectorData = {
-            refreshToken: data?.refresh_token,
-            expriyTime: data?.expiry_date
-          }
-
-          updateOrCreateConnector(user?.email, 'ga4', connectorData);
+        setAccessToken(data?.access_token || null);
+        const user = JSON.parse(localStorage.getItem('userSession'))?.user;
+        const connectorData = {
+          refreshToken: data?.refresh_token,
+          expriyTime: data?.expiry_date
         }
+
+        updateOrCreateConnector(user?.email, 'ga4', connectorData);
       } catch (error) {
         console.error("Error getting tokens:", error);
+      }
+    }
+
+    // this functuon is responsible to genrate acesstoken using refresh token recvived from db
+    async function getTokenFromRefreshToken(refreshToken: string) {
+      try {
+        const response = await fetch(`/api/auth/ga4-refresh-token`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ refresh_token: refreshToken }),
+        });
+
+        const data = await response.json();
+        setAccessToken(data?.access_token || null);
+      } catch (error) {
+        console.error("Error getting access token using refresh token:", error);
       }
     }
 
     if (code && !accessToken) {
       getTokenFromCode(code);
     }
-  }, [code, accessToken]);
+    else if(refreshTokenParam && !accessToken){
+      getTokenFromRefreshToken(refreshTokenParam);
+    }
+  }, [code,refreshTokenParam]);
 
   const handleAccountChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedAccount(event.target.value);

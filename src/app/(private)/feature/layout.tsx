@@ -23,6 +23,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
     const handleSignOut = async () => {
         setLoading(true);
+        localStorage.removeItem('userSession');
         await signOut({ redirect: false });
         router.push("/login");
     };

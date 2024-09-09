@@ -20,6 +20,7 @@ const Page = () => {
 
         <button
           onClick={() => {
+            localStorage.removeItem('userSession');
             router.push("/login");
           }}
           className="w-full  bg-primary hover:bg-primary-700 focus:bg-blue-400 text-lg text-white font-semibold  px-4 py-3 mt-6"

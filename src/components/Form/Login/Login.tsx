@@ -52,6 +52,7 @@ const Login = () => {
       //   description: "Welcome to kreomart",
       // });
       router.push(callBack || "/");
+      localStorage.setItem('userSession', JSON.stringify(session?.data));
       notify("You have been signed out.", 'info'); // Show sign-out toast
       setLoading(false);
     }

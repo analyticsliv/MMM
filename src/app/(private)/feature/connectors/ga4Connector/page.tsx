@@ -3,11 +3,13 @@
 import { useUser } from '@/app/context/UserContext';
 import useConnector from '@/components/hooks/connectors/useConnectors';
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 const GA4ConnectorPage = () => {
   const { getConnectorData, error, loading } = useConnector();
   const [isAuthrozie, setIsAuthorize] = useState(null);
   const {user} = useUser();
+  const router = useRouter();
   const [authUrl, setAuthUrl] = useState<string>('');
 
   useEffect(() => {
@@ -33,6 +35,14 @@ const GA4ConnectorPage = () => {
       toTestAuth();
     }
   }, [user])
+
+  useEffect(() => {
+    if (isAuthrozie && isAuthrozie.refreshToken) {
+      // Redirect the user with the refresh_token in the URL
+      const redirectUrl = `/feature/connectors/ga4Connector/sucess?refresh_token=${encodeURIComponent(isAuthrozie.refreshToken)}`;
+      router.push(redirectUrl); // Next.js navigation
+    }
+  }, [isAuthrozie, router]);
 
   if (loading) {
     return <h1>Its loading </h1>
