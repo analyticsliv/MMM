@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 import { DateRangePicker, RangeKeyDict } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
-import { format } from 'date-fns'; // To format the date in dd/mm/yyyy format
-import { FaCalendarAlt } from 'react-icons/fa'; // For the calendar icon
+import { format } from 'date-fns';
+import { FaCalendarAlt } from 'react-icons/fa';
 
 interface CustomDatepickerProps {
   onDateRangeChange: (startDate: Date | null, endDate: Date | null) => void;
@@ -27,22 +27,24 @@ export default function CustomDatepicker({ onDateRangeChange }: CustomDatepicker
       startDate: selection.startDate,
       endDate: selection.endDate,
     });
-    onDateRangeChange(selection.startDate, selection.endDate); // Notify parent component
+    onDateRangeChange(selection.startDate, selection.endDate);
 
   };
-  // Calculate min and max dates based on the selected date range
-  const minDate = new Date(); // Allow selection of dates before today
+
+
+  const minDate = new Date();
   const maxDate = dateRange.startDate
     ? new Date(dateRange.startDate.getTime() + 30 * 24 * 60 * 60 * 1000)
     : undefined;
   const minDateForEndDate = dateRange.endDate
     ? new Date(dateRange.endDate.getTime() - 30 * 24 * 60 * 60 * 1000)
     : undefined;
-  const handleRangeSelect = (e) => {
+
+
+  const handleRangeSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedValue = e.target.value;
     setSelectedRange(selectedValue);
 
-    // Automatically adjust start and end dates based on range selection
     let startDate = new Date();
     let endDate = new Date();
 
@@ -52,9 +54,8 @@ export default function CustomDatepicker({ onDateRangeChange }: CustomDatepicker
         break;
 
       case "month":
-        // This Month
-        startDate = new Date(startDate.getFullYear(), startDate.getMonth(), 1); // First day of the month
-        endDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0); // Last day of the month
+        startDate = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
+        endDate = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0);
         break;
 
       case "prev-month":
@@ -72,8 +73,10 @@ export default function CustomDatepicker({ onDateRangeChange }: CustomDatepicker
       default:
         return;
     }
-
     setDateRange({ startDate, endDate });
+    onDateRangeChange(startDate, endDate);
+    // setDateRange({ startDate, endDate });
+    // onDateRangeChange(dateRange.startDate, dateRange.endDate);
   };
 
   const clearDates = () => setDateRange({ startDate: null, endDate: null });
@@ -87,7 +90,6 @@ export default function CustomDatepicker({ onDateRangeChange }: CustomDatepicker
     <div>
 
       <div className="flex w-full h-[31px] rounded-tl-md border border-gray-400 text-[#000000] text-xl font-semibold bg-[#EDF4FF]">
-        {/* Select Range Dropdown */}
         <select
           value={selectedRange}
           onChange={handleRangeSelect}
@@ -98,10 +100,8 @@ export default function CustomDatepicker({ onDateRangeChange }: CustomDatepicker
           <option className='bg-white' value="prev-month">Previous Month</option>
           <option className='bg-white' value="month">This Month</option>
           <option className='bg-white' value="next-month">Next Month</option>
-          {/* <option value="1-week">1 Week</option> */}
         </select>
 
-        {/* Custom Date Button */}
         <button onClick={openModal} className="flex-1 flex items-center font-semibold justify-center px-4 bg-[#EDF4FF]">
           <FaCalendarAlt className="mr-2" />
           {formatDateRange(dateRange.startDate, dateRange.endDate)}
