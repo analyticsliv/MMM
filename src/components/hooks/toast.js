@@ -13,7 +13,7 @@ const useToast = () => {
 
         const newToastId = toast[type](message, {
             position: "top-center",
-            autoClose: 4000,
+            autoClose: 3000,
             hideProgressBar: false,
             closeOnClick: true,
             pauseOnHover: true,
