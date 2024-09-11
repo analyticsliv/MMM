@@ -58,7 +58,8 @@ const Page: React.FC = () => {
   };
 
   const handlePropertyChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedProperty(event.target.value);
+    const selectedPropertyId = event.target.value;
+    setSelectedProperty(selectedPropertyId);
   };
 
   const handleReportChange = (event) => {
@@ -72,6 +73,7 @@ const Page: React.FC = () => {
 
   const {
     properties,
+    propertyIds,
     loading: propertiesLoading,
     error: propertiesError,
   } = useAccountProperties(selectedAccount, accountSummaries, accessToken);
@@ -252,7 +254,7 @@ const Page: React.FC = () => {
                   >
                     <option value="" disabled>Select a property</option>
                     {properties.map((property, index) => (
-                      <option key={index} className="bg-white" value={property.name}>
+                      <option key={property.property} className="bg-white" value={propertyIds[index]}>
                         {property.displayName}
                       </option>
                     ))}
