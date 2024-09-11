@@ -161,8 +161,8 @@ const Page: React.FC = () => {
       // refresh_token: refreshTokenParam || "N/A",
       refresh_token: refreshToken || "N/A", // Use refreshToken from state or search param
       property_id: selectedProperty,
-      project_id: "wex-ga4-bigquery",
-      dataset_name: "abcd",
+      project_id: "dx-api-project",
+      dataset_name: "trial_data",
       start_date: formattedStartDate, // Use formatted start date
       end_date: formattedEndDate, // Use formatted end date 
       reports_list: selectedReport,
