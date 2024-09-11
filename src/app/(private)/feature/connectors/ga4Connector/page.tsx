@@ -4,6 +4,7 @@ import { useUser } from '@/app/context/UserContext';
 import useConnector from '@/components/hooks/connectors/useConnectors';
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import SplashScreen from '@/app/SplashScreen';
 
 const GA4ConnectorPage = () => {
   const { getConnectorData, error, loading } = useConnector();
@@ -45,7 +46,18 @@ const GA4ConnectorPage = () => {
   }, [isAuthrozie, router]);
 
   if (loading) {
-    return <h1>Its loading </h1>
+    return (
+    // <SplashScreen />
+    <div className="fixed z-50 h-full w-full flex justify-center items-center bg-white">
+    <div className="flex flex-col justify-center items-center">
+      <div className="loader"></div>
+      <p className="mt-4 text-xl font-semibold text-gray-700">
+        Loading...
+      </p>
+    </div>
+  </div>
+  )
+    //  <h1>Its loading </h1>
   }
   else if (isAuthrozie){
     return <h1>Altredy authenticated</h1>
