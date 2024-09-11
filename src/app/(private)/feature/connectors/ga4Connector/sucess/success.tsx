@@ -39,7 +39,6 @@ const Page: React.FC = () => {
 
   const notify = useToast();
 
-
   useEffect(() => {
     if (dropdownVisible) {
       document.addEventListener('mousedown', handleOutsideClick);
@@ -94,6 +93,7 @@ const Page: React.FC = () => {
         const response = await fetch(`/api/auth/ga4-auth?code=${code}`);
         const data = await response.json();
         setAccessToken(data?.access_token || null);
+        setRefreshToken(data?.refresh_token);
         const user = JSON.parse(localStorage.getItem('userSession'))?.user;
         const connectorData = {
           refreshToken: data?.refresh_token,
@@ -126,7 +126,6 @@ const Page: React.FC = () => {
 
     if (code && !accessToken) {
       getTokenFromCode(code);
-      setRefreshToken(code);
     }
     else if (refreshTokenParam && !accessToken) {
       getTokenFromRefreshToken(refreshTokenParam);
@@ -306,8 +305,6 @@ const Page: React.FC = () => {
           </div>
         </Dialog>
       </div>
-
-
     </div>
   );
 };
