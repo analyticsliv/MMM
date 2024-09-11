@@ -11,7 +11,8 @@ import useAccountProperties from "@/components/hooks/connectors/ga4PropertyList"
 import useToast from "@/components/hooks/toast";
 import { ToastContainer } from "react-toastify";
 import { format } from 'date-fns';
-
+import { reportOptions } from "@/utils/const";
+import useGa4Details from "@/components/hooks/connectors/useGa4Details";
 
 const Page: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -26,6 +27,9 @@ const Page: React.FC = () => {
   const code = searchParams.get("code");
   const refreshTokenParam = searchParams.get("refresh_token");
   const { updateOrCreateConnector, getConnectorData, error, loading } = useConnector();
+  const [refreshToken, setRefreshToken] = useState<string | null>(null);
+
+  const { ga4Details } = useGa4Details();
 
   const handleOutsideClick = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -85,40 +89,7 @@ const Page: React.FC = () => {
   const formattedStartDate = dateRange.startDate ? format(dateRange.startDate, 'yyyy-MM-dd') : null;
   const formattedEndDate = dateRange.endDate ? format(dateRange.endDate, 'yyyy-MM-dd') : null;
 
-  const handleSubmit = () => {
-    console.log('Start Date:', dateRange.startDate);
-    console.log('End Date:', dateRange.endDate);
 
-    if (!selectedAccount) {
-      notify('Please select an account first!', 'error');
-      return;
-    }
-    if (!selectedProperty) {
-      notify('Please select a property first!', 'error');
-      return;
-    }
-    if (selectedReport.length === 0) {
-      notify('Please select at least one report!', 'error');
-      return;
-    }
-
-    const data = {
-      refresh_token: refreshTokenParam || "N/A",
-      property_id: selectedProperty,
-      project_id: "wex-ga4-bigquery",
-      dataset_name: "abcd",
-      start_date: formattedStartDate, // Use formatted start date
-      end_date: formattedEndDate, // Use formatted end date 
-      reports_list: selectedReport,
-    };
-    console.log(data);
-    closeModal();
-    setSelectedProperty(null);
-    setSelectedAccount(null);
-    setSelectedReport([]);
-    notify('Submission successful!', 'success');
-
-  };
   useEffect(() => {
     // this function is responsible to genrate acesstoken if user comes first time...
     async function getTokenFromCode(code: string) {
@@ -158,25 +129,55 @@ const Page: React.FC = () => {
 
     if (code && !accessToken) {
       getTokenFromCode(code);
+      setRefreshToken(code);
     }
     else if (refreshTokenParam && !accessToken) {
       getTokenFromRefreshToken(refreshTokenParam);
+      setRefreshToken(refreshTokenParam);
     }
   }, [code, refreshTokenParam]);
-  const reportOptions = {
-    User_Acquisition: 'User Acquisition',
-    Acquisition_Traffic: 'Acquisition Traffic',
-    Acquisition_Goal_Report: 'Acquisition Goal Report',
-    Engagement_Events: 'Engagement Events',
-    Engagement_Conversions: 'Engagement Conversions',
-    Engagement_Pages_Screens: 'Engagement Pages Screens',
-    Engagement_Landing_page: 'Engagement Landing Page',
-    Monetisation_Ecommerce_purchases: 'Monetisation Ecommerce Purchases',
-    Monetisation_Item_Lists: 'Monetisation Item Lists',
-    Monetisation_Overview_Promotion: 'Monetisation Overview Promotion',
-    Demographics_details_Interests: 'Demographics Details Interests',
-    Demographics_details_Geo_Language: 'Demographics Details Geo Language',
-    Tech_details: 'Tech Details',
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const formattedStartDate = dateRange.startDate ? format(dateRange.startDate, 'yyyy-MM-dd') : null;
+    const formattedEndDate = dateRange.endDate ? format(dateRange.endDate, 'yyyy-MM-dd') : null;
+
+    if (!formattedStartDate || !formattedEndDate) {
+      notify('Please select Date Range!', 'error');
+      return;
+    }
+    if (!selectedAccount) {
+      notify('Please select an account first!', 'error');
+      return;
+    }
+    if (!selectedProperty) {
+      notify('Please select a property first!', 'error');
+      return;
+    }
+    if (selectedReport.length === 0) {
+      notify('Please select at least one report!', 'error');
+      return;
+    }
+
+    const data = {
+      // refresh_token: refreshTokenParam || "N/A",
+      refresh_token: refreshToken || "N/A", // Use refreshToken from state or search param
+      property_id: selectedProperty,
+      project_id: "wex-ga4-bigquery",
+      dataset_name: "abcd",
+      start_date: formattedStartDate, // Use formatted start date
+      end_date: formattedEndDate, // Use formatted end date 
+      reports_list: selectedReport,
+    };
+    console.log(data);
+
+    await ga4Details(data);
+
+    closeModal();
+    setSelectedProperty(null);
+    setSelectedAccount(null);
+    setSelectedReport([]);
+    notify('Submission successful!', 'success');
   };
 
   return (

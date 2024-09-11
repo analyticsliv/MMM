@@ -95,7 +95,7 @@ export default function CustomDatepicker({ onDateRangeChange }: CustomDatepicker
           onChange={handleRangeSelect}
           className="flex-1 px-4 border-r border-r-gray-500 bg-[#EDF4FF] rounded-tl-md"
         >
-          <option className='bg-white text-lg font-semibold' value="">Select Range</option>
+          <option className='bg-white text-lg font-semibold' value="" disabled>Select Range</option>
           <option className='bg-white' value="week">This Week</option>
           <option className='bg-white' value="prev-month">Previous Month</option>
           <option className='bg-white' value="month">This Month</option>
