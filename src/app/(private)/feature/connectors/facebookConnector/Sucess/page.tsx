@@ -94,8 +94,7 @@ const SuccessPage = () => {
       start_date: formattedStartDate, // Use formatted start date
       end_date: formattedEndDate, // Use formatted end date
       level: selectedLevel,
-      table_name: "Facebook_Data.sss1"
-
+      table_name: "Facebook_Data.sss1",
     }
     console.log("data object", data)
     closeModal();
@@ -114,7 +113,7 @@ const SuccessPage = () => {
         >
           Open Facebook Modal
         </button>
-        <Dialog open={isModalOpen} onClose={closeModal} className="bg-gray-800 bg-opacity-75"
+        <Dialog open={isModalOpen} onClose={closeModal} className="bg-gray-600 bg-opacity-50"
           style={{
             position: 'absolute',
             top: '50%',
@@ -147,14 +146,14 @@ const SuccessPage = () => {
               {/* <select
                     onChange={handleAccountChange}
                     value={selectedAccount || ""}
-                    className="p-2 h-14 text-xl font-semibold rounded-sm bg-homeGray w-1/3"
+                    className="p-2 h-14 text-xl font-semibold rounded-sm bg-homeGray w-1/2"
                     required
                   ></select> */}
 
               <CustomDatepicker onDateRangeChange={handleDateRangeChange} />
 
               <div className="flex gap-4 mt-6 justify-evenly max-h-56 ">
-                <select onChange={handleAccountSelect} value={selectedAccount || ""} className="p-2 h-14  max-h-56 text-xl font-semibold rounded-sm bg-homeGray w-1/3">
+                <select onChange={handleAccountSelect} value={selectedAccount || ""} className="p-2 h-14  max-h-56 text-xl font-semibold rounded-sm bg-homeGray w-1/2">
                   <option value="">Select Account</option>
                   {accounts.map((account) => (
                     <option key={account.id} value={account.id} className="bg-white">
@@ -162,7 +161,7 @@ const SuccessPage = () => {
                     </option>
                   ))}
                 </select>
-                <select onChange={handleLevelSelect} value={selectedLevel || ""} className="p-2 h-14 text-xl font-semibold rounded-sm bg-homeGray w-1/3">
+                <select onChange={handleLevelSelect} value={selectedLevel || ""} className="p-2 h-14 text-xl font-semibold rounded-sm bg-homeGray w-1/2">
                   <option className="bg-white" value="">Select Level</option>
                   <option className="bg-white" value="ad">Ad</option>
                   <option className="bg-white" value="campaign">Campaign</option>
