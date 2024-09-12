@@ -175,7 +175,6 @@ const Page: React.FC = () => {
     setSelectedProperty(null);
     setSelectedAccount(null);
     setSelectedReport([]);
-    notify('Submission successful!', 'success');
   };
 
   return (
@@ -210,7 +209,7 @@ const Page: React.FC = () => {
         >
 
           <div className="fixed inset-0 flex items-center justify-center p-5">
-            <div className="bg-white p-6 flex flex-col justify-between rounded-lg shadow-lg w-[650px] h-[300px] 2xl:w-[800px] 2xl:h-[400px]">
+            <div className="bg-white p-6 flex flex-col justify-between rounded-lg shadow-lg w-[650px] h-[300px] 2xl:w-[700px] 2xl:h-[350px]">
 
               <div className="flex items-center">
                 <Dialog.Title className="text-2xl font-bold text-white text-center w-32 py-3 rounded-md mb-4 bg-custom-gradient mx-auto">
