@@ -8,6 +8,7 @@ import CustomDatepicker from '@/components/DatePicker/Datepicker';
 import { format } from 'date-fns';
 import useToast from '@/components/hooks/toast';
 import { ToastContainer } from 'react-toastify';
+import { createJobId } from '@/utils/helper';
 
 const SuccessPage = () => {
   const { data: session, status } = useSession();
@@ -23,6 +24,37 @@ const SuccessPage = () => {
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
   const notify = useToast();
+
+  useEffect(() => {
+    async function getJobDetail(jobId: string) {
+
+      try {
+        const response = await fetch('/api/connectors/jobCheck', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ jobId }), // Sending jobId in the body
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log("API response:", data);
+
+      } catch (error) {
+        console.error('Error fetching auth URL:', error);
+      }
+    }
+
+
+    const jobId = createJobId('facebook', "data.analytics@analyticsliv.com");
+    if (jobId) {
+      getJobDetail(jobId);
+    }
+  }, []);
 
   useEffect(() => {
     if (accessToken) {

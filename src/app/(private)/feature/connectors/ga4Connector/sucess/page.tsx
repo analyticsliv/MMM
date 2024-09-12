@@ -14,19 +14,3 @@ function Page() {
 }
 
 export default Page;
-
-
-// https://us-central1-dx-api-project.cloudfunctions.net/function-post-ga4
-// const data = [
-//   {
-//     "refresh_token": "1//0gP9C1j6ZNsq0CgYIARAAGBASNwF-L9Ir0UUc-oM9qr_RFT6bG3AKdBr6aZJKx6dlEy082IaY8Wh5wDa2ndQ_ax2oaXUZCDzFnRM",
-//     "property_id": "307724020",
-//     "start_date": dateRange.startDate,
-//     "end_date": "2024-01-01",
-//     "project_id": "wex-ga4-bigquery",
-//     "dataset_name": "abcd",
-//     "reports_list": [
-//         "Engagement_Landing_page"
-//     ]
-// }
-// ]
