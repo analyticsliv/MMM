@@ -10,9 +10,11 @@ import useToast from '@/components/hooks/toast';
 import { ToastContainer } from 'react-toastify';
 import { createJobId } from '@/utils/helper';
 import JobDetail from '@/Models/JobDetail';
+import useFbDetails from '@/components/hooks/connectors/useFbDetails';
 
 const SuccessPage = () => {
   const { data: session, status } = useSession();
+  const { fbDetails } = useFbDetails();
   const { updateOrCreateConnector, getConnectorData, error, loading } = useConnector()
   const searchParams = useSearchParams();
   const accessToken = searchParams.get('accessToken');
@@ -127,8 +129,10 @@ const SuccessPage = () => {
       end_date: formattedEndDate, // Use formatted end date
       level: selectedLevel,
       table_name: "Facebook_Data.sss1",
+      ad_account_id : selectedAccount
     }
     console.log("data object", data)
+    await fbDetails(data)
     closeModal();
     setSelectedLevel(null);
     setSelectedAccount(null);
