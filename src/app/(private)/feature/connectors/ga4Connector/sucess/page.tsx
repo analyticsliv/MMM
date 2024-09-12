@@ -16,7 +16,7 @@ function Page() {
 export default Page;
 
 
-// https://us-central1-wex-ga4-bigquery.cloudfunctions.net/function-post-test
+// https://us-central1-dx-api-project.cloudfunctions.net/function-post-ga4
 // const data = [
 //   {
 //     "refresh_token": "1//0gP9C1j6ZNsq0CgYIARAAGBASNwF-L9Ir0UUc-oM9qr_RFT6bG3AKdBr6aZJKx6dlEy082IaY8Wh5wDa2ndQ_ax2oaXUZCDzFnRM",

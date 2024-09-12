@@ -53,7 +53,7 @@ const SuccessPage = () => {
 
   const fetchUserAccounts = async (accessToken: string) => {
     try {
-      const response = await fetch(`https://graph.facebook.com/v11.0/me/accounts?access_token=${accessToken}`);
+      const response = await fetch(`https://graph.facebook.com/v11.0/me/adaccounts?fields=id,name&access_token=${accessToken}`);
       const data = await response.json();
       setAccounts(data.data || []);
     } catch (error) {

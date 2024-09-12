@@ -4,7 +4,7 @@ const useGa4Details = () => {
     const ga4Details = async (data) => {
         try {
             const response = await axios.post(
-                'https://us-central1-wex-ga4-bigquery.cloudfunctions.net/function-post-test', data
+                'https://us-central1-dx-api-project.cloudfunctions.net/function-post-ga4', data
             );
 
 
