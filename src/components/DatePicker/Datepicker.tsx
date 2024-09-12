@@ -4,7 +4,6 @@ import { DateRangePicker, RangeKeyDict } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import { format } from 'date-fns';
-import { FaCalendarAlt } from 'react-icons/fa';
 
 interface CustomDatepickerProps {
   onDateRangeChange: (startDate: Date | null, endDate: Date | null) => void;
@@ -102,8 +101,8 @@ export default function CustomDatepicker({ onDateRangeChange }: CustomDatepicker
           <option className='bg-white' value="next-month">Next Month</option>
         </select>
 
-        <button onClick={openModal} className="flex-1 flex items-center font-semibold justify-center px-4 bg-[#EDF4FF]">
-          <FaCalendarAlt className="mr-2" />
+        <button onClick={openModal} className="flex-1 flex items-center gap-2 font-semibold justify-center px-4 bg-[#EDF4FF]">
+          <img alt='calender' src='/assets/calender2.webp' className='h-14 w-14' />
           {formatDateRange(dateRange.startDate, dateRange.endDate)}
         </button>
       </div>
