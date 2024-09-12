@@ -9,6 +9,7 @@ import { format } from 'date-fns';
 import useToast from '@/components/hooks/toast';
 import { ToastContainer } from 'react-toastify';
 import { createJobId } from '@/utils/helper';
+import JobDetail from '@/Models/JobDetail';
 
 const SuccessPage = () => {
   const { data: session, status } = useSession();
@@ -19,7 +20,7 @@ const SuccessPage = () => {
   const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
   const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [jobData, setJobData] = useState<object | null>(null);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -42,14 +43,13 @@ const SuccessPage = () => {
         }
 
         const data = await response.json();
+        setJobData(data); // Store jobId in state
         console.log("API response:", data);
 
       } catch (error) {
         console.error('Error fetching auth URL:', error);
       }
     }
-
-
     const jobId = createJobId('facebook', "data.analytics@analyticsliv.com");
     if (jobId) {
       getJobDetail(jobId);
@@ -138,13 +138,15 @@ const SuccessPage = () => {
       <ToastContainer />
       <div className="flex items-center justify-center min-h-screen">
 
-        {/* <h1>Authentication Successful</h1> */}
-        <button
-          onClick={openModal}
-          className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg"
-        >
-          Open Facebook Modal
-        </button>
+        {jobData?.message == "Job not found" ? (
+          <button
+            onClick={openModal}
+            className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg"
+          >
+            Open Facebook Modal
+          </button>) : <div>
+          Connector is already connected !
+        </div>}
         <Dialog open={isModalOpen} onClose={closeModal} className="bg-gray-600 bg-opacity-50"
           style={{
             position: 'absolute',
