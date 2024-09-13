@@ -33,7 +33,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal }) => {
   const refreshTokenParam = searchParams.get("refresh_token");
   const { updateOrCreateConnector, getConnectorData, error, loading } = useConnector();
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
-
+  const [submitLoading, setSubmitLoading] = useState(false);
   const { ga4Details } = useGa4Details();
 
   const handleOutsideClick = (event) => {
@@ -159,7 +159,6 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal }) => {
       notify('Please select at least one report!', 'error');
       return;
     }
-
     const data = {
       refresh_token: refreshToken || "N/A",
       property_id: selectedProperty,
@@ -171,9 +170,10 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal }) => {
     };
     console.log(data);
 
+    setSubmitLoading(true);
     await ga4Details(data);
-
     closeModal();
+    setSubmitLoading(false);
     setSelectedProperty(null);
     setSelectedAccount(null);
     setSelectedReport([]);
@@ -292,7 +292,11 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal }) => {
                 </div>
               </div>
               <div>
-                <button type="submit" onClick={handleSubmit} className="bg-homeGray hover:bg-gray-500 w-40 h-14 text-xl font-bold mx-[43%] border-[#B5B5B5]">Submit</button>
+                <button type="submit" onClick={handleSubmit} className="bg-homeGray hover:bg-gray-500 w-40 h-14 text-xl font-bold mx-[43%] border-[#B5B5B5]">
+                  {submitLoading ? (<div className="flex justify-center items-center">
+                    <div className="w-6 h-6 border-4 border-t-transparent border-red-400 rounded-full animate-spin"></div>
+                  </div>) : (<span>Submit</span>)}
+                </button>
               </div>
             </div>
           </div>
