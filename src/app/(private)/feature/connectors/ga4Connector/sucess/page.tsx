@@ -7,9 +7,13 @@ import { createJobId } from '@/utils/helper';
 const Page: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [jobData, setJobData] = useState<object | null>(null);
+  const [statusMessage, setStatusMessage] = useState<string>('');
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+  const handleModalSubmitSuccess = (message: string) => {
+    setStatusMessage(message);
+  };
 
   useEffect(() => {
     async function getJobDetail(jobId: string) {
@@ -43,13 +47,15 @@ const Page: React.FC = () => {
 
   return (
     <div className="flex items-center justify-center min-h-screen">
-      {jobData?.message == "Job not found" ? (
+      {statusMessage ? (
+        <div>{statusMessage}</div>
+      ) : jobData?.message == "Job not found" ? (
         <button onClick={openModal} className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg">Open Success Modal</button>) :
         <div>
           Connector is already connected !
         </div>}
       {isModalOpen && (
-        <SuccessModal isModalOpen={isModalOpen} closeModal={closeModal} />
+        <SuccessModal isModalOpen={isModalOpen} closeModal={closeModal} onSubmitSuccess={handleModalSubmitSuccess} />
       )}
     </div>
   );

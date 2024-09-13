@@ -14,13 +14,13 @@ import { format } from 'date-fns';
 import { reportOptions } from "@/utils/const";
 import useGa4Details from "@/components/hooks/connectors/useGa4Details";
 
-
 interface SuccessModalProps {
   isModalOpen: boolean;
   closeModal: () => void;
+  onSubmitSuccess: (message: string) => void;
 }
 
-const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal }) => {
+const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSuccess }) => {
   const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
   const [selectedProperty, setSelectedProperty] = useState<string | null>(null);
   const [selectedReport, setSelectedReport] = React.useState('');
@@ -171,12 +171,23 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal }) => {
     console.log(data);
 
     setSubmitLoading(true);
-    await ga4Details(data);
-    closeModal();
-    setSubmitLoading(false);
-    setSelectedProperty(null);
-    setSelectedAccount(null);
-    setSelectedReport([]);
+    try {
+      const response = await ga4Details(data);
+
+      if (response.success) {
+        onSubmitSuccess('GA4 Connector Successful!');
+      } else {
+        onSubmitSuccess('GA4 Connector Failed!');
+      }
+    } catch (error) {
+      onSubmitSuccess('An error occurred!');
+    } finally {
+      closeModal();
+      setSubmitLoading(false);
+      setSelectedProperty(null);
+      setSelectedAccount(null);
+      setSelectedReport([]);
+    }
   };
 
   return (
