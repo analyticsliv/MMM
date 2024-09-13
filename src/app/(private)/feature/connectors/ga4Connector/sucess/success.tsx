@@ -14,8 +14,14 @@ import { format } from 'date-fns';
 import { reportOptions } from "@/utils/const";
 import useGa4Details from "@/components/hooks/connectors/useGa4Details";
 
-const Page: React.FC = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+
+interface SuccessModalProps {
+  isModalOpen: boolean;
+  closeModal: () => void;
+}
+
+const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal }) => {
+  // const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
   const [selectedProperty, setSelectedProperty] = useState<string | null>(null);
   const [selectedReport, setSelectedReport] = React.useState('');
@@ -78,8 +84,8 @@ const Page: React.FC = () => {
     error: propertiesError,
   } = useAccountProperties(selectedAccount, accountSummaries, accessToken);
 
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  // const openModal = () => setIsModalOpen(true);
+  // const closeModal = () => setIsModalOpen(false);
   const [dateRange, setDateRange] = useState<{ startDate: Date | null; endDate: Date | null }>({
     startDate: null,
     endDate: null
@@ -158,13 +164,12 @@ const Page: React.FC = () => {
     }
 
     const data = {
-      // refresh_token: refreshTokenParam || "N/A",
-      refresh_token: refreshToken || "N/A", // Use refreshToken from state or search param
+      refresh_token: refreshToken || "N/A",
       property_id: selectedProperty,
       project_id: "dx-api-project",
       dataset_name: "trial_data",
-      start_date: formattedStartDate, // Use formatted start date
-      end_date: formattedEndDate, // Use formatted end date 
+      start_date: formattedStartDate,
+      end_date: formattedEndDate,
       reports_list: selectedReport,
     };
     console.log(data);
@@ -181,15 +186,7 @@ const Page: React.FC = () => {
 
     <div className="">
       <ToastContainer />
-
       <div className="flex items-center justify-center min-h-screen">
-        <button
-          onClick={openModal}
-          className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg"
-        >
-          Open GA4 Modal
-        </button>
-
         <Dialog open={isModalOpen} onClose={closeModal} className="bg-gray-800 bg-opacity-75"
           style={{
             position: 'absolute',
@@ -205,10 +202,9 @@ const Page: React.FC = () => {
             flexDirection: 'column',
             overflow: 'auto',
             // opacity: 0.95,
-          }}
-        >
+          }}>
 
-          <div className="fixed inset-0 flex items-center justify-center p-5">
+          <div className={`fixed inset-0 flex items-center justify-center p-5 ${isModalOpen ? '' : 'hidden'}`}>
             <div className="bg-white p-6 flex flex-col justify-between rounded-lg shadow-lg w-[650px] h-[300px] 2xl:w-[700px] 2xl:h-[350px]">
 
               <div className="flex items-center">

@@ -1,16 +1,23 @@
-'use client'; // Add this line at the top of the file
+'use client';
+import React from "react";
+import { useState } from "react";
+import SuccessModal from "./success"; // Assuming success.tsx is in the same folder.
 
-import React, { useState } from 'react';
-import SuccessPage from './success';
-// import CustomDatepicker from './CustomDatepicker';
-// import SuccessPage from './SuccessPage'; // Import SuccessPage
+const Page: React.FC = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-function Page() {
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
   return (
-    <div>
-      <SuccessPage />
+    <div className="flex items-center justify-center min-h-screen">
+      <button onClick={openModal} className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg">Open Success Modal</button>
+
+      {isModalOpen && (
+        <SuccessModal isModalOpen={isModalOpen} closeModal={closeModal} />
+      )}
     </div>
   );
-}
+};
 
 export default Page;
