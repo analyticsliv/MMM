@@ -18,9 +18,11 @@ interface SuccessModalProps {
   isModalOpen: boolean;
   closeModal: () => void;
   onSubmitSuccess: (message: string) => void;
+  setLoadingScreen: (loading: boolean) => void;
+
 }
 
-const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSuccess }) => {
+const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSuccess, setLoadingScreen }) => {
   const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
   const [selectedProperty, setSelectedProperty] = useState<string | null>(null);
   const [selectedReport, setSelectedReport] = React.useState('');
@@ -33,7 +35,6 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
   const refreshTokenParam = searchParams.get("refresh_token");
   const { updateOrCreateConnector, getConnectorData, error, loading } = useConnector();
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
-  const [submitLoading, setSubmitLoading] = useState(false);
   const { ga4Details } = useGa4Details();
 
   const handleOutsideClick = (event) => {
@@ -170,10 +171,15 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
     };
     console.log(data);
 
-    setSubmitLoading(true);
     try {
+      setLoadingScreen(true);
+      closeModal();
+
       const response = await ga4Details(data);
 
+      setSelectedProperty(null);
+      setSelectedAccount(null);
+      setSelectedReport([]);
       if (response.success) {
         onSubmitSuccess('GA4 Connector Successful!');
       } else {
@@ -182,11 +188,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
     } catch (error) {
       onSubmitSuccess('An error occurred!');
     } finally {
-      closeModal();
-      setSubmitLoading(false);
-      setSelectedProperty(null);
-      setSelectedAccount(null);
-      setSelectedReport([]);
+      setLoadingScreen(false);
     }
   };
 
@@ -303,11 +305,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
                 </div>
               </div>
               <div>
-                <button type="submit" onClick={handleSubmit} className="bg-homeGray hover:bg-gray-500 w-40 h-14 text-xl font-bold mx-[43%] border-[#B5B5B5]">
-                  {submitLoading ? (<div className="flex justify-center items-center">
-                    <div className="w-6 h-6 border-4 border-t-transparent border-red-400 rounded-full animate-spin"></div>
-                  </div>) : (<span>Submit</span>)}
-                </button>
+                <button type="submit" onClick={handleSubmit} className="bg-homeGray hover:bg-gray-500 w-40 h-14 text-xl font-bold mx-[43%] border-[#B5B5B5]">Submit</button>
               </div>
             </div>
           </div>
