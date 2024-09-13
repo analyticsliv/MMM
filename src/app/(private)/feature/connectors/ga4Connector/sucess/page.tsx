@@ -55,7 +55,7 @@ const Page: React.FC = () => {
         <div>{statusMessage}</div>
       ) : jobData?.message === "Job not found" ? (
         <button onClick={openModal} className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg">
-          Open Success Modal
+          Open GA4 Modal
         </button>
       ) : (
         <div>
