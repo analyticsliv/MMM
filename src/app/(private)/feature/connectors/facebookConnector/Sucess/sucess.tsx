@@ -14,8 +14,10 @@ import useFbDetails from '@/components/hooks/connectors/useFbDetails';
 interface SuccessModalProps {
     isModalOpen: boolean;
     closeModal: () => void;
+    onSubmitSuccess: (message: string) => void;  // Add this callback
+
 }
-const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal }) => {
+const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSuccess }) => {
     const { data: session, status } = useSession();
     const { fbDetails } = useFbDetails();
     const { updateOrCreateConnector, getConnectorData, error, loading } = useConnector()
@@ -102,11 +104,22 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal }) => {
         }
         console.log("data object", data)
         setSubmitLoading(true);
-        await fbDetails(data)
-        closeModal();
-        setSubmitLoading(false);
-        setSelectedLevel(null);
-        setSelectedAccount(null);
+        try {
+            const response = await fbDetails(data);  // Get fbDetails API response
+
+            if (response.success) {
+                onSubmitSuccess('Facebook Connector Successful!'); // Success message
+            } else {
+                onSubmitSuccess('Facebook Connector Failed!'); // Failure message
+            }
+        } catch (error) {
+            onSubmitSuccess('An error occurred!');  // Handle API error
+        } finally {
+            closeModal();
+            setSubmitLoading(false);
+            setSelectedLevel(null);
+            setSelectedAccount(null);
+        }
     }
     return (
         <div>
@@ -174,3 +187,22 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal }) => {
 };
 
 export default Page;
+
+
+        //     try {
+        //         const response = await fbDetails(data);  // Get fbDetails API response
+
+        //         // Assuming fbDetails returns an object with a success message or status
+        //         if (response?.status) {
+        //             onSubmitSuccess('Facebook Connector Successful!'); // Pass success message to parent
+        //         } else {
+        //             onSubmitSuccess('Facebook Connector Failed!'); // Pass error message to parent
+        //         }
+        //     } catch (error) {
+        //         onSubmitSuccess('An error occurred!');  // Handle API error
+        //     }
+        //     await fbDetails(data)
+        //     closeModal();
+        //     setSubmitLoading(false);
+        //     setSelectedLevel(null);
+        //     setSelectedAccount(null);
