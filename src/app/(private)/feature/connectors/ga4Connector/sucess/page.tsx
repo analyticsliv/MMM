@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect } from "react";
 import { useState } from "react";
-import SuccessModal from "./success"; // Assuming success.tsx is in the same folder.
+import SuccessModal from "./success";
 import { createJobId } from '@/utils/helper';
 
 const Page: React.FC = () => {

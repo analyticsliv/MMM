@@ -21,7 +21,6 @@ interface SuccessModalProps {
 }
 
 const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal }) => {
-  // const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
   const [selectedProperty, setSelectedProperty] = useState<string | null>(null);
   const [selectedReport, setSelectedReport] = React.useState('');
@@ -84,8 +83,6 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal }) => {
     error: propertiesError,
   } = useAccountProperties(selectedAccount, accountSummaries, accessToken);
 
-  // const openModal = () => setIsModalOpen(true);
-  // const closeModal = () => setIsModalOpen(false);
   const [dateRange, setDateRange] = useState<{ startDate: Date | null; endDate: Date | null }>({
     startDate: null,
     endDate: null
@@ -201,7 +198,6 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal }) => {
             display: 'flex',
             flexDirection: 'column',
             overflow: 'auto',
-            // opacity: 0.95,
           }}>
 
           <div className={`fixed inset-0 flex items-center justify-center p-5 ${isModalOpen ? '' : 'hidden'}`}>
@@ -296,7 +292,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal }) => {
                 </div>
               </div>
               <div>
-                <button type="submit" onClick={handleSubmit} className="bg-homeGray w-40 h-14 text-lg font-semibold mx-[43%] border-[#B5B5B5]">Submit</button>
+                <button type="submit" onClick={handleSubmit} className="bg-homeGray hover:bg-gray-500 w-40 h-14 text-xl font-bold mx-[43%] border-[#B5B5B5]">Submit</button>
               </div>
             </div>
           </div>
