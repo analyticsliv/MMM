@@ -42,20 +42,11 @@ const Page: React.FC = () => {
     }
   }, []);
 
-
-  const [dateRange, setDateRange] = useState<{ startDate: Date | null; endDate: Date | null }>({
-    startDate: null,
-    endDate: null
-  });
-  const handleDateRangeChange = (startDate: Date | null, endDate: Date | null) => {
-    setDateRange({ startDate, endDate });
-    console.log("object", setDateRange)
-  };
-
   return (
     <div className="flex items-center justify-center min-h-screen">
       {jobData?.message == "Job not found" ? (
-        <button onClick={openModal} className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg">Open Facebook Modal</button>) :
+        <button onClick={openModal} className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg">Open Facebook Modal</button>
+      ) :
         <div>
           Connector is already connected !
         </div>}

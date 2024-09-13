@@ -29,36 +29,6 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal }) => {
     const notify = useToast();
 
     useEffect(() => {
-        async function getJobDetail(jobId: string) {
-
-            try {
-                const response = await fetch('/api/connectors/jobCheck', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ jobId }), // Sending jobId in the body
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json();
-                setJobData(data); // Store jobId in state
-                console.log("API response:", data);
-
-            } catch (error) {
-                console.error('Error fetching auth URL:', error);
-            }
-        }
-        const jobId = createJobId('facebook', "data.analytics@analyticsliv.com");
-        if (jobId) {
-            getJobDetail(jobId);
-        }
-    }, []);
-
-    useEffect(() => {
         if (accessToken) {
             fetchUserAccounts(accessToken);
         }
