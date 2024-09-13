@@ -8,16 +8,16 @@ import CustomDatepicker from '@/components/DatePicker/Datepicker';
 import { format } from 'date-fns';
 import useToast from '@/components/hooks/toast';
 import { ToastContainer } from 'react-toastify';
-import { createJobId } from '@/utils/helper';
 import useFbDetails from '@/components/hooks/connectors/useFbDetails';
 
 interface SuccessModalProps {
     isModalOpen: boolean;
     closeModal: () => void;
-    onSubmitSuccess: (message: string) => void;  // Add this callback
+    onSubmitSuccess: (message: string) => void;
+    setLoadingScreen: (loading: boolean) => void;
 
 }
-const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSuccess }) => {
+const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSuccess, setLoadingScreen }) => {
     const { data: session, status } = useSession();
     const { fbDetails } = useFbDetails();
     const { updateOrCreateConnector, getConnectorData, error, loading } = useConnector()
@@ -26,7 +26,6 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
     const [accounts, setAccounts] = useState<any[]>([]);
     const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
     const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
-    const [submitLoading, setSubmitLoading] = useState(false);
 
     const notify = useToast();
 
@@ -103,22 +102,23 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
             ad_account_id: selectedAccount
         }
         console.log("data object", data)
-        setSubmitLoading(true);
         try {
-            const response = await fbDetails(data);  // Get fbDetails API response
-
-            if (response.success) {
-                onSubmitSuccess('Facebook Connector Successful!'); // Success message
-            } else {
-                onSubmitSuccess('Facebook Connector Failed!'); // Failure message
-            }
-        } catch (error) {
-            onSubmitSuccess('An error occurred!');  // Handle API error
-        } finally {
+            setLoadingScreen(true);
             closeModal();
-            setSubmitLoading(false);
+
+            const response = await fbDetails(data);
+
             setSelectedLevel(null);
             setSelectedAccount(null);
+            if (response.success) {
+                onSubmitSuccess('Facebook Connector Successful!');
+            } else {
+                onSubmitSuccess('Facebook Connector Failed!');
+            }
+        } catch (error) {
+            onSubmitSuccess('An error occurred!');
+        } finally {
+            setLoadingScreen(false);
         }
     }
     return (
@@ -174,11 +174,12 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
                                     <option className="bg-white" value="ad_set">Ad set</option>
                                 </select>
                             </div>
-                            <button type="submit" onClick={handleSubmit} className="bg-homeGray hover:bg-gray-500 w-40 h-14 text-xl font-bold mx-[43%] border-[#B5B5B5]">
+                            <button type="submit" onClick={handleSubmit} className="bg-homeGray hover:bg-gray-500 w-40 h-14 text-xl font-bold mx-[43%] border-[#B5B5B5]">Submit</button>
+                            {/* <button type="submit" onClick={handleSubmit} className="bg-homeGray hover:bg-gray-500 w-40 h-14 text-xl font-bold mx-[43%] border-[#B5B5B5]">
                                 {submitLoading ? (<div className="flex justify-center items-center">
                                     <div className="w-6 h-6 border-4 border-t-transparent border-red-400 rounded-full animate-spin"></div>
                                 </div>) : (<span>Submit</span>)}
-                            </button>
+                            </button> */}
                         </div></div>
                 </Dialog>
             </div>
@@ -189,20 +190,20 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
 export default Page;
 
 
-        //     try {
-        //         const response = await fbDetails(data);  // Get fbDetails API response
+//     try {
+//         const response = await fbDetails(data);  // Get fbDetails API response
 
-        //         // Assuming fbDetails returns an object with a success message or status
-        //         if (response?.status) {
-        //             onSubmitSuccess('Facebook Connector Successful!'); // Pass success message to parent
-        //         } else {
-        //             onSubmitSuccess('Facebook Connector Failed!'); // Pass error message to parent
-        //         }
-        //     } catch (error) {
-        //         onSubmitSuccess('An error occurred!');  // Handle API error
-        //     }
-        //     await fbDetails(data)
-        //     closeModal();
-        //     setSubmitLoading(false);
-        //     setSelectedLevel(null);
-        //     setSelectedAccount(null);
+//         // Assuming fbDetails returns an object with a success message or status
+//         if (response?.status) {
+//             onSubmitSuccess('Facebook Connector Successful!'); // Pass success message to parent
+//         } else {
+//             onSubmitSuccess('Facebook Connector Failed!'); // Pass error message to parent
+//         }
+//     } catch (error) {
+//         onSubmitSuccess('An error occurred!');  // Handle API error
+//     }
+//     await fbDetails(data)
+//     closeModal();
+//     setSubmitLoading(false);
+//     setSelectedLevel(null);
+//     setSelectedAccount(null);

@@ -1,20 +1,18 @@
 "use client"
 
 import React, { useEffect, useState } from 'react';
-import SuccessModal from "./sucess"; // Assuming success.tsx is in the same folder.
+import SuccessModal from "./sucess";
 import { createJobId } from '@/utils/helper';
 
 const Page: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [jobData, setJobData] = useState<object | null>(null);
-  const [statusMessage, setStatusMessage] = useState<string>(''); // To store success/error message from modal
+  const [statusMessage, setStatusMessage] = useState<string>('');
+  const [loadingScreen, setLoadingScreen] = useState(false);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
-  const handleModalSubmitSuccess = (message: string) => {
-    // This function will be called when the modal form submission is successful
-    setStatusMessage(message); // Set the message to display on the parent page
-  };
+
   useEffect(() => {
     async function getJobDetail(jobId: string) {
       try {
@@ -46,7 +44,14 @@ const Page: React.FC = () => {
 
   return (
     <div className="flex items-center justify-center min-h-screen">
-      {statusMessage ? (
+      {loadingScreen ? (
+        <div className="flex flex-col justify-center items-center space-y-4">
+          <div className="flex items-center">
+            <div className="w-12 h-12 border-4 border-t-transparent border-blue-500 border-solid rounded-full animate-spin"></div>
+          </div>
+          <span className="text-lg font-semibold text-gray-700">Loading...</span>
+        </div>
+      ) : statusMessage ? (
         <div>{statusMessage}</div> // Display success or error message here
       ) : jobData?.message == "Job not found" ? (
         <button onClick={openModal} className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg">
@@ -56,7 +61,12 @@ const Page: React.FC = () => {
         <div>Connector is already connected!</div>
       )}
       {isModalOpen && (
-        <SuccessModal isModalOpen={isModalOpen} closeModal={closeModal} onSubmitSuccess={handleModalSubmitSuccess} // Pass the callback function
+        <SuccessModal isModalOpen={isModalOpen} closeModal={closeModal} onSubmitSuccess={(message: string) => {
+          setStatusMessage(message);
+          setIsModalOpen(false);
+          setLoadingScreen(true);
+        }}
+        setLoadingScreen={setLoadingScreen}// Pass the callback function
         />
       )}
     </div>

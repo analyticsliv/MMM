@@ -18,7 +18,6 @@ const useFbDetails = () => {
                 if (response.status === 200) {
                     console.log("API response:", response.data);
                     console.log("status fb", response?.data?.success)
-                    // return response.data;
                     return { success: true, data: response.data };
 
                 } else {
@@ -42,6 +41,7 @@ const useFbDetails = () => {
 };
 
 export default useFbDetails;
+
 // import axios from 'axios';
 
 // const useFbDetails = () => {
