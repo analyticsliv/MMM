@@ -50,10 +50,24 @@ const FacebookAuthButton = () => {
   }, [])
 
   if (loading) {
-    return <h1>Its loading </h1>
+    return (<div className="fixed z-50 h-full w-full flex justify-center items-center bg-white">
+      <div className="flex flex-col justify-center items-center">
+        <div className="loader"></div>
+        <p className="mt-4 text-xl font-semibold text-gray-700">
+          Loading...
+        </p>
+      </div>
+    </div>)
   }
   else if (isAuthrozie) {
-    return <h1>Allready authenticated</h1>
+    return (<div className="fixed z-50 h-full w-full flex justify-center items-center bg-white">
+      <div className="flex flex-col justify-center items-center">
+        <div className="loader"></div>
+        <p className="mt-4 text-xl font-semibold text-gray-700">
+          Loading...
+        </p>
+      </div>
+    </div>)
   }
 
 
