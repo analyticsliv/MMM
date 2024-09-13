@@ -9,6 +9,7 @@ import { format } from 'date-fns';
 import useToast from '@/components/hooks/toast';
 import { ToastContainer } from 'react-toastify';
 import useFbDetails from '@/components/hooks/connectors/useFbDetails';
+import { createJobId } from '@/utils/helper';
 
 interface SuccessModalProps {
     isModalOpen: boolean;
@@ -22,6 +23,8 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
     const { fbDetails } = useFbDetails();
     const { updateOrCreateConnector, getConnectorData, error, loading } = useConnector()
     const searchParams = useSearchParams();
+    const user = JSON.parse(localStorage.getItem('userSession'))?.user;
+    const jobId = createJobId('ga4', user?.email);
     const accessToken = searchParams.get('accessToken');
     const [accounts, setAccounts] = useState<any[]>([]);
     const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
@@ -42,7 +45,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
                 expire: Date.now() + 60 * 24 * 60 * 60 * 1000
             };
 
-            updateOrCreateConnector("data.analytics@analyticsliv.com", 'facebook', connectorData);
+            updateOrCreateConnector(user?.email, 'facebook', connectorData);
         }
     }, [accessToken, session, status])
 
@@ -68,13 +71,11 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
     const handleAccountSelect = async (event: React.ChangeEvent<HTMLSelectElement>) => {
         const accountId = event.target.value;
         setSelectedAccount(accountId);
-        console.log("ghjkl", accountId)
     };
 
     const handleLevelSelect = async (event: React.ChangeEvent<HTMLSelectElement>) => {
         const Level = event.target.value;
         setSelectedLevel(Level);
-        console.log("ghjkl", Level)
     };
 
     const handleSubmit = async () => {
@@ -99,9 +100,10 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
             end_date: formattedEndDate, // Use formatted end date
             level: selectedLevel,
             table_name: "Facebook_Data.sss1",
-            ad_account_id: selectedAccount
+            ad_account_id: selectedAccount,
+            jobId:jobId
         }
-        console.log("data object", data)
+        
         try {
             setLoadingScreen(true);
             closeModal();

@@ -13,6 +13,7 @@ import { ToastContainer } from "react-toastify";
 import { format } from 'date-fns';
 import { reportOptions } from "@/utils/const";
 import useGa4Details from "@/components/hooks/connectors/useGa4Details";
+import { createJobId } from "@/utils/helper";
 
 interface SuccessModalProps {
   isModalOpen: boolean;
@@ -29,13 +30,15 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const dropdownRef = useRef(null);
-  const { user } = useUser();
+  // const { user } = useUser();
   const searchParams = useSearchParams();
   const code = searchParams.get("code");
   const refreshTokenParam = searchParams.get("refresh_token");
   const { updateOrCreateConnector, getConnectorData, error, loading } = useConnector();
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
   const { ga4Details } = useGa4Details();
+  const user = JSON.parse(localStorage.getItem('userSession'))?.user;
+  const jobId = createJobId('ga4', user?.email);
 
   const handleOutsideClick = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -100,7 +103,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
         const data = await response.json();
         setAccessToken(data?.access_token || null);
         setRefreshToken(data?.refresh_token);
-        const user = JSON.parse(localStorage.getItem('userSession'))?.user;
+        // const user = JSON.parse(localStorage.getItem('userSession'))?.user;
         const connectorData = {
           refreshToken: data?.refresh_token,
           expriyTime: data?.expiry_date
@@ -168,8 +171,8 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
       start_date: formattedStartDate,
       end_date: formattedEndDate,
       reports_list: selectedReport,
+      jobId: jobId
     };
-    console.log(data);
 
     try {
       setLoadingScreen(true);
