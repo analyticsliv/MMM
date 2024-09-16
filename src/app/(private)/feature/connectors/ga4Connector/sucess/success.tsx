@@ -13,23 +13,33 @@ import { ToastContainer } from "react-toastify";
 import { format } from 'date-fns';
 import { reportOptions } from "@/utils/const";
 import useGa4Details from "@/components/hooks/connectors/useGa4Details";
+import { createJobId } from "@/utils/helper";
 
-const Page: React.FC = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+interface SuccessModalProps {
+  isModalOpen: boolean;
+  closeModal: () => void;
+  onSubmitSuccess: (message: string) => void;
+  setLoadingScreen: (loading: boolean) => void;
+  setStatusCheck: (loading: boolean) => void;
+
+}
+
+const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSuccess, setLoadingScreen, setStatusCheck }) => {
   const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
   const [selectedProperty, setSelectedProperty] = useState<string | null>(null);
   const [selectedReport, setSelectedReport] = React.useState('');
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const dropdownRef = useRef(null);
-  const { user } = useUser();
+  // const { user } = useUser();
   const searchParams = useSearchParams();
   const code = searchParams.get("code");
   const refreshTokenParam = searchParams.get("refresh_token");
   const { updateOrCreateConnector, getConnectorData, error, loading } = useConnector();
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
-
   const { ga4Details } = useGa4Details();
+  const user = JSON.parse(localStorage.getItem('userSession'))?.user;
+  const jobId = createJobId('ga4', user?.email);
 
   const handleOutsideClick = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -78,8 +88,6 @@ const Page: React.FC = () => {
     error: propertiesError,
   } = useAccountProperties(selectedAccount, accountSummaries, accessToken);
 
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
   const [dateRange, setDateRange] = useState<{ startDate: Date | null; endDate: Date | null }>({
     startDate: null,
     endDate: null
@@ -96,7 +104,7 @@ const Page: React.FC = () => {
         const data = await response.json();
         setAccessToken(data?.access_token || null);
         setRefreshToken(data?.refresh_token);
-        const user = JSON.parse(localStorage.getItem('userSession'))?.user;
+        // const user = JSON.parse(localStorage.getItem('userSession'))?.user;
         const connectorData = {
           refreshToken: data?.refresh_token,
           expriyTime: data?.expiry_date
@@ -135,8 +143,48 @@ const Page: React.FC = () => {
     }
   }, [code, refreshTokenParam]);
 
+  const [jobData, setJobData] = useState<object | null>(null);
+  const [jobStatus, setJobStatus] = useState<string | null>(null); // State to hold the status
+
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    async function getStatusDetail(jobId: string) {
+      // try {
+      //   const response = await fetch('/api/connectors/jobStatus', {
+      //     method: 'POST',
+      //     headers: {
+      //       'Content-Type': 'application/json',
+      //     },
+      //     body: JSON.stringify({ jobId }), // Sending jobId in the body
+      //   });
+
+      //   if (!response.ok) {
+      //     throw new Error(`HTTP error! status: ${response.status}`);
+      //   }
+
+      //   // const data = await response.json();
+      //   // setJobData(data); // Store jobId in state
+      //   // console.log("API response:", data);
+
+      //   const data = await response.json();
+      //   setJobData(data);
+      //   const { status } = data?.status;
+      //   setJobStatus(status);
+      //   console.log("API response status:", status);
+      // } catch (error) {
+      //   console.error('Error fetching auth URL:', error);
+      // }
+    }
+
+    // if (jobId) {
+    //   console.log("Calling getStatusDetail...");
+    //   getStatusDetail(jobId);
+    // }
+    // if (!jobId) {
+    //   console.log("NONO Calling getStatusDetail...");
+    //   getStatusDetail(jobId);
+    // }
     const formattedStartDate = dateRange.startDate ? format(dateRange.startDate, 'yyyy-MM-dd') : null;
     const formattedEndDate = dateRange.endDate ? format(dateRange.endDate, 'yyyy-MM-dd') : null;
 
@@ -156,40 +204,43 @@ const Page: React.FC = () => {
       notify('Please select at least one report!', 'error');
       return;
     }
-
     const data = {
-      // refresh_token: refreshTokenParam || "N/A",
-      refresh_token: refreshToken || "N/A", // Use refreshToken from state or search param
+      refresh_token: refreshToken || "N/A",
       property_id: selectedProperty,
       project_id: "dx-api-project",
       dataset_name: "trial_data",
-      start_date: formattedStartDate, // Use formatted start date
-      end_date: formattedEndDate, // Use formatted end date 
+      start_date: formattedStartDate,
+      end_date: formattedEndDate,
       reports_list: selectedReport,
+      jobId: jobId
     };
-    console.log(data);
 
-    await ga4Details(data);
+    try {
+      setLoadingScreen(true);
+      closeModal();
 
-    closeModal();
-    setSelectedProperty(null);
-    setSelectedAccount(null);
-    setSelectedReport([]);
+      const response = await ga4Details(data);
+
+      setSelectedProperty(null);
+      setSelectedAccount(null);
+      setSelectedReport([]);
+      if (response.success) {
+        onSubmitSuccess('GA4 Connector Successful!');
+      } else {
+        onSubmitSuccess('GA4 Connector Failed!');
+      }
+    } catch (error) {
+      onSubmitSuccess('An error occurred!');
+    } finally {
+      setLoadingScreen(false);
+    }
   };
 
   return (
 
     <div className="">
       <ToastContainer />
-
       <div className="flex items-center justify-center min-h-screen">
-        <button
-          onClick={openModal}
-          className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg"
-        >
-          Open GA4 Modal
-        </button>
-
         <Dialog open={isModalOpen} onClose={closeModal} className="bg-gray-800 bg-opacity-75"
           style={{
             position: 'absolute',
@@ -204,11 +255,9 @@ const Page: React.FC = () => {
             display: 'flex',
             flexDirection: 'column',
             overflow: 'auto',
-            // opacity: 0.95,
-          }}
-        >
+          }}>
 
-          <div className="fixed inset-0 flex items-center justify-center p-5">
+          <div className={`fixed inset-0 flex items-center justify-center p-5 ${isModalOpen ? '' : 'hidden'}`}>
             <div className="bg-white p-6 flex flex-col justify-between rounded-lg shadow-lg w-[650px] h-[300px] 2xl:w-[700px] 2xl:h-[350px]">
 
               <div className="flex items-center">
@@ -300,7 +349,7 @@ const Page: React.FC = () => {
                 </div>
               </div>
               <div>
-                <button type="submit" onClick={handleSubmit} className="bg-homeGray w-40 h-14 text-lg font-semibold mx-[43%] border-[#B5B5B5]">Submit</button>
+                <button type="submit" onClick={handleSubmit} className="bg-homeGray hover:bg-gray-500 w-40 h-14 text-xl font-bold mx-[43%] border-[#B5B5B5]">Submit</button>
               </div>
             </div>
           </div>

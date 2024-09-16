@@ -1,13 +1,14 @@
+
 import axios from 'axios';
 import { useState } from 'react';
 
-const useGa4Details = () => {
+const useFbDetails = () => {
 
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    const url = 'https://us-central1-dx-api-project.cloudfunctions.net/function-post-ga4';
-    const ga4Details = async (data: Object) => {
+    const url = 'https://us-central1-dx-api-project.cloudfunctions.net/facebook-api';
+    const fbDetails = async (data: Object) => {
         setLoading(true);
         setError(null);
         try {
@@ -16,15 +17,16 @@ const useGa4Details = () => {
 
                 if (response.status === 200) {
                     console.log("API response:", response.data);
-                    console.log("status ga4", response?.data?.success)
+                    console.log("status fb", response?.data?.success)
                     return { success: true, data: response.data };
+
                 } else {
                     console.error("Error:", response.statusText);
-                    return { success: false, message: 'Fetching GA4 details failed' };
+                    return { success: false, message: 'Fetching Facebook details failed' };
                 }
             } catch (error) {
                 console.error("Error:", error);
-                return { success: false, message: 'An error occurred while fetching GA4 details' };
+                return { success: false, message: 'An error occurred while fetching Facebook details' };
             }
         } finally {
             setLoading(false);
@@ -32,19 +34,19 @@ const useGa4Details = () => {
     };
 
     return {
-        ga4Details,
+        fbDetails,
         loading,
         error,
     };
 };
 
-export default useGa4Details;
+export default useFbDetails;
 
 // import axios from 'axios';
 
-// const useGa4Details = () => {
-//     const url = 'https://us-central1-dx-api-project.cloudfunctions.net/function-post-ga4';
-//     const ga4Details = async (data: Object) => {
+// const useFbDetails = () => {
+//     const url = 'https://us-central1-dx-api-project.cloudfunctions.net/facebook-api';
+//     const fbDetails = async (data: Object) => {
 //         try {
 //             try {
 //                 const response = await axios.post('/api/proxy', { url, body: data });
@@ -66,7 +68,7 @@ export default useGa4Details;
 //         }
 //     };
 
-//     return { ga4Details };
+//     return { fbDetails };
 // };
 
-// export default useGa4Details;
+// export default useFbDetails;

@@ -2,26 +2,29 @@
 "use client";
 import { useUser } from '@/app/context/UserContext';
 import useConnector from '@/components/hooks/connectors/useConnectors';
-import { useRouter } from 'next/router';
+// import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
 const FacebookAuthButton = () => {
+  const router = useRouter();
   const { getConnectorData, error, loading } = useConnector();
   const [isAuthrozie, setIsAuthorize] = useState(null);
   const [authUrl, setAuthUrl] = useState('');
-  const {user} = useUser();
+  // const {user} = useUser();
+  const user = JSON.parse(localStorage.getItem('userSession'))?.user;
 
 
   useEffect(() => {
     if (isAuthrozie?.accessToken) {
       const accessTokenParam = encodeURIComponent(isAuthrozie?.accessToken);
-      const successUrl = `http://127.0.0.1:3000/feature/connectors/facebookConnector/sucess?accessToken=${accessTokenParam}`;
-      
+      const successUrl = `/feature/connectors/facebookConnector/sucess?accessToken=${accessTokenParam}`;
+
       // Redirect to the success page with the access token
-      window.location.href = successUrl;
+      router.push(successUrl);
     }
   }, [isAuthrozie]);
-  
+
   useEffect(() => {
     async function fetchAuthUrl() {
       try {
@@ -41,17 +44,30 @@ const FacebookAuthButton = () => {
       const data = await getConnectorData('facebook', user?.email);
       setIsAuthorize(data)
     }
-    if(user){
+    if (user) {
       toTestAuth();
     }
-  }, [user])
+  }, [])
 
   if (loading) {
-    return <h1>Its loading </h1>
+    return (<div className="fixed z-50 h-full w-full flex justify-center items-center bg-white">
+      <div className="flex flex-col justify-center items-center">
+        <div className="loader"></div>
+        <p className="mt-4 text-xl font-semibold text-gray-700">
+          Loading...
+        </p>
+      </div>
+    </div>)
   }
-  else if (isAuthrozie){
-    console.log("isAuthrozieisAuthrozie",isAuthrozie)
-    return <h1>Allready authenticated</h1>
+  else if (isAuthrozie) {
+    return (<div className="fixed z-50 h-full w-full flex justify-center items-center bg-white">
+      <div className="flex flex-col justify-center items-center">
+        <div className="loader"></div>
+        <p className="mt-4 text-xl font-semibold text-gray-700">
+          Loading...
+        </p>
+      </div>
+    </div>)
   }
 
 
@@ -61,8 +77,8 @@ const FacebookAuthButton = () => {
       <div className="bg-white shadow-lg rounded-lg p-8 text-center mx-auto">
         <h1 className="pb-4 text-2xl font-semibold text-gray-800">Connect Your Facebook Account</h1>
         <p className="pb-6 text-gray-600">Get started by authorizing your Facebook account to access insights and analytics.</p>
-        <a 
-          href={authUrl} 
+        <a
+          href={authUrl}
           className="bg-primary text-white py-3 px-6 rounded-full shadow-md transition-all duration-200 ease-in-out transform hover:bg-gray-700 hover:scale-105 flex items-center justify-center gap-2"
         >
           <span className="facebook-icon"></span> Authorize with Facebook

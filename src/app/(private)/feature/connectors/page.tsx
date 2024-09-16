@@ -29,14 +29,13 @@ const Subpage1 = () => {
           Connectors Available
         </div>
         <div className="grid grid-cols-3 gap-6 xl:gap-12 items-center">
-          {connectors.map((connector, index) => {
+          {connectors?.map((connector, index) => {
             const isDisabled = index > 1;
 
             return (
-              <Link
-                className={`w-64 p-5 text-center text-lg font-semibold text-[#010101] bg-white hover:text-gray-950 ${
-                  isDisabled ? "pointer-events-none opacity-50" : ""
-                }`}
+              <Link key={index}
+                className={`w-64 p-5 text-center text-lg font-semibold text-[#010101] bg-white hover:text-gray-950 ${isDisabled ? "pointer-events-none opacity-50" : ""
+                  }`}
                 // className="w-64 p-5 text-center text-lg font-semibold text-[#010101] bg-white hover:text-gray-950"
                 href={isDisabled ? "#" : connector.path}
               >
