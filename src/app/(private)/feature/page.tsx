@@ -5,7 +5,7 @@ import User from "@/components/User/user";
 import React, { useEffect } from "react";
 
 const page = ({ }: any) => {
-  const { loading, session } = useCheckAuth();
+  // const { loading, session } = useCheckAuth();
   const handleFeatureVisit = async (email: any) => {
     const response = await fetch('/api/feature-visit', {
       method: 'POST',
@@ -19,11 +19,11 @@ const page = ({ }: any) => {
     console.log(data.message);
   };
 
-  useEffect(() => {
-    if (!loading && session?.user?.email) {
-      handleFeatureVisit(session?.user?.email);
-    }
-  }, [loading, session]);
+  // useEffect(() => {
+  //   if (!loading && session?.user?.email) {
+  //     handleFeatureVisit(session?.user?.email);
+  //   }
+  // }, [loading, session]);
 
   return (
     <>
