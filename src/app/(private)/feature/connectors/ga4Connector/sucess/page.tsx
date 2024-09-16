@@ -8,6 +8,7 @@ const Page: React.FC = () => {
   const [jobData, setJobData] = useState<object | null>(null);
   const [statusMessage, setStatusMessage] = useState<string>('');
   const [loadingScreen, setLoadingScreen] = useState(false);
+  const [statusCheck, setStatusCheck] = useState<string>('');
   const user = JSON.parse(localStorage.getItem('userSession'))?.user;
   const jobId = createJobId('ga4', user?.email);
 
@@ -37,7 +38,6 @@ const Page: React.FC = () => {
         console.error('Error fetching job details:', error);
       }
     }
-
     if (jobId) {
       getJobDetail(jobId);
     }
@@ -54,11 +54,14 @@ const Page: React.FC = () => {
         </div>
       ) : statusMessage ? (
         <div>{statusMessage}</div>
-      ) : jobData?.message === "Job not found" ? (
+      ): statusCheck ==="inProgress" ? (
+        <div>in progress</div>
+      ): jobData?.message === "Job not found" ? (
         <button onClick={openModal} className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg">
           Open GA4 Modal
         </button>
-      ) : (
+      )
+      : (
         <div>
           Connector is already connected!
         </div>
@@ -70,8 +73,10 @@ const Page: React.FC = () => {
           closeModal={closeModal}
           onSubmitSuccess={(message: string) => {
             setStatusMessage(message);
+            setStatusCheck(message);
             setIsModalOpen(false);
             setLoadingScreen(true);
+
           }}
           setLoadingScreen={setLoadingScreen}
         />

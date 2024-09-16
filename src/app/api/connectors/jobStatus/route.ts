@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
             { jobId },
             {
                 $set: {
-                    status: status || 'Started',
+                    status: status || 'inProgress',
                     updatedAt: Date.now(),
                 }
             },
@@ -26,6 +26,7 @@ export async function POST(req: NextRequest) {
                 upsert: true     // Create a new document if no match is found
             }
         );
+        console.log('API hit: jobId:', jobId, 'status:', status);
 
         return NextResponse.json({ message: 'Job status updated', updatedJob }, { status: 200 });
     } catch (error) {

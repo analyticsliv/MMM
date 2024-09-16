@@ -20,10 +20,11 @@ interface SuccessModalProps {
   closeModal: () => void;
   onSubmitSuccess: (message: string) => void;
   setLoadingScreen: (loading: boolean) => void;
+  setStatusCheck: (loading: boolean) => void;
 
 }
 
-const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSuccess, setLoadingScreen }) => {
+const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSuccess, setLoadingScreen, setStatusCheck }) => {
   const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
   const [selectedProperty, setSelectedProperty] = useState<string | null>(null);
   const [selectedReport, setSelectedReport] = React.useState('');
@@ -142,8 +143,48 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
     }
   }, [code, refreshTokenParam]);
 
+  const [jobData, setJobData] = useState<object | null>(null);
+  const [jobStatus, setJobStatus] = useState<string | null>(null); // State to hold the status
+
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    async function getStatusDetail(jobId: string) {
+      // try {
+      //   const response = await fetch('/api/connectors/jobStatus', {
+      //     method: 'POST',
+      //     headers: {
+      //       'Content-Type': 'application/json',
+      //     },
+      //     body: JSON.stringify({ jobId }), // Sending jobId in the body
+      //   });
+
+      //   if (!response.ok) {
+      //     throw new Error(`HTTP error! status: ${response.status}`);
+      //   }
+
+      //   // const data = await response.json();
+      //   // setJobData(data); // Store jobId in state
+      //   // console.log("API response:", data);
+
+      //   const data = await response.json();
+      //   setJobData(data);
+      //   const { status } = data?.status;
+      //   setJobStatus(status);
+      //   console.log("API response status:", status);
+      // } catch (error) {
+      //   console.error('Error fetching auth URL:', error);
+      // }
+    }
+
+    // if (jobId) {
+    //   console.log("Calling getStatusDetail...");
+    //   getStatusDetail(jobId);
+    // }
+    // if (!jobId) {
+    //   console.log("NONO Calling getStatusDetail...");
+    //   getStatusDetail(jobId);
+    // }
     const formattedStartDate = dateRange.startDate ? format(dateRange.startDate, 'yyyy-MM-dd') : null;
     const formattedEndDate = dateRange.endDate ? format(dateRange.endDate, 'yyyy-MM-dd') : null;
 
