@@ -9,9 +9,16 @@ import SplashScreen from '@/app/SplashScreen';
 const GA4ConnectorPage = () => {
   const { getConnectorData, error, loading } = useConnector();
   const [isAuthrozie, setIsAuthorize] = useState(null);
-  const {user} = useUser();
+  const { user, setUser } = useUser();
   const router = useRouter();
   const [authUrl, setAuthUrl] = useState<string>('');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // const item = localStorage.getItem('userSession');
+      setUser(JSON.parse(localStorage.getItem('userSession') || '{}')?.user);
+    }
+  }, [])
 
   useEffect(() => {
     async function fetchAuthUrl() {

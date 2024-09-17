@@ -38,7 +38,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
   const { updateOrCreateConnector, getConnectorData, error, loading } = useConnector();
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
   const { ga4Details } = useGa4Details();
-  const user = JSON.parse(localStorage.getItem('userSession'))?.user;
+  const user = JSON.parse(localStorage.getItem('userSession') || '{}')?.user;
   const jobId = createJobId('ga4', user?.email);
 
   const handleOutsideClick = (event) => {

@@ -1,19 +1,15 @@
-// src/app/context/UserContext.tsx
-"use client"
-import { createContext, useState, useContext, ReactNode } from 'react';
+"use client";
 
-
+import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 
 // Define the context type
 interface UserContextType {
-  user: Object | null;
-  setUser: (arg:any) => void;
+  user: object | null;
+  setUser: (user: object | null) => void;
 }
 
 // Create the UserContext with default values
-const UserContext = createContext({
-  email : "data.analytics@analyticsliv.com"
-});
+const UserContext = createContext<UserContextType | undefined>(undefined);
 
 // Export useUserContext for easier access to the context in other components
 export const useUserContext = () => {
@@ -30,8 +26,16 @@ interface UserProviderProps {
 }
 
 // Create the UserProvider component to wrap around your app
-export const UserProvider = ({ children }:any) => {
-  const [user, setUser] = useState<Object | null>({});
+export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
+  const [user, setUser] = useState<object | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // Read from localStorage and update the state
+      const storedUser = JSON.parse(localStorage.getItem('userSession') || '{}')?.user;
+      setUser(storedUser || null);
+    }
+  }, []);
 
   return (
     <UserContext.Provider value={{ user, setUser }}>
@@ -39,7 +43,6 @@ export const UserProvider = ({ children }:any) => {
     </UserContext.Provider>
   );
 };
-
 
 // Custom hook to use the UserContext
 export function useUser(): UserContextType {
