@@ -4,21 +4,16 @@ import React, { useEffect, useState } from 'react';
 import SuccessModal from "./sucess";
 import { createJobId } from '@/utils/helper';
 import { useUser } from '@/app/context/UserContext';
+import useUserSession from '@/components/hooks/useUserSession';
 
 const Page: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [jobData, setJobData] = useState<object | null>({});
   const [statusMessage, setStatusMessage] = useState<string>('');
   const [loadingScreen, setLoadingScreen] = useState(false);
-  const { user, setUser } = useUser();
+  const { user, setUser } = useUserSession();
   const [jobId, setJobId] = useState(String)
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      // const item = localStorage.getItem('userSession');
-      setUser(JSON.parse(localStorage.getItem('userSession') || '{}')?.user);
-    }
-  }, [])
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);

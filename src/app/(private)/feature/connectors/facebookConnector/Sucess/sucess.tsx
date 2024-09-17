@@ -11,6 +11,7 @@ import { ToastContainer } from 'react-toastify';
 import useFbDetails from '@/components/hooks/connectors/useFbDetails';
 import { createJobId } from '@/utils/helper';
 import { useUser } from '@/app/context/UserContext';
+import useUserSession from '@/components/hooks/useUserSession';
 
 interface SuccessModalProps {
     isModalOpen: boolean;
@@ -31,15 +32,9 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
 
     const notify = useToast();
 
-    const { user, setUser } = useUser();
+    const { user, setUser } = useUserSession();
     const [jobId, setJobId] = useState(String)
 
-    useEffect(() => {
-        if (typeof window !== 'undefined' && !user) {
-            // const item = localStorage.getItem('userSession');
-            setUser(JSON.parse(localStorage.getItem('userSession') || '{}')?.user);
-        }
-    }, [])
 
     useEffect(() => {
         if (user) {
