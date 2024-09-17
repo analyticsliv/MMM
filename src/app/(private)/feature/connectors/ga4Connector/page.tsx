@@ -5,20 +5,14 @@ import useConnector from '@/components/hooks/connectors/useConnectors';
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import SplashScreen from '@/app/SplashScreen';
+import useUserSession from '@/components/hooks/useUserSession';
 
 const GA4ConnectorPage = () => {
   const { getConnectorData, error, loading } = useConnector();
   const [isAuthrozie, setIsAuthorize] = useState(null);
-  const { user, setUser } = useUser();
+  const { user, setUser } = useUserSession();
   const router = useRouter();
   const [authUrl, setAuthUrl] = useState<string>('');
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      // const item = localStorage.getItem('userSession');
-      setUser(JSON.parse(localStorage.getItem('userSession') || '{}')?.user);
-    }
-  }, [])
 
   useEffect(() => {
     async function fetchAuthUrl() {
