@@ -10,6 +10,7 @@ import useToast from '@/components/hooks/toast';
 import { ToastContainer } from 'react-toastify';
 import useFbDetails from '@/components/hooks/connectors/useFbDetails';
 import { createJobId } from '@/utils/helper';
+import { useUser } from '@/app/context/UserContext';
 
 interface SuccessModalProps {
     isModalOpen: boolean;
@@ -23,14 +24,28 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
     const { fbDetails } = useFbDetails();
     const { updateOrCreateConnector, getConnectorData, error, loading } = useConnector()
     const searchParams = useSearchParams();
-    const user = JSON.parse(localStorage.getItem('userSession') || '{}')?.user;
-    const jobId = createJobId('ga4', user?.email);
     const accessToken = searchParams.get('accessToken');
     const [accounts, setAccounts] = useState<any[]>([]);
     const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
     const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
 
     const notify = useToast();
+
+    const { user, setUser } = useUser();
+    const [jobId, setJobId] = useState(String)
+
+    useEffect(() => {
+        if (typeof window !== 'undefined' && !user) {
+            // const item = localStorage.getItem('userSession');
+            setUser(JSON.parse(localStorage.getItem('userSession') || '{}')?.user);
+        }
+    }, [])
+
+    useEffect(() => {
+        if (user) {
+            setJobId(createJobId('facebook', user?.email));
+        }
+    }, [user])
 
     useEffect(() => {
         if (accessToken) {
@@ -101,9 +116,9 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
             level: selectedLevel,
             table_name: "Facebook_Data.sss1",
             ad_account_id: selectedAccount,
-            jobId:jobId
+            jobId: jobId
         }
-        
+
         try {
             setLoadingScreen(true);
             closeModal();
