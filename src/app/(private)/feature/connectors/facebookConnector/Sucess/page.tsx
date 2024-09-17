@@ -3,14 +3,22 @@
 import React, { useEffect, useState } from 'react';
 import SuccessModal from "./sucess";
 import { createJobId } from '@/utils/helper';
+import { useUser } from '@/app/context/UserContext';
 
 const Page: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [jobData, setJobData] = useState<object | null>(null);
+  const [jobData, setJobData] = useState<object | null>({});
   const [statusMessage, setStatusMessage] = useState<string>('');
   const [loadingScreen, setLoadingScreen] = useState(false);
-  const user = JSON.parse(localStorage.getItem('userSession'))?.user;
-  const jobId = createJobId('ga4', user?.email);
+  const { user, setUser } = useUser();
+  const [jobId, setJobId] = useState(String)
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // const item = localStorage.getItem('userSession');
+      setUser(JSON.parse(localStorage.getItem('userSession') || '{}')?.user);
+    }
+  }, [])
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -39,10 +47,13 @@ const Page: React.FC = () => {
       }
     }
 
-    if (jobId) {
+    if (user && !jobId) {
+      setJobId(createJobId('facebook', user?.email));
+    }
+    else if(jobId) {
       getJobDetail(jobId);
     }
-  }, []);
+  }, [user, jobId]);
 
   return (
     <div className="flex items-center justify-center min-h-screen">
@@ -68,7 +79,7 @@ const Page: React.FC = () => {
           setIsModalOpen(false);
           setLoadingScreen(true);
         }}
-        setLoadingScreen={setLoadingScreen}// Pass the callback function
+          setLoadingScreen={setLoadingScreen}// Pass the callback function
         />
       )}
     </div>

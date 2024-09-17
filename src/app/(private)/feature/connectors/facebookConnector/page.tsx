@@ -9,12 +9,9 @@ import React, { useEffect, useState } from 'react';
 const FacebookAuthButton = () => {
   const router = useRouter();
   const { getConnectorData, error, loading } = useConnector();
-  const [isAuthrozie, setIsAuthorize] = useState(null);
+  const [isAuthrozie, setIsAuthorize] = useState(Object);
   const [authUrl, setAuthUrl] = useState('');
-  // const {user} = useUser();
-  const user = JSON.parse(localStorage.getItem('userSession'))?.user;
-
-
+  const user = JSON.parse(localStorage.getItem('userSession') || '{}')?.user;
   useEffect(() => {
     if (isAuthrozie?.accessToken) {
       const accessTokenParam = encodeURIComponent(isAuthrozie?.accessToken);

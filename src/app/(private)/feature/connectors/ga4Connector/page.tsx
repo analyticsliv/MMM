@@ -9,7 +9,7 @@ import SplashScreen from '@/app/SplashScreen';
 const GA4ConnectorPage = () => {
   const { getConnectorData, error, loading } = useConnector();
   const [isAuthrozie, setIsAuthorize] = useState(null);
-  const {user} = useUser();
+  const user = JSON.parse(localStorage.getItem('userSession') || '{}')?.user;
   const router = useRouter();
   const [authUrl, setAuthUrl] = useState<string>('');
 
@@ -35,7 +35,7 @@ const GA4ConnectorPage = () => {
     if(user?.email){
       toTestAuth();
     }
-  }, [user])
+  }, [])
 
   useEffect(() => {
     if (isAuthrozie && isAuthrozie.refreshToken) {
