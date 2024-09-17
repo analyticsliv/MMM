@@ -2,6 +2,7 @@
 "use client";
 import { useUser } from '@/app/context/UserContext';
 import useConnector from '@/components/hooks/connectors/useConnectors';
+import useUserSession from '@/components/hooks/useUserSession';
 // import { useRouter } from 'next/router';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
@@ -11,16 +12,9 @@ const FacebookAuthButton = () => {
   const { getConnectorData, error, loading } = useConnector();
   const [isAuthrozie, setIsAuthorize] = useState(Object);
   const [authUrl, setAuthUrl] = useState('');
-  const { user, setUser } = useUser();
+  // const { user, setUser } = useUser();
+  const { user, setUser } = useUserSession();
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      // const item = localStorage.getItem('userSession');
-      setUser(JSON.parse(localStorage.getItem('userSession') || '{}')?.user);
-    }
-  }, [])
-
-  
   useEffect(() => {
     if (isAuthrozie?.accessToken) {
       const accessTokenParam = encodeURIComponent(isAuthrozie?.accessToken);
@@ -44,13 +38,13 @@ const FacebookAuthButton = () => {
 
     fetchAuthUrl();
   }, []);
-  console.log("dfgtyhfgthyujhg",user)
+
   useEffect(() => {
     async function toTestAuth() {
       const data = await getConnectorData('facebook', user?.email);
       setIsAuthorize(data)
     }
-    console.log("dfgtyhfgthyujhg",user)
+
     if (user) {
       toTestAuth();
     }

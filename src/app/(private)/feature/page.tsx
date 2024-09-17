@@ -1,11 +1,9 @@
 "use client";
-import { useCheckAuth } from "@/components/hooks/useCheckAuth";
 import SearchBar from "@/components/searchbar/search";
 import User from "@/components/User/user";
 import React, { useEffect } from "react";
 
 const page = ({ }: any) => {
-  // const { loading, session } = useCheckAuth();
   const handleFeatureVisit = async (email: any) => {
     const response = await fetch('/api/feature-visit', {
       method: 'POST',
