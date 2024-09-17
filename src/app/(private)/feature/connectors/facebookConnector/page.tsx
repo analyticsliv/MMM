@@ -11,7 +11,16 @@ const FacebookAuthButton = () => {
   const { getConnectorData, error, loading } = useConnector();
   const [isAuthrozie, setIsAuthorize] = useState(Object);
   const [authUrl, setAuthUrl] = useState('');
-  const user = JSON.parse(localStorage.getItem('userSession') || '{}')?.user;
+  const { user, setUser } = useUser();
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // const item = localStorage.getItem('userSession');
+      setUser(JSON.parse(localStorage.getItem('userSession') || '{}')?.user);
+    }
+  }, [])
+
+  
   useEffect(() => {
     if (isAuthrozie?.accessToken) {
       const accessTokenParam = encodeURIComponent(isAuthrozie?.accessToken);
@@ -35,16 +44,17 @@ const FacebookAuthButton = () => {
 
     fetchAuthUrl();
   }, []);
-
+  console.log("dfgtyhfgthyujhg",user)
   useEffect(() => {
     async function toTestAuth() {
       const data = await getConnectorData('facebook', user?.email);
       setIsAuthorize(data)
     }
+    console.log("dfgtyhfgthyujhg",user)
     if (user) {
       toTestAuth();
     }
-  }, [])
+  }, [user])
 
   if (loading) {
     return (<div className="fixed z-50 h-full w-full flex justify-center items-center bg-white">
