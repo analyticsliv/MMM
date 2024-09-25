@@ -5,7 +5,6 @@ import { Dialog } from "@headlessui/react";
 import CustomDatepicker from "@/components/DatePicker/Datepicker";
 import { useUser } from "@/app/context/UserContext";
 import { useSearchParams } from "next/navigation";
-import useConnector from "@/components/hooks/connectors/useConnectors";
 import useAccountSummaries from "@/components/hooks/connectors/ga4AccountList";
 import useAccountProperties from "@/components/hooks/connectors/ga4PropertyList";
 import useToast from "@/components/hooks/toast";
@@ -21,22 +20,16 @@ interface SuccessModalProps {
     onSubmitSuccess: (message: string) => void;
     setLoadingScreen: (loading: boolean) => void;
     setStatusCheck: (loading: boolean) => void;
-
+    accessToken: string | null;
 }
 
-const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSuccess, setLoadingScreen, setStatusCheck }) => {
+const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSuccess, setLoadingScreen, setStatusCheck, accessToken }) => {
     const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
     const [selectedProperty, setSelectedProperty] = useState<string | null>(null);
     const [selectedReport, setSelectedReport] = React.useState('');
     const [dropdownVisible, setDropdownVisible] = useState(false);
-    const [accessToken, setAccessToken] = useState<string | null>(null);
     const dropdownRef = useRef(null);
-    // const { user } = useUser();
     const searchParams = useSearchParams();
-    const code = searchParams.get("code");
-    const refreshTokenParam = searchParams.get("refresh_token");
-    const { updateOrCreateConnector, getConnectorData, error, loading } = useConnector();
-    const [refreshToken, setRefreshToken] = useState<string | null>(null);
     const { ga4Details } = useGa4Details();
     const user = JSON.parse(localStorage.getItem('userSession') || '{}')?.user;
     const jobId = createJobId('ga4', user?.email);
@@ -96,95 +89,12 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
         setDateRange({ startDate, endDate });
     };
 
-    useEffect(() => {
-        // this function is responsible to genrate acesstoken if user comes first time...
-        async function getTokenFromCode(code: string) {
-            try {
-                const response = await fetch(`/api/auth/ga4-auth?code=${code}`);
-                const data = await response.json();
-                setAccessToken(data?.access_token || null);
-                setRefreshToken(data?.refresh_token);
-                // const user = JSON.parse(localStorage.getItem('userSession'))?.user;
-                const connectorData = {
-                    refreshToken: data?.refresh_token,
-                    expriyTime: data?.expiry_date
-                }
-
-                updateOrCreateConnector(user?.email, 'ga4', connectorData);
-            } catch (error) {
-                console.error("Error getting tokens:", error);
-            }
-        }
-
-        // this functuon is responsible to genrate acesstoken using refresh token recvived from db
-        async function getTokenFromRefreshToken(refreshToken: string) {
-            try {
-                const response = await fetch(`/api/auth/ga4-refresh-token`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ refresh_token: refreshToken }),
-                });
-
-                const data = await response.json();
-                setAccessToken(data?.access_token || null);
-            } catch (error) {
-                console.error("Error getting access token using refresh token:", error);
-            }
-        }
-
-        if (code && !accessToken) {
-            getTokenFromCode(code);
-        }
-        else if (refreshTokenParam && !accessToken) {
-            getTokenFromRefreshToken(refreshTokenParam);
-            setRefreshToken(refreshTokenParam);
-        }
-    }, [code, refreshTokenParam]);
-
     const [jobData, setJobData] = useState<object | null>(null);
     const [jobStatus, setJobStatus] = useState<string | null>(null); // State to hold the status
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        async function getStatusDetail(jobId: string) {
-            // try {
-            //   const response = await fetch('/api/connectors/jobStatus', {
-            //     method: 'POST',
-            //     headers: {
-            //       'Content-Type': 'application/json',
-            //     },
-            //     body: JSON.stringify({ jobId }), // Sending jobId in the body
-            //   });
-
-            //   if (!response.ok) {
-            //     throw new Error(`HTTP error! status: ${response.status}`);
-            //   }
-
-            //   // const data = await response.json();
-            //   // setJobData(data); // Store jobId in state
-            //   // console.log("API response:", data);
-
-            //   const data = await response.json();
-            //   setJobData(data);
-            //   const { status } = data?.status;
-            //   setJobStatus(status);
-            //   console.log("API response status:", status);
-            // } catch (error) {
-            //   console.error('Error fetching auth URL:', error);
-            // }
-        }
-
-        // if (jobId) {
-        //   console.log("Calling getStatusDetail...");
-        //   getStatusDetail(jobId);
-        // }
-        // if (!jobId) {
-        //   console.log("NONO Calling getStatusDetail...");
-        //   getStatusDetail(jobId);
-        // }
         const formattedStartDate = dateRange.startDate ? format(dateRange.startDate, 'yyyy-MM-dd') : null;
         const formattedEndDate = dateRange.endDate ? format(dateRange.endDate, 'yyyy-MM-dd') : null;
 
@@ -282,14 +192,21 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
                                         onChange={handleAccountChange}
                                         value={selectedAccount || ""}
                                         className="p-2 h-14 text-xl font-semibold rounded-sm bg-homeGray w-1/3"
+                                        disabled={accountsLoading}
                                         required
                                     >
-                                        <option value="" disabled>Select an account</option>
-                                        {accountSummaries.map((account, index) => (
-                                            <option key={index} className="bg-white" value={account.name}>
-                                                {account.displayName}
-                                            </option>
-                                        ))}
+                                        {accountsLoading ? (
+                                            <option>Loading...</option>
+                                        ) : (
+                                            <>
+                                                <option value="" disabled>Select an account</option>
+                                                {accountSummaries.map((account, index) => (
+                                                    <option key={index} className="bg-white" value={account.name}>
+                                                        {account.displayName}
+                                                    </option>
+                                                ))}
+                                            </>
+                                        )}
                                     </select>
 
                                     {/* Property Select */}
@@ -306,6 +223,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
                                                 {property.displayName}
                                             </option>
                                         ))}
+
                                     </select>
 
                                     <div className="relative w-1/3" ref={dropdownRef}>
@@ -354,8 +272,8 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
                         </div>
                     </div>
                 </Dialog>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 };
 

@@ -4,6 +4,8 @@ import SuccessModal from "./success";
 import { createJobId } from '@/utils/helper';
 import { useUser } from "@/app/context/UserContext";
 import useUserSession from "@/components/hooks/useUserSession";
+import { useSearchParams } from "next/navigation";
+import useConnector from "@/components/hooks/connectors/useConnectors";
 
 const Page: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -13,6 +15,13 @@ const Page: React.FC = () => {
   const [statusCheck, setStatusCheck] = useState<string>('');
   const { user, setUser } = useUserSession();
   const [jobId, setJobId] = useState(String)
+
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [refreshToken, setRefreshToken] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  const code = searchParams.get("code");
+  const refreshTokenParam = searchParams.get("refresh_token");
+  const { updateOrCreateConnector, getConnectorData, error, loading } = useConnector();
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -50,6 +59,55 @@ const Page: React.FC = () => {
     }
   }, [jobId, user]);
 
+
+  useEffect(() => {
+    // this function is responsible to genrate acesstoken if user comes first time...
+    async function getTokenFromCode(code: string) {
+      try {
+        const response = await fetch(`/api/auth/ga4-auth?code=${code}`);
+        const data = await response.json();
+        setAccessToken(data?.access_token || null);
+        setRefreshToken(data?.refresh_token);
+        // const user = JSON.parse(localStorage.getItem('userSession'))?.user;
+        const connectorData = {
+          refreshToken: data?.refresh_token,
+          expriyTime: data?.expiry_date
+        }
+
+        updateOrCreateConnector(user?.email, 'ga4', connectorData);
+      } catch (error) {
+        console.error("Error getting tokens:", error);
+      }
+    }
+
+    // this functuon is responsible to genrate acesstoken using refresh token recvived from db
+    async function getTokenFromRefreshToken(refreshToken: string) {
+      try {
+        const response = await fetch(`/api/auth/ga4-refresh-token`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ refresh_token: refreshToken }),
+        });
+
+        const data = await response.json();
+        setAccessToken(data?.access_token || null);
+      } catch (error) {
+        console.error("Error getting access token using refresh token:", error);
+      }
+    }
+
+    if (code && !accessToken && user) {
+      getTokenFromCode(code);
+    }
+    else if (refreshTokenParam && !accessToken && user) {
+      getTokenFromRefreshToken(refreshTokenParam);
+      setRefreshToken(refreshTokenParam);
+    }
+  }, [code, refreshTokenParam, user]);
+
+
   return (
     <div className="flex items-center justify-center min-h-screen">
       {loadingScreen ? (
@@ -85,6 +143,7 @@ const Page: React.FC = () => {
             setLoadingScreen(true);
 
           }}
+          accessToken={accessToken}
           setLoadingScreen={setLoadingScreen}
         />
       )}
