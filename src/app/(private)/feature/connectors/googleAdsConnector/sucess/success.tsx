@@ -13,6 +13,7 @@ import { ToastContainer } from "react-toastify";
 import { format } from 'date-fns';
 import useGa4Details from "@/components/hooks/connectors/useGa4Details";
 import { createJobId } from "@/utils/helper";
+import useCustomerList from "@/components/hooks/connectors/googleAdsCustomerList";
 
 interface SuccessModalProps {
   isModalOpen: boolean;
@@ -57,6 +58,12 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
     loading: accountsLoading,
     error: accountsError,
   } = useAccountSummaries(accessToken);
+
+  const {
+    customerDetails,
+    // loading: accountsLoading,
+    // error: accountsError,
+  } = useCustomerList(accessToken);
 
   const handleAccountChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedAccount(event.target.value);
@@ -203,7 +210,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
                     required
                   >
                     <option value="" disabled>Select a customer</option>
-                    {accountSummaries.map((account, index) => (
+                    {customerDetails.map((account, index) => (
                       <option key={index} className="bg-white" value={account.name}>
                         {account.displayName}
                       </option>
@@ -211,7 +218,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
                   </select>
 
                   {/* Property Select */}
-                  <select
+                  {/* <select
                     onChange={handlePropertyChange}
                     value={selectedProperty || ""}
                     className="p-2 h-14 text-xl font-semibold rounded-sm bg-homeGray w-1/3"
@@ -224,7 +231,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
                         {property.displayName}
                       </option>
                     ))}
-                  </select>
+                  </select> */}
 
                   <select onChange={handleLevelSelect} value={selectedLevel || ""} className="p-2 h-14 text-xl font-semibold rounded-sm bg-homeGray w-1/2">
                     <option className="bg-white" value="">Select Level</option>
