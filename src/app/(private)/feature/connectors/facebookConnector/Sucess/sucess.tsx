@@ -18,14 +18,14 @@ interface SuccessModalProps {
     closeModal: () => void;
     onSubmitSuccess: (message: string) => void;
     setLoadingScreen: (loading: boolean) => void;
-
+    accessToken: string | null;
 }
-const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSuccess, setLoadingScreen }) => {
+const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSuccess, setLoadingScreen, accessToken  }) => {
     const { data: session, status } = useSession();
     const { fbDetails } = useFbDetails();
     const { updateOrCreateConnector, getConnectorData, error, loading } = useConnector()
     const searchParams = useSearchParams();
-    const accessToken = searchParams.get('accessToken');
+    // const accessToken = searchParams.get('accessToken');
     const [accounts, setAccounts] = useState<any[]>([]);
     const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
     const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
@@ -48,16 +48,16 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
         }
     }, [accessToken]);
 
-    useEffect(() => {
-        if (accessToken) {
-            const connectorData = {
-                accessToken: accessToken,
-                expire: Date.now() + 60 * 24 * 60 * 60 * 1000
-            };
+    // useEffect(() => {
+    //     if (accessToken) {
+    //         const connectorData = {
+    //             accessToken: accessToken,
+    //             expire: Date.now() + 60 * 24 * 60 * 60 * 1000
+    //         };
 
-            updateOrCreateConnector(user?.email, 'facebook', connectorData);
-        }
-    }, [accessToken, session, status])
+    //         updateOrCreateConnector(user?.email, 'facebook', connectorData);
+    //     }
+    // }, [accessToken, session, status])
 
 
     const [dateRange, setDateRange] = useState<{ startDate: Date | null; endDate: Date | null }>({

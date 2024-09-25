@@ -4,6 +4,8 @@ import React, { useEffect, useState } from 'react';
 import SuccessModal from "./sucess";
 import { createJobId } from '@/utils/helper';
 import { useUser } from '@/app/context/UserContext';
+import { useSearchParams } from 'next/navigation';
+import { updateOrCreateConnector } from '@/lib/userService';
 import useUserSession from '@/components/hooks/useUserSession';
 
 const Page: React.FC = () => {
@@ -13,6 +15,9 @@ const Page: React.FC = () => {
   const [loadingScreen, setLoadingScreen] = useState(false);
   const { user, setUser } = useUserSession();
   const [jobId, setJobId] = useState(String)
+
+  const searchParams = useSearchParams();
+  const accessToken = searchParams.get('accessToken');
 
 
   const openModal = () => setIsModalOpen(true);
@@ -49,6 +54,19 @@ const Page: React.FC = () => {
       getJobDetail(jobId);
     }
   }, [user, jobId]);
+ 
+
+  useEffect(() => {
+    if (accessToken) {
+        const connectorData = {
+            accessToken: accessToken,
+            expire: Date.now() + 60 * 24 * 60 * 60 * 1000
+        };
+
+        updateOrCreateConnector(user?.email, 'facebook', connectorData);
+    }
+}, [accessToken, session, status])
+
 
   return (
     <div className="flex items-center justify-center min-h-screen">
@@ -74,6 +92,7 @@ const Page: React.FC = () => {
           setIsModalOpen(false);
           setLoadingScreen(true);
         }}
+        accessToken={accessToken}
           setLoadingScreen={setLoadingScreen}// Pass the callback function
         />
       )}
