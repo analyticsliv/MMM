@@ -288,7 +288,7 @@ export default Page;
 
 
 
-async function getStatusDetail(jobId: string) {
+// async function getStatusDetail(jobId: string) {
   // try {
   //   const response = await fetch('/api/connectors/jobStatus', {
   //     method: 'POST',
@@ -314,7 +314,7 @@ async function getStatusDetail(jobId: string) {
   // } catch (error) {
   //   console.error('Error fetching auth URL:', error);
   // }
-}
+// }
 
 // if (jobId) {
 //   console.log("Calling getStatusDetail...");

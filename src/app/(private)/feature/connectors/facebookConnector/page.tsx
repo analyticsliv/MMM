@@ -51,7 +51,7 @@ const FacebookAuthButton = () => {
   }, [user])
 
   if (loading) {
-    return (<div className="fixed z-50 h-full w-full flex justify-center items-center bg-white">
+    return (<div className="fixed z-50 h-full w-[85%] flex justify-center items-center bg-white">
       <div className="flex flex-col justify-center items-center">
         <div className="loader"></div>
         <p className="mt-4 text-xl font-semibold text-gray-700">
@@ -61,7 +61,7 @@ const FacebookAuthButton = () => {
     </div>)
   }
   else if (isAuthrozie) {
-    return (<div className="fixed z-50 h-full w-full flex justify-center items-center bg-white">
+    return (<div className="fixed z-50 h-full w-[85%] flex justify-center items-center bg-white">
       <div className="flex flex-col justify-center items-center">
         <div className="loader"></div>
         <p className="mt-4 text-xl font-semibold text-gray-700">
