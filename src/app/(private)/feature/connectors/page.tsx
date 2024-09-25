@@ -13,7 +13,7 @@ const Subpage1 = () => {
     { label: "GA4", path: "/feature/connectors/ga4Connector" },
     { label: "Facebook", path: "/feature/connectors/facebookConnector" },
     { label: "DV360", path: "/feature/connectors/dv360Connector" },
-    { label: "Google Ads", path: "/feature/connectors/GoogleAds" },
+    { label: "Google Ads", path: "/feature/connectors/googleAdsConnector" },
     { label: "LinkedIn", path: "/feature/connectors/LinkedIn" },
     { label: "Custom", path: "/feature/connectors/Custom" },
   ];
@@ -30,7 +30,7 @@ const Subpage1 = () => {
         </div>
         <div className="grid grid-cols-3 gap-6 xl:gap-12 items-center">
           {connectors?.map((connector, index) => {
-            const isDisabled = index > 2;
+            const isDisabled = index > 3;
 
             return (
               <Link key={index}
