@@ -123,7 +123,7 @@ const Page: React.FC = () => {
         <div>in progress</div>
       ) : jobData?.message === "Job not found" ? (
         <button onClick={openModal} className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg">
-          Open GA4 Modal
+          Open DV360 Modal
         </button>
       )
         : (

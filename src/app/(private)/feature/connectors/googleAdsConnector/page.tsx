@@ -1,4 +1,3 @@
-// src/app/feature/connectors/ga4Connector/page.tsx
 "use client";
 import { useUser } from '@/app/context/UserContext';
 import useConnector from '@/components/hooks/connectors/useConnectors';

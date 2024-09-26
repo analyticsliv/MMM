@@ -34,11 +34,11 @@ const useCustomerSummaries = (accessToken: string | null) => {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     useEffect(() => {
-        
+
         const getGoogleAdsCustomers = async () => {
-            
+
             try {
-                accessToken="ya29.a0AcM612y0xlklQfCM255UHRKolLDXb7-AF2fyg-Yjr47GAjjt7d4SHjKU4fhrAZEttbPB3BgmWYx85HI42a8X1hak9_WC8r4qGcvnAslLd-A334EyXhhRTQGDmpfe8ve1bZayFlzaKSl4aFcYvigTHffe0zi8fh1bIVkYY87laCgYKAQ0SARASFQHGX2MinZcmF07L_Bl7v7VH9sOvyw0175"
+                accessToken = "ya29.a0AcM612y0xlklQfCM255UHRKolLDXb7-AF2fyg-Yjr47GAjjt7d4SHjKU4fhrAZEttbPB3BgmWYx85HI42a8X1hak9_WC8r4qGcvnAslLd-A334EyXhhRTQGDmpfe8ve1bZayFlzaKSl4aFcYvigTHffe0zi8fh1bIVkYY87laCgYKAQ0SARASFQHGX2MinZcmF07L_Bl7v7VH9sOvyw0175"
                 // Step 1: Fetch the list of accessible customer IDs
                 // const accessToken = 'ya29.a0AcM612yZgVOdK_DjwWdrw0KxxAQrvYEvqcy2NnotxImbFlDzc605IRiX8OIor95pYOKSsQiLlfznZKUNpv8SPGm3QWdGANWop9GE8caWElKN1QkZB46xtH-XmCmsQJRqstJvoXBg2eWXHedFq01I-6bZV7vvV2V2EhrLXdeqBBIaCgYKAf8SARASFQHGX2Mi2VrdbU0n71gCHTuVLOaqSg0178'
                 //         // await getNewAccessToken();
@@ -84,7 +84,8 @@ const useCustomerSummaries = (accessToken: string | null) => {
                         console.error(`Error fetching details for customer ID ${customerId}:`, err.response?.data || err.message);
                     }
                 }
-
+                setCustomerSummaries(customerDetails);
+                console.log("customer object",customerDetails)
                 console.log('Customer Details:', customerDetails);
                 return { customerDetails, loading, error };
 
@@ -99,7 +100,7 @@ const useCustomerSummaries = (accessToken: string | null) => {
         }
     }, [accessToken]);
 
-    return {};
+    return { customerSummaries };
 };
 
 

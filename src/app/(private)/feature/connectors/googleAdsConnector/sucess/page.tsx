@@ -121,7 +121,7 @@ console.log("connector data object",connectorData)
         <div>in progress</div>
       ) : jobData?.message === "Job not found" ? (
         <button onClick={openModal} className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg">
-          Open GA4 Modal
+          Open Google Ads Modal
         </button>
       )
         : (
