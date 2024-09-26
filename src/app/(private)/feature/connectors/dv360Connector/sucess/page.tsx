@@ -4,7 +4,6 @@ import SuccessModal from "./success";
 import { createJobId } from '@/utils/helper';
 import { useUser } from "@/app/context/UserContext";
 import useUserSession from "@/components/hooks/useUserSession";
-import { updateOrCreateConnector } from "@/lib/userService";
 import { useSearchParams } from "next/navigation";
 import useConnector from "@/components/hooks/connectors/useConnectors";
 
@@ -15,8 +14,6 @@ const Page: React.FC = () => {
   const [loadingScreen, setLoadingScreen] = useState(false);
   const [statusCheck, setStatusCheck] = useState<string>('');
   const { user, setUser } = useUserSession();
-  // const user = JSON.parse(localStorage.getItem('userSession') || '{}')?.user;
-
   const [jobId, setJobId] = useState(String)
 
   const [accessToken, setAccessToken] = useState<string | null>(null);
@@ -53,7 +50,7 @@ const Page: React.FC = () => {
         console.error('Error fetching job details:', error);
       }
     }
-    
+
     if (user && !jobId) {
       setJobId(createJobId('ga4', user?.email))
     }

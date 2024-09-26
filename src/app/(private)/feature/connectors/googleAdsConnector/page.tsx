@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import SplashScreen from '@/app/SplashScreen';
 import useUserSession from '@/components/hooks/useUserSession';
 
-const GA4ConnectorPage = () => {
+const GoogleAdsConnectorPage = () => {
   const { getConnectorData, error, loading } = useConnector();
   const [isAuthrozie, setIsAuthorize] = useState(null);
   const { user, setUser } = useUserSession();
@@ -94,4 +94,4 @@ const GA4ConnectorPage = () => {
   );
 };
 
-export default GA4ConnectorPage;
+export default GoogleAdsConnectorPage;

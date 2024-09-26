@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import SplashScreen from '@/app/SplashScreen';
 import useUserSession from '@/components/hooks/useUserSession';
 
-const GA4ConnectorPage = () => {
+const DV360ConnectorPage = () => {
   const { getConnectorData, error, loading } = useConnector();
   const [isAuthrozie, setIsAuthorize] = useState(null);
   const { user, setUser } = useUserSession();
@@ -33,7 +33,7 @@ const GA4ConnectorPage = () => {
       const data = await getConnectorData('ga4', user?.email);
       setIsAuthorize(data)
     }
-    if(user?.email){
+    if (user?.email) {
       toTestAuth();
     }
   }, [user])
@@ -48,30 +48,30 @@ const GA4ConnectorPage = () => {
 
   if (loading) {
     return (
-    // <SplashScreen />
-    <div className="fixed z-50 h-full w-[85%] flex justify-center items-center bg-white">
-    <div className="flex flex-col justify-center items-center">
-      <div className="loader"></div>
-      <p className="mt-4 text-xl font-semibold text-gray-700">
-        Loading...
-      </p>
-    </div>
-  </div>
-  )
+      // <SplashScreen />
+      <div className="fixed z-50 h-full w-[85%] flex justify-center items-center bg-white">
+        <div className="flex flex-col justify-center items-center">
+          <div className="loader"></div>
+          <p className="mt-4 text-xl font-semibold text-gray-700">
+            Loading...
+          </p>
+        </div>
+      </div>
+    )
     //  <h1>Its loading </h1>
   }
-  else if (isAuthrozie){
+  else if (isAuthrozie) {
     return (
       // <SplashScreen />
       <div className="fixed z-50 h-full w-[85%] flex justify-center items-center bg-white">
-      <div className="flex flex-col justify-center items-center">
-        <div className="loader"></div>
-        <p className="mt-4 text-xl font-semibold text-gray-700">
-          Loading...
-        </p>
+        <div className="flex flex-col justify-center items-center">
+          <div className="loader"></div>
+          <p className="mt-4 text-xl font-semibold text-gray-700">
+            Loading...
+          </p>
+        </div>
       </div>
-    </div>
-    ) 
+    )
     // <h1>Altredy authenticated</h1>
   }
 
@@ -94,4 +94,4 @@ const GA4ConnectorPage = () => {
   );
 };
 
-export default GA4ConnectorPage;
+export default DV360ConnectorPage;

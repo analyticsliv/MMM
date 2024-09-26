@@ -48,9 +48,12 @@ const HomePage = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <div className="p-10 bg-white rounded-lg shadow-lg border border-gray-300">
-          <p className="text-lg font-semibold text-gray-800">Loading...</p>
+<div className="fixed z-50 h-full w-[100%] flex justify-center items-center bg-white">
+        <div className="flex flex-col justify-center items-center">
+          <div className="loader"></div>
+          <p className="mt-4 text-xl font-semibold text-gray-700">
+            Loading...
+          </p>
         </div>
       </div>
     );

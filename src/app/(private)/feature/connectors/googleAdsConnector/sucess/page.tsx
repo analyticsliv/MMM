@@ -2,9 +2,7 @@
 import React, { useEffect, useState } from "react";
 import SuccessModal from "./success";
 import { createJobId } from '@/utils/helper';
-import { useUser } from "@/app/context/UserContext";
 import useUserSession from "@/components/hooks/useUserSession";
-import { updateOrCreateConnector } from "@/lib/userService";
 import { useSearchParams } from "next/navigation";
 import useConnector from "@/components/hooks/connectors/useConnectors";
 
@@ -15,7 +13,6 @@ const Page: React.FC = () => {
   const [loadingScreen, setLoadingScreen] = useState(false);
   const [statusCheck, setStatusCheck] = useState<string>('');
   const { user, setUser } = useUserSession();
-  // const user = JSON.parse(localStorage.getItem('userSession') || '{}')?.user;
 
   const [jobId, setJobId] = useState(String)
 
@@ -53,7 +50,7 @@ const Page: React.FC = () => {
         console.error('Error fetching job details:', error);
       }
     }
-    
+
     if (user && !jobId) {
       setJobId(createJobId('ga4', user?.email))
     }
@@ -71,7 +68,6 @@ const Page: React.FC = () => {
         const data = await response.json();
         setAccessToken(data?.access_token || null);
         setRefreshToken(data?.refresh_token);
-        // const user = JSON.parse(localStorage.getItem('userSession'))?.user;
         const connectorData = {
           refreshToken: data?.refresh_token,
           expriyTime: data?.expiry_date
@@ -109,8 +105,6 @@ const Page: React.FC = () => {
       setRefreshToken(refreshTokenParam);
     }
   }, [code, refreshTokenParam, user]);
-
-
   return (
     <div className="flex items-center justify-center min-h-screen">
       {loadingScreen ? (

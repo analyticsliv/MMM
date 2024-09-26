@@ -11,7 +11,6 @@ import useAccountProperties from "@/components/hooks/connectors/ga4PropertyList"
 import useToast from "@/components/hooks/toast";
 import { ToastContainer } from "react-toastify";
 import { format } from 'date-fns';
-import { reportOptions } from "@/utils/const";
 import useGa4Details from "@/components/hooks/connectors/useGa4Details";
 import { createJobId } from "@/utils/helper";
 
@@ -27,16 +26,13 @@ interface SuccessModalProps {
 const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSuccess, setLoadingScreen, setStatusCheck, accessToken }) => {
   const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
   const [selectedProperty, setSelectedProperty] = useState<string | null>(null);
-  const [selectedReport, setSelectedReport] = React.useState('');
   const [dropdownVisible, setDropdownVisible] = useState(false);
-  // const [accessToken, setAccessToken] = useState<string | null>(null);
-  // const [refreshToken, setRefreshToken] = useState<string | null>(null);
+  const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
+
   const dropdownRef = useRef(null);
-  // const { user } = useUser();
   const searchParams = useSearchParams();
   const code = searchParams.get("code");
-  // const refreshTokenParam = searchParams.get("refresh_token");
-  // const { updateOrCreateConnector, getConnectorData, error, loading } = useConnector();
+  const [refreshToken, setRefreshToken] = useState<string | null>(null);
   const { ga4Details } = useGa4Details();
   const user = JSON.parse(localStorage.getItem('userSession') || '{}')?.user;
   const jobId = createJobId('ga4', user?.email);
@@ -72,15 +68,6 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
     setSelectedProperty(selectedPropertyId);
   };
 
-  const handleReportChange = (event) => {
-    const { value, checked } = event.target;
-    setSelectedReport(prevSelectedReports =>
-      checked
-        ? [...prevSelectedReports, value]
-        : prevSelectedReports.filter(report => report !== value)
-    );
-  };
-
   const {
     properties,
     propertyIds,
@@ -98,6 +85,12 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
 
   const [jobData, setJobData] = useState<object | null>(null);
   const [jobStatus, setJobStatus] = useState<string | null>(null); // State to hold the status
+
+
+  const handleLevelSelect = async (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const Level = event.target.value;
+    setSelectedLevel(Level);
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -117,21 +110,29 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
       notify('Please select a property first!', 'error');
       return;
     }
-    if (selectedReport.length === 0) {
-      notify('Please select at least one report!', 'error');
+    if (!selectedLevel) {
+      notify('Please select a Level first!', 'error');
       return;
     }
     const data = {
-      refresh_token: refreshToken || "N/A",
-      property_id: selectedProperty,
-      project_id: "dx-api-project",
-      dataset_name: "trial_data",
       start_date: formattedStartDate,
       end_date: formattedEndDate,
-      reports_list: selectedReport,
-      jobId: jobId
+      refresh_token: refreshToken || "N/A",
+      level: selectedLevel,
+      customer_id: "6661667050",
+      //   property_id: selectedProperty,
+      //   project_id: "dx-api-project",
+      //   dataset_name: "trial_data",
+      //   reports_name: selectedReport,
+      //   jobId: jobId
     };
-
+    // '{
+    //     "start_date": "2024-01-01",
+    //     "end_date": "2024-12-31",
+    //     "refresh_token": "ya29.a0AfB_byCDZAj0W6ud_v_go_3elfPETlJ-UtgThRI2b8rsioO4nwyNuQvqM5u7nnwTICH8Yk_dunCI9b5am4LaAYXWcDIVC7G6PX_RveVMLwSQQ_grjQVnZAOQqWfb_CIGcpaDm6krIwLcwEZ1BzOGNGYR4BYbPmKt28k1aCgYKASsSARASFQGOcNnCdH2W9RXnADxU4Gn2oY8DGA0171",
+    //     "report_name": "campaign",
+    //     "customer_id": "6661667050"
+    // }'
     try {
       setLoadingScreen(true);
       closeModal();
@@ -140,7 +141,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
 
       setSelectedProperty(null);
       setSelectedAccount(null);
-      setSelectedReport([]);
+      setSelectedLevel(null);
       if (response.success) {
         onSubmitSuccess('GA4 Connector Successful!');
       } else {
@@ -199,21 +200,14 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
                     onChange={handleAccountChange}
                     value={selectedAccount || ""}
                     className="p-2 h-14 text-xl font-semibold rounded-sm bg-homeGray w-1/3"
-                    disabled={accountsLoading}
                     required
                   >
-                    {accountsLoading ? (
-                      <option>Loading...</option>
-                    ) : (
-                      <>
-                        <option value="" disabled>Select an account</option>
-                        {accountSummaries.map((account, index) => (
-                          <option key={index} className="bg-white" value={account.name}>
-                            {account.displayName}
-                          </option>
-                        ))}
-                      </>
-                    )}
+                    <option value="" disabled>Select a customer</option>
+                    {accountSummaries.map((account, index) => (
+                      <option key={index} className="bg-white" value={account.name}>
+                        {account.displayName}
+                      </option>
+                    ))}
                   </select>
 
                   {/* Property Select */}
@@ -224,53 +218,20 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
                     disabled={!selectedAccount} // Disable if no account is selected
                     required
                   >
-                    <option value="" disabled>Select a property</option>
+                    <option value="" disabled>Select a report</option>
                     {properties.map((property, index) => (
                       <option key={property.property} className="bg-white" value={propertyIds[index]}>
                         {property.displayName}
                       </option>
                     ))}
-
                   </select>
 
-                  <div className="relative w-1/3" ref={dropdownRef}>
-                    <button
-                      onClick={() => setDropdownVisible(!dropdownVisible)}
-                      className={`p-2 h-14 w-full text-xl font-semibold rounded-sm bg-homeGray flex items-center justify-between ${selectedReport.length > 0}`}
-                    >
-                      Select Reports
-                      <span className="relative ml-2">
-                        {selectedReport.length > 0 && (
-                          <span className="bg-red-500 text-white px-2 py-1 rounded-full absolute left-0 transform translate-y-[-50%]">
-                            {selectedReport.length}
-                          </span>
-                        )}
-                      </span>
-                      <img className="ml-2 max-h-5 max-w-5 "
-                        src="/assets/dropdown1.webp"
-                      />
-                    </button>
-                    {dropdownVisible && (
-                      <div className="absolute bg-white border shadow-lg mt-2 z-10 max-h-80 overflow-y-scroll">
-                        {Object.entries(reportOptions).map(([key, label]) => (
-                          <div key={key} className="flex items-center p-2 ">
-                            <input
-                              type="checkbox"
-                              id={key}
-                              value={key}
-                              checked={selectedReport.includes(key)}
-                              onChange={handleReportChange}
-                              className="mr-2"
-                              required
-                            />
-                            <label htmlFor={key} className="text-lg">
-                              {label}
-                            </label>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                  <select onChange={handleLevelSelect} value={selectedLevel || ""} className="p-2 h-14 text-xl font-semibold rounded-sm bg-homeGray w-1/2">
+                    <option className="bg-white" value="">Select Level</option>
+                    <option className="bg-white" value="ad">Ad</option>
+                    <option className="bg-white" value="campaign">Campaign</option>
+                    <option className="bg-white" value="ad_set">Ad set</option>
+                  </select>
                 </div>
               </div>
               <div>
@@ -279,95 +240,9 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
             </div>
           </div>
         </Dialog>
-      </div >
-    </div >
+      </div>
+    </div>
   );
 };
 
 export default Page;
-
-
-
-// async function getStatusDetail(jobId: string) {
-  // try {
-  //   const response = await fetch('/api/connectors/jobStatus', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify({ jobId }), // Sending jobId in the body
-  //   });
-
-  //   if (!response.ok) {
-  //     throw new Error(`HTTP error! status: ${response.status}`);
-  //   }
-
-  //   // const data = await response.json();
-  //   // setJobData(data); // Store jobId in state
-  //   // console.log("API response:", data);
-
-  //   const data = await response.json();
-  //   setJobData(data);
-  //   const { status } = data?.status;
-  //   setJobStatus(status);
-  //   console.log("API response status:", status);
-  // } catch (error) {
-  //   console.error('Error fetching auth URL:', error);
-  // }
-// }
-
-// if (jobId) {
-//   console.log("Calling getStatusDetail...");
-//   getStatusDetail(jobId);
-// }
-// if (!jobId) {
-//   console.log("NONO Calling getStatusDetail...");
-//   getStatusDetail(jobId);
-// }
-
-// useEffect(() => {
-//   // this function is responsible to genrate acesstoken if user comes first time...
-//   async function getTokenFromCode(code: string) {
-//     try {
-//       const response = await fetch(`/api/auth/ga4-auth?code=${code}`);
-//       const data = await response.json();
-//       setAccessToken(data?.access_token || null);
-//       setRefreshToken(data?.refresh_token);
-//       // const user = JSON.parse(localStorage.getItem('userSession'))?.user;
-//       const connectorData = {
-//         refreshToken: data?.refresh_token,
-//         expriyTime: data?.expiry_date
-//       }
-
-//       updateOrCreateConnector(user?.email, 'ga4', connectorData);
-//     } catch (error) {
-//       console.error("Error getting tokens:", error);
-//     }
-//   }
-
-//   // this functuon is responsible to genrate acesstoken using refresh token recvived from db
-//   async function getTokenFromRefreshToken(refreshToken: string) {
-//     try {
-//       const response = await fetch(`/api/auth/ga4-refresh-token`, {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({ refresh_token: refreshToken }),
-//       });
-
-//       const data = await response.json();
-//       setAccessToken(data?.access_token || null);
-//     } catch (error) {
-//       console.error("Error getting access token using refresh token:", error);
-//     }
-//   }
-
-//   if (code && !accessToken) {
-//     getTokenFromCode(code);
-//   }
-//   else if (refreshTokenParam && !accessToken) {
-//     getTokenFromRefreshToken(refreshTokenParam);
-//     setRefreshToken(refreshTokenParam);
-//   }
-// }, [code, refreshTokenParam]);

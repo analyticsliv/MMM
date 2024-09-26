@@ -18,14 +18,14 @@ interface SuccessModalProps {
     closeModal: () => void;
     onSubmitSuccess: (message: string) => void;
     setLoadingScreen: (loading: boolean) => void;
-
+    accessToken: string | null;
 }
-const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSuccess, setLoadingScreen }) => {
+const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSuccess, setLoadingScreen, accessToken  }) => {
     const { data: session, status } = useSession();
     const { fbDetails } = useFbDetails();
-    const { updateOrCreateConnector, getConnectorData, error, loading } = useConnector()
-    const searchParams = useSearchParams();
-    const accessToken = searchParams.get('accessToken');
+    // const { updateOrCreateConnector, getConnectorData, error, loading } = useConnector()
+    // const searchParams = useSearchParams();
+    // const accessToken = searchParams.get('accessToken');
     const [accounts, setAccounts] = useState<any[]>([]);
     const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
     const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
@@ -47,17 +47,6 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
             fetchUserAccounts(accessToken);
         }
     }, [accessToken]);
-
-    useEffect(() => {
-        if (accessToken) {
-            const connectorData = {
-                accessToken: accessToken,
-                expire: Date.now() + 60 * 24 * 60 * 60 * 1000
-            };
-
-            updateOrCreateConnector(user?.email, 'facebook', connectorData);
-        }
-    }, [accessToken, session, status])
 
 
     const [dateRange, setDateRange] = useState<{ startDate: Date | null; endDate: Date | null }>({
@@ -133,6 +122,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
             setLoadingScreen(false);
         }
     }
+    
     return (
         <div>
             <ToastContainer />
@@ -187,11 +177,6 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
                                 </select>
                             </div>
                             <button type="submit" onClick={handleSubmit} className="bg-homeGray hover:bg-gray-500 w-40 h-14 text-xl font-bold mx-[43%] border-[#B5B5B5]">Submit</button>
-                            {/* <button type="submit" onClick={handleSubmit} className="bg-homeGray hover:bg-gray-500 w-40 h-14 text-xl font-bold mx-[43%] border-[#B5B5B5]">
-                                {submitLoading ? (<div className="flex justify-center items-center">
-                                    <div className="w-6 h-6 border-4 border-t-transparent border-red-400 rounded-full animate-spin"></div>
-                                </div>) : (<span>Submit</span>)}
-                            </button> */}
                         </div></div>
                 </Dialog>
             </div>
@@ -200,22 +185,3 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
 };
 
 export default Page;
-
-
-//     try {
-//         const response = await fbDetails(data);  // Get fbDetails API response
-
-//         // Assuming fbDetails returns an object with a success message or status
-//         if (response?.status) {
-//             onSubmitSuccess('Facebook Connector Successful!'); // Pass success message to parent
-//         } else {
-//             onSubmitSuccess('Facebook Connector Failed!'); // Pass error message to parent
-//         }
-//     } catch (error) {
-//         onSubmitSuccess('An error occurred!');  // Handle API error
-//     }
-//     await fbDetails(data)
-//     closeModal();
-//     setSubmitLoading(false);
-//     setSelectedLevel(null);
-//     setSelectedAccount(null);
