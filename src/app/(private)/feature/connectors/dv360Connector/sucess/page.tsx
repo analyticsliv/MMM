@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import SuccessModal from "./success";
+import SuccessModal from "./sucess";
 import { createJobId } from '@/utils/helper';
 import { useUser } from "@/app/context/UserContext";
 import useUserSession from "@/components/hooks/useUserSession";
