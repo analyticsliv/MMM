@@ -21,8 +21,7 @@ interface SuccessModalProps {
 }
 
 const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSuccess, setLoadingScreen, setStatusCheck, accessToken }) => {
-  const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
-  const [selectedProperty, setSelectedProperty] = useState<string | null>(null);
+  const [selectedCustomer, setSelectedCustomer] = useState<string | null>(null);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
 
@@ -41,7 +40,6 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
   };
 
   const notify = useToast();
-
   useEffect(() => {
     if (dropdownVisible) {
       document.addEventListener('mousedown', handleOutsideClick);
@@ -51,26 +49,16 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
 
   const {
     customerSummaries,
-    // loading: accountsLoading,
-    // error: accountsError,
+    loading: customerLoading,
+    error: customerError,
   } = useCustomerSummaries(accessToken);
 
-  const handleAccountChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedAccount(event.target.value);
-    setSelectedProperty(null);
+
+  const handleCustomerChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedCustomerId = event.target.value;
+    setSelectedCustomer(selectedCustomerId);
   };
 
-  const handlePropertyChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedPropertyId = event.target.value;
-    setSelectedProperty(selectedPropertyId);
-  };
-
-  // const {
-  //   properties,
-  //   propertyIds,
-  //   loading: propertiesLoading,
-  //   error: propertiesError,
-  // } = useAccountProperties(selectedAccount, accountSummaries, accessToken);
 
   const [dateRange, setDateRange] = useState<{ startDate: Date | null; endDate: Date | null }>({
     startDate: null,
@@ -136,8 +124,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
 
       const response = await ga4Details(data);
 
-      setSelectedProperty(null);
-      setSelectedAccount(null);
+      setSelectedCustomer(null);
       setSelectedLevel(null);
       if (response.success) {
         onSubmitSuccess('Google Ads Connector Successful!');
@@ -191,18 +178,18 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
 
                 <CustomDatepicker onDateRangeChange={handleDateRangeChange} />
 
-                {/* Account Summaries and Property Select */}
+                {/* Customer Summaries and level Select */}
                 <div className="flex gap-4 mt-6 justify-between">
                   <select
-                    onChange={handleAccountChange}
-                    value={selectedAccount || ""}
+                    onChange={handleCustomerChange}
+                    value={selectedCustomer || ""}
                     className="p-2 h-14 text-xl font-semibold rounded-sm bg-homeGray w-1/3"
                     required
                   >
                     <option value="" disabled>Select a customer</option>
-                    {customerSummaries.map((account, index) => (
-                      <option key={index} className="bg-white" value={account.name}>
-                        {account.displayName}
+                    {customerSummaries?.map((customer, index) => (
+                      <option key={index} className="bg-white" value={customer.name}>
+                        {customer.displayName}
                       </option>
                     ))}
                   </select>

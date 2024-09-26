@@ -22,9 +22,10 @@ interface SuccessModalProps {
   setLoadingScreen: (loading: boolean) => void;
   setStatusCheck: (loading: boolean) => void;
   accessToken: string | null;
+  refreshToken: string | null;
 }
 
-const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSuccess, setLoadingScreen, setStatusCheck, accessToken }) => {
+const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSuccess, setLoadingScreen, setStatusCheck, accessToken, refreshToken }) => {
   const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
   const [selectedProperty, setSelectedProperty] = useState<string | null>(null);
   const [selectedReport, setSelectedReport] = React.useState('');

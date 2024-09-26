@@ -78,7 +78,7 @@ const DV360ConnectorPage = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-[#F6F8FE] to-[#E8EAF6]">
       <div className="bg-white shadow-lg rounded-lg p-8 text-center mx-auto">
-        <h1 className="pb-5 text-3xl font-semibold text-gray-800">Authorize Google Analytics Access</h1>
+        <h1 className="pb-5 text-3xl font-semibold text-gray-800">Authorize DV360</h1>
         <a
           href={authUrl}
           className="inline-block bg-primary text-xl text-white py-3 px-6 rounded-full shadow-md transition-all duration-100 ease-in-out transform hover:bg-gray-700 hover:scale-105"
