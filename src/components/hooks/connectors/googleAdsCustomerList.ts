@@ -61,7 +61,7 @@ const useCustomerSummaries = (accessToken: string | null) => {
                 }
 
                 // Step 2: Fetch customer details for each customer ID
-                const customerDetails = [];
+                const customerDetails: Array<[]> = [];
                 for (const customerId of customerIds) {
 
                     try {
@@ -75,7 +75,6 @@ const useCustomerSummaries = (accessToken: string | null) => {
                         });
 
                         const accounts = customerResponse.data.results;
-                        console.log("customer object", accounts)
                         accounts.forEach(account => {
                             customerDetails.push({
                                 'id': account.customer.id,
@@ -90,7 +89,6 @@ const useCustomerSummaries = (accessToken: string | null) => {
                 }
                 setCustomerSummaries(customerDetails);
                 console.log("customer object", customerDetails)
-                console.log('Customer Details:', customerDetails);
                 return { customerDetails, loading, error };
 
             } catch (error) {

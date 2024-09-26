@@ -104,7 +104,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
       end_date: formattedEndDate,
       refresh_token: refreshToken || "N/A",
       level: selectedLevel,
-      customer_id: "6661667050",
+      customer_id: selectedCustomer,
       //   property_id: selectedProperty,
       //   project_id: "dx-api-project",
       //   dataset_name: "trial_data",
@@ -183,13 +183,13 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
                   <select
                     onChange={handleCustomerChange}
                     value={selectedCustomer || ""}
-                    className="p-2 h-14 text-xl font-semibold rounded-sm bg-homeGray w-1/3"
+                    className="p-2 h-14 text-xl font-semibold rounded-sm bg-homeGray w-1/2"
                     required
                   >
                     <option value="" disabled>Select a customer</option>
                     {customerSummaries?.map((customer, index) => (
-                      <option key={index} className="bg-white" value={customer.name}>
-                        {customer.displayName}
+                      <option key={index} className="bg-white" value={customer.id}>
+                        {customer.name}
                       </option>
                     ))}
                   </select>
