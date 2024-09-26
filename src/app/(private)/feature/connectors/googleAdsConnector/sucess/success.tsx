@@ -3,17 +3,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Dialog } from "@headlessui/react";
 import CustomDatepicker from "@/components/DatePicker/Datepicker";
-import { useUser } from "@/app/context/UserContext";
 import { useSearchParams } from "next/navigation";
-import useConnector from "@/components/hooks/connectors/useConnectors";
 import useCustomerSummaries from "@/components/hooks/connectors/googleAdsCustomerList";
-import useAccountProperties from "@/components/hooks/connectors/ga4PropertyList";
 import useToast from "@/components/hooks/toast";
 import { ToastContainer } from "react-toastify";
 import { format } from 'date-fns';
 import useGa4Details from "@/components/hooks/connectors/useGa4Details";
 import { createJobId } from "@/utils/helper";
-import useCustomerList from "@/components/hooks/connectors/googleAdsCustomerList";
 
 interface SuccessModalProps {
   isModalOpen: boolean;
@@ -54,16 +50,10 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
   }, [dropdownVisible]);
 
   const {
-    cuscustomerDetails,
-    loading: accountsLoading,
-    error: accountsError,
-  } = useCustomerSummaries(accessToken);
-
-  const {
-    customerDetails,
+    customerSummaries,
     // loading: accountsLoading,
     // error: accountsError,
-  } = useCustomerList(accessToken);
+  } = useCustomerSummaries(accessToken);
 
   const handleAccountChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedAccount(event.target.value);
@@ -109,14 +99,14 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
       notify('Please select Date Range!', 'error');
       return;
     }
-    if (!selectedAccount) {
-      notify('Please select an account first!', 'error');
-      return;
-    }
-    if (!selectedProperty) {
-      notify('Please select a property first!', 'error');
-      return;
-    }
+    // if (!selectedAccount) {
+    //   notify('Please select a customer first!', 'error');
+    //   return;
+    // }
+    // if (!selectedProperty) {
+    //   notify('Please select a property first!', 'error');
+    //   return;
+    // }
     if (!selectedLevel) {
       notify('Please select a Level first!', 'error');
       return;
@@ -150,9 +140,9 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
       setSelectedAccount(null);
       setSelectedLevel(null);
       if (response.success) {
-        onSubmitSuccess('GA4 Connector Successful!');
+        onSubmitSuccess('Google Ads Connector Successful!');
       } else {
-        onSubmitSuccess('GA4 Connector Failed!');
+        onSubmitSuccess('Google Ads Connector Failed!');
       }
     } catch (error) {
       onSubmitSuccess('An error occurred!');
@@ -186,8 +176,8 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
             <div className="bg-white p-6 flex flex-col justify-between rounded-lg shadow-lg w-[650px] h-[300px] 2xl:w-[700px] 2xl:h-[350px]">
 
               <div className="flex items-center">
-                <Dialog.Title className="text-2xl font-bold text-white text-center w-32 py-3 rounded-md mb-4 bg-custom-gradient mx-auto">
-                  GA4
+                <Dialog.Title className="text-2xl font-bold text-white text-center w-44 py-3 rounded-md mb-4 bg-custom-gradient mx-auto">
+                  Google Ads
                 </Dialog.Title>
 
                 <button onClick={closeModal} className="mb-10">
@@ -210,7 +200,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
                     required
                   >
                     <option value="" disabled>Select a customer</option>
-                    {customerDetails.map((account, index) => (
+                    {customerSummaries.map((account, index) => (
                       <option key={index} className="bg-white" value={account.name}>
                         {account.displayName}
                       </option>
