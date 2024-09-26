@@ -6,7 +6,7 @@ import CustomDatepicker from "@/components/DatePicker/Datepicker";
 import { useUser } from "@/app/context/UserContext";
 import { useSearchParams } from "next/navigation";
 import useConnector from "@/components/hooks/connectors/useConnectors";
-import useAccountSummaries from "@/components/hooks/connectors/ga4AccountList";
+import useCustomerSummaries from "@/components/hooks/connectors/googleAdsCustomerList";
 import useAccountProperties from "@/components/hooks/connectors/ga4PropertyList";
 import useToast from "@/components/hooks/toast";
 import { ToastContainer } from "react-toastify";
@@ -36,7 +36,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
   const { ga4Details } = useGa4Details();
   const user = JSON.parse(localStorage.getItem('userSession') || '{}')?.user;
-  const jobId = createJobId('ga4', user?.email);
+  const jobId = createJobId('googleAds', user?.email);
 
   const handleOutsideClick = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -54,10 +54,10 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
   }, [dropdownVisible]);
 
   const {
-    accountSummaries,
+    cuscustomerDetails,
     loading: accountsLoading,
     error: accountsError,
-  } = useAccountSummaries(accessToken);
+  } = useCustomerSummaries(accessToken);
 
   const {
     customerDetails,
@@ -75,12 +75,12 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
     setSelectedProperty(selectedPropertyId);
   };
 
-  const {
-    properties,
-    propertyIds,
-    loading: propertiesLoading,
-    error: propertiesError,
-  } = useAccountProperties(selectedAccount, accountSummaries, accessToken);
+  // const {
+  //   properties,
+  //   propertyIds,
+  //   loading: propertiesLoading,
+  //   error: propertiesError,
+  // } = useAccountProperties(selectedAccount, accountSummaries, accessToken);
 
   const [dateRange, setDateRange] = useState<{ startDate: Date | null; endDate: Date | null }>({
     startDate: null,

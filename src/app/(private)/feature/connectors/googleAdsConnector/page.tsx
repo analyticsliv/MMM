@@ -17,7 +17,7 @@ const GoogleAdsConnectorPage = () => {
   useEffect(() => {
     async function fetchAuthUrl() {
       try {
-        const response = await fetch('/api/ga4-auth-url');
+        const response = await fetch('/api/googleAds-auth-url');
         const data = await response.json();
         setAuthUrl(data.authUrl);
       } catch (error) {
@@ -30,7 +30,7 @@ const GoogleAdsConnectorPage = () => {
 
   useEffect(() => {
     async function toTestAuth() {
-      const data = await getConnectorData('ga4', user?.email);
+      const data = await getConnectorData('googleAds', user?.email);
       setIsAuthorize(data)
     }
     if(user?.email){
@@ -41,7 +41,7 @@ const GoogleAdsConnectorPage = () => {
   useEffect(() => {
     if (isAuthrozie && isAuthrozie.refreshToken) {
       // Redirect the user with the refresh_token in the URL
-      const redirectUrl = `/feature/connectors/ga4Connector/sucess?refresh_token=${encodeURIComponent(isAuthrozie.refreshToken)}`;
+      const redirectUrl = `/feature/connectors/googleAdsConnector/sucess?refresh_token=${encodeURIComponent(isAuthrozie.refreshToken)}`;
       router.push(redirectUrl); // Next.js navigation
     }
   }, [isAuthrozie, router]);
