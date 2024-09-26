@@ -4,6 +4,7 @@ import { NextResponse, NextRequest } from 'next/server';
 export async function GET(req: NextRequest, res: NextResponse) {
   const url = new URL(req.url);
   const code = url.searchParams.get('code');
+  const baseUrl = process.env.BASE_API_URL;
 
   if (!code) {
     return NextResponse.json({ error: 'Authorization code not provided' }, { status: 400 });
@@ -11,7 +12,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
 
   const clientId = process.env.FACEBOOK_CLIENT_ID;
   const clientSecret = process.env.FACEBOOK_CLIENT_SECRET;
-  const redirectUri = 'https://127.0.0.1:3000/api/facebook-callback';
+  const redirectUri =  process.env.FACEBOOK_REDIRECT_URI;
 
   try {
     const response = await fetch(
@@ -25,7 +26,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
 
     const { access_token: accessToken } = data;
     
-    const successUrl = `http://127.0.0.1:3000/feature/connectors/facebookConnector/sucess?accessToken=${encodeURIComponent(accessToken)}`;
+    const successUrl = `${baseUrl}feature/connectors/facebookConnector/sucess?accessToken=${encodeURIComponent(accessToken)}`;
     return NextResponse.redirect(successUrl);
 
 
