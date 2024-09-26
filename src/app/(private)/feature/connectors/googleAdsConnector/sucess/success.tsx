@@ -87,37 +87,23 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
       notify('Please select Date Range!', 'error');
       return;
     }
-    // if (!selectedAccount) {
-    //   notify('Please select a customer first!', 'error');
-    //   return;
-    // }
-    // if (!selectedProperty) {
-    //   notify('Please select a property first!', 'error');
-    //   return;
-    // }
+    if (!selectedCustomer) {
+      notify('Please select a Customer first!', 'error');
+      return;
+    }
     if (!selectedLevel) {
       notify('Please select a Level first!', 'error');
       return;
     }
+
     const data = {
       start_date: formattedStartDate,
       end_date: formattedEndDate,
       refresh_token: refreshToken || "N/A",
-      level: selectedLevel,
+      report_name: selectedLevel,
       customer_id: selectedCustomer,
-      //   property_id: selectedProperty,
-      //   project_id: "dx-api-project",
-      //   dataset_name: "trial_data",
-      //   reports_name: selectedReport,
-      //   jobId: jobId
     };
-    // '{
-    //     "start_date": "2024-01-01",
-    //     "end_date": "2024-12-31",
-    //     "refresh_token": "ya29.a0AfB_byCDZAj0W6ud_v_go_3elfPETlJ-UtgThRI2b8rsioO4nwyNuQvqM5u7nnwTICH8Yk_dunCI9b5am4LaAYXWcDIVC7G6PX_RveVMLwSQQ_grjQVnZAOQqWfb_CIGcpaDm6krIwLcwEZ1BzOGNGYR4BYbPmKt28k1aCgYKASsSARASFQGOcNnCdH2W9RXnADxU4Gn2oY8DGA0171",
-    //     "report_name": "campaign",
-    //     "customer_id": "6661667050"
-    // }'
+
     try {
       setLoadingScreen(true);
       closeModal();
@@ -184,31 +170,22 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
                     onChange={handleCustomerChange}
                     value={selectedCustomer || ""}
                     className="p-2 h-14 text-xl font-semibold rounded-sm bg-homeGray w-1/2"
+                    disabled={customerLoading}
                     required
                   >
-                    <option value="" disabled>Select a customer</option>
-                    {customerSummaries?.map((customer, index) => (
-                      <option key={index} className="bg-white" value={customer.id}>
-                        {customer.name}
-                      </option>
-                    ))}
+                    {customerLoading ? (
+                      <option>Loading...</option>
+                    ) : (
+                      <>
+                        <option value="" disabled>Select a customer</option>
+                        {customerSummaries?.map((customer, index) => (
+                          <option key={index} className="bg-white" value={customer.id}>
+                            {customer.name}
+                          </option>
+                        ))}
+                      </>
+                    )}
                   </select>
-
-                  {/* Property Select */}
-                  {/* <select
-                    onChange={handlePropertyChange}
-                    value={selectedProperty || ""}
-                    className="p-2 h-14 text-xl font-semibold rounded-sm bg-homeGray w-1/3"
-                    disabled={!selectedAccount} // Disable if no account is selected
-                    required
-                  >
-                    <option value="" disabled>Select a report</option>
-                    {properties.map((property, index) => (
-                      <option key={property.property} className="bg-white" value={propertyIds[index]}>
-                        {property.displayName}
-                      </option>
-                    ))}
-                  </select> */}
 
                   <select onChange={handleLevelSelect} value={selectedLevel || ""} className="p-2 h-14 text-xl font-semibold rounded-sm bg-homeGray w-1/2">
                     <option className="bg-white" value="">Select Level</option>
