@@ -11,7 +11,7 @@ import useToast from "@/components/hooks/toast";
 import { ToastContainer } from "react-toastify";
 import { format } from 'date-fns';
 import { reportOptions } from "@/utils/const";
-import useGa4Details from "@/components/hooks/connectors/useGa4Details";
+import useDv360Advertisers from "@/components/hooks/connectors/dv360Advertiser";
 import { createJobId } from "@/utils/helper";
 
 interface SuccessModalProps {
@@ -24,13 +24,13 @@ interface SuccessModalProps {
 }
 
 const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSuccess, setLoadingScreen, setStatusCheck, accessToken }) => {
-    const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
+    const [selectedAdvertiser, setSelectedAdvertiser] = useState<string | null>(null);
     const [selectedProperty, setSelectedProperty] = useState<string | null>(null);
     const [selectedReport, setSelectedReport] = React.useState('');
     const [dropdownVisible, setDropdownVisible] = useState(false);
     const dropdownRef = useRef(null);
     const searchParams = useSearchParams();
-    const { ga4Details } = useGa4Details();
+    const { dv360Details } = useDv360Advertisers(accessToken);
     const user = JSON.parse(localStorage.getItem('userSession') || '{}')?.user;
     const jobId = createJobId('dv360', user?.email);
 
@@ -49,21 +49,27 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
         }
     }, [dropdownVisible]);
 
-    const {
-        accountSummaries,
-        loading: accountsLoading,
-        error: accountsError,
-    } = useAccountSummaries(accessToken);
+    // const {
+    //     accountSummaries,
+    //     loading: accountsLoading,
+    //     error: accountsError,
+    // } = useAccountSummaries(accessToken);
 
-    const handleAccountChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedAccount(event.target.value);
+    const {
+        advertisers,
+        loading: advertiserLoading,
+        error: advertiserError,
+    } = useDv360Advertisers(accessToken);
+
+    const handleAdvertiserChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setSelectedAdvertiser(event.target.value);
         setSelectedProperty(null);
     };
 
-    const handlePropertyChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedPropertyId = event.target.value;
-        setSelectedProperty(selectedPropertyId);
-    };
+    // const handlePropertyChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    //     const selectedPropertyId = event.target.value;
+    //     setSelectedProperty(selectedPropertyId);
+    // };
 
     const handleReportChange = (event) => {
         const { value, checked } = event.target;
@@ -74,12 +80,12 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
         );
     };
 
-    const {
-        properties,
-        propertyIds,
-        loading: propertiesLoading,
-        error: propertiesError,
-    } = useAccountProperties(selectedAccount, accountSummaries, accessToken);
+    // const {
+    //     properties,
+    //     propertyIds,
+    //     loading: propertiesLoading,
+    //     error: propertiesError,
+    // } = useAccountProperties(selectedAccount, accountSummaries, accessToken);
 
     const [dateRange, setDateRange] = useState<{ startDate: Date | null; endDate: Date | null }>({
         startDate: null,
@@ -102,20 +108,20 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
             notify('Please select Date Range!', 'error');
             return;
         }
-        if (!selectedAccount) {
-            notify('Please select an account first!', 'error');
+        if (!selectedAdvertiser) {
+            notify('Please select an Advertiser first!', 'error');
             return;
         }
-        if (!selectedProperty) {
-            notify('Please select a property first!', 'error');
-            return;
-        }
+        // if (!selectedProperty) {
+        //     notify('Please select a property first!', 'error');
+        //     return;
+        // }
         if (selectedReport.length === 0) {
             notify('Please select at least one report!', 'error');
             return;
         }
         const data = {
-            refresh_token: refreshToken || "N/A",
+            // refresh_token: refreshToken || "N/A",
             property_id: selectedProperty,
             project_id: "dx-api-project",
             dataset_name: "trial_data",
@@ -129,7 +135,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
             setLoadingScreen(true);
             closeModal();
 
-            const response = await ga4Details(data);
+            const response = await dv360Details(data);
 
             setSelectedProperty(null);
             setSelectedAccount(null);
@@ -189,20 +195,20 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
                                 {/* Account Summaries and Property Select */}
                                 <div className="flex gap-4 mt-6 justify-between">
                                     <select
-                                        onChange={handleAccountChange}
-                                        value={selectedAccount || ""}
+                                        onChange={handleAdvertiserChange}
+                                        value={selectedAdvertiser || ""}
                                         className="p-2 h-14 text-xl font-semibold rounded-sm bg-homeGray w-1/3"
-                                        disabled={accountsLoading}
+                                        disabled={advertiserLoading}
                                         required
                                     >
-                                        {accountsLoading ? (
+                                        {advertiserLoading ? (
                                             <option>Loading...</option>
                                         ) : (
                                             <>
-                                                <option value="" disabled>Select an account</option>
-                                                {accountSummaries.map((account, index) => (
-                                                    <option key={index} className="bg-white" value={account.name}>
-                                                        {account.displayName}
+                                                <option value="" disabled>Select an Advertiser</option>
+                                                {advertisers?.map((advertiser, index) => (
+                                                    <option key={index} className="bg-white" value={advertiser?.id}>
+                                                        {advertiser?.displayName}
                                                     </option>
                                                 ))}
                                             </>
@@ -210,7 +216,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
                                     </select>
 
                                     {/* Property Select */}
-                                    <select
+                                    {/* <select
                                         onChange={handlePropertyChange}
                                         value={selectedProperty || ""}
                                         className="p-2 h-14 text-xl font-semibold rounded-sm bg-homeGray w-1/3"
@@ -224,7 +230,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
                                             </option>
                                         ))}
 
-                                    </select>
+                                    </select> */}
 
                                     <div className="relative w-1/3" ref={dropdownRef}>
                                         <button
