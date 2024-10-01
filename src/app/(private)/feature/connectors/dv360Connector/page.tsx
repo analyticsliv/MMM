@@ -1,4 +1,3 @@
-// src/app/feature/connectors/ga4Connector/page.tsx
 "use client";
 import { useUser } from '@/app/context/UserContext';
 import useConnector from '@/components/hooks/connectors/useConnectors';
@@ -17,7 +16,7 @@ const DV360ConnectorPage = () => {
   useEffect(() => {
     async function fetchAuthUrl() {
       try {
-        const response = await fetch('/api/ga4-auth-url');
+        const response = await fetch('/api/dv360-auth-url');
         const data = await response.json();
         setAuthUrl(data.authUrl);
       } catch (error) {
@@ -30,7 +29,7 @@ const DV360ConnectorPage = () => {
 
   useEffect(() => {
     async function toTestAuth() {
-      const data = await getConnectorData('ga4', user?.email);
+      const data = await getConnectorData('dv360', user?.email);
       setIsAuthorize(data)
     }
     if (user?.email) {
@@ -41,7 +40,7 @@ const DV360ConnectorPage = () => {
   useEffect(() => {
     if (isAuthrozie && isAuthrozie.refreshToken) {
       // Redirect the user with the refresh_token in the URL
-      const redirectUrl = `/feature/connectors/ga4Connector/sucess?refresh_token=${encodeURIComponent(isAuthrozie.refreshToken)}`;
+      const redirectUrl = `/feature/connectors/dv360Connector/sucess?refresh_token=${encodeURIComponent(isAuthrozie.refreshToken)}`;
       router.push(redirectUrl); // Next.js navigation
     }
   }, [isAuthrozie, router]);

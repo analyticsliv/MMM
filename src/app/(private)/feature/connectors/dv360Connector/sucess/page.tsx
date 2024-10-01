@@ -52,7 +52,7 @@ const Page: React.FC = () => {
     }
 
     if (user && !jobId) {
-      setJobId(createJobId('ga4', user?.email))
+      setJobId(createJobId('dv360', user?.email))
     }
     else if (jobId) {
       getJobDetail(jobId);
@@ -64,7 +64,7 @@ const Page: React.FC = () => {
     // this function is responsible to genrate acesstoken if user comes first time...
     async function getTokenFromCode(code: string) {
       try {
-        const response = await fetch(`/api/auth/ga4-auth?code=${code}`);
+        const response = await fetch(`/api/auth/dv360-auth?code=${code}`);
         const data = await response.json();
         setAccessToken(data?.access_token || null);
         setRefreshToken(data?.refresh_token);
@@ -74,7 +74,7 @@ const Page: React.FC = () => {
           expriyTime: data?.expiry_date
         }
 
-        updateOrCreateConnector(user?.email, 'ga4', connectorData);
+        updateOrCreateConnector(user?.email, 'dv360', connectorData);
       } catch (error) {
         console.error("Error getting tokens:", error);
       }
@@ -83,7 +83,7 @@ const Page: React.FC = () => {
     // this functuon is responsible to genrate acesstoken using refresh token recvived from db
     async function getTokenFromRefreshToken(refreshToken: string) {
       try {
-        const response = await fetch(`/api/auth/ga4-refresh-token`, {
+        const response = await fetch(`/api/auth/dv360-refresh-token`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
