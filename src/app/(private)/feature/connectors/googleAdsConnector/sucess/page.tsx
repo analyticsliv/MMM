@@ -26,7 +26,6 @@ const Page: React.FC = () => {
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-console.log("acc token check object",accessToken)
   useEffect(() => {
     async function getJobDetail(jobId: string) {
       try {

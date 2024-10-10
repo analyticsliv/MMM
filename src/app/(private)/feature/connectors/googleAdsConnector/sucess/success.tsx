@@ -186,12 +186,12 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
                       </>
                     )}
                   </select>
-
                   <select onChange={handleLevelSelect} value={selectedLevel || ""} className="p-2 h-14 text-xl font-semibold rounded-sm bg-homeGray w-1/2">
                     <option className="bg-white" value="">Select Level</option>
-                    <option className="bg-white" value="ad">Ad</option>
+                    <option className="bg-white" value="ad_performance">Ad Performance</option>
                     <option className="bg-white" value="campaign">Campaign</option>
-                    <option className="bg-white" value="ad_set">Ad set</option>
+                    <option className="bg-white" value="ad_group">Ad Group</option>
+                    <option className="bg-white" value="keyword">Keyword</option>
                   </select>
                 </div>
               </div>
