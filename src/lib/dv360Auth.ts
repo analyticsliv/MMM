@@ -1,8 +1,8 @@
 import { google } from 'googleapis';
 
 const oAuth2Client = new google.auth.OAuth2(
-    process.env.DV360_CLIENT_ID,
-    process.env.DV360_CLIENT_SECTRET,
+    process.env.GOOGLE_CLIENT_ID,
+    process.env.GOOGLE_CLIENT_SECRET,
     process.env.DV360_REDIRECT_URI // Your redirect URI
 );
 

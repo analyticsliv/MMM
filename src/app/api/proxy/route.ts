@@ -26,8 +26,9 @@ export async function POST(req: NextRequest) {
             console.error('Error fetching auth URL:', error);
         }
     }
+
+    const { url, body, headers } = await req.json(); // Parse the JSON body to get the URL, body, and headers
     try {
-        const { url, body, headers } = await req.json(); // Parse the JSON body to get the URL, body, and headers
 
         if (!url || !body) {
             return NextResponse.json({ message: 'URL and body are required' }, { status: 400 });
@@ -48,6 +49,7 @@ export async function POST(req: NextRequest) {
         // Send the external API response back to the client
         return NextResponse.json(externalResponse.data, { status: 200 });
     } catch (error) {
+        getStatusDetail(body?.jobId, "failed");
         console.error('Error forwarding request:', error);
         return NextResponse.json({ message: 'Error communicating with external API', error: error.message }, { status: 500 });
     }
