@@ -1,4 +1,3 @@
-// src/app/feature/connectors/ga4Connector/page.tsx
 "use client";
 import { useUser } from '@/app/context/UserContext';
 import useConnector from '@/components/hooks/connectors/useConnectors';
@@ -17,7 +16,7 @@ const GoogleAdsConnectorPage = () => {
   useEffect(() => {
     async function fetchAuthUrl() {
       try {
-        const response = await fetch('/api/ga4-auth-url');
+        const response = await fetch('/api/googleAds-auth-url');
         const data = await response.json();
         setAuthUrl(data.authUrl);
       } catch (error) {
@@ -30,7 +29,7 @@ const GoogleAdsConnectorPage = () => {
 
   useEffect(() => {
     async function toTestAuth() {
-      const data = await getConnectorData('ga4', user?.email);
+      const data = await getConnectorData('googleAds', user?.email);
       setIsAuthorize(data)
     }
     if(user?.email){
@@ -41,7 +40,7 @@ const GoogleAdsConnectorPage = () => {
   useEffect(() => {
     if (isAuthrozie && isAuthrozie.refreshToken) {
       // Redirect the user with the refresh_token in the URL
-      const redirectUrl = `/feature/connectors/ga4Connector/sucess?refresh_token=${encodeURIComponent(isAuthrozie.refreshToken)}`;
+      const redirectUrl = `/feature/connectors/googleAdsConnector/sucess?refresh_token=${encodeURIComponent(isAuthrozie.refreshToken)}`;
       router.push(redirectUrl); // Next.js navigation
     }
   }, [isAuthrozie, router]);
@@ -78,7 +77,7 @@ const GoogleAdsConnectorPage = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-[#F6F8FE] to-[#E8EAF6]">
       <div className="bg-white shadow-lg rounded-lg p-8 text-center mx-auto">
-        <h1 className="pb-5 text-3xl font-semibold text-gray-800">Authorize Google Analytics Access</h1>
+        <h1 className="pb-5 text-3xl font-semibold text-gray-800">Authorize Google Ads</h1>
         <a
           href={authUrl}
           className="inline-block bg-primary text-xl text-white py-3 px-6 rounded-full shadow-md transition-all duration-100 ease-in-out transform hover:bg-gray-700 hover:scale-105"

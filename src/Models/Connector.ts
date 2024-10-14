@@ -11,6 +11,9 @@ const ConnectorSchema = new mongoose.Schema({
     dv360: {
         type: Object,
     },
+    googleAds: {
+        type: Object,
+    },
     createdAt: { type: Date, default: Date.now },
 });
 

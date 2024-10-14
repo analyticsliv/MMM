@@ -26,7 +26,6 @@ const Page: React.FC = () => {
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-
   useEffect(() => {
     async function getJobDetail(jobId: string) {
       try {
@@ -52,7 +51,7 @@ const Page: React.FC = () => {
     }
 
     if (user && !jobId) {
-      setJobId(createJobId('ga4', user?.email))
+      setJobId(createJobId('googleAds', user?.email))
     }
     else if (jobId) {
       getJobDetail(jobId);
@@ -64,7 +63,7 @@ const Page: React.FC = () => {
     // this function is responsible to genrate acesstoken if user comes first time...
     async function getTokenFromCode(code: string) {
       try {
-        const response = await fetch(`/api/auth/ga4-auth?code=${code}`);
+        const response = await fetch(`/api/auth/googleAds-auth?code=${code}`);
         const data = await response.json();
         setAccessToken(data?.access_token || null);
         setRefreshToken(data?.refresh_token);
@@ -72,8 +71,8 @@ const Page: React.FC = () => {
           refreshToken: data?.refresh_token,
           expriyTime: data?.expiry_date
         }
-
-        updateOrCreateConnector(user?.email, 'ga4', connectorData);
+console.log("connector data object",connectorData)
+        updateOrCreateConnector(user?.email, 'googleAds', connectorData);
       } catch (error) {
         console.error("Error getting tokens:", error);
       }
@@ -82,7 +81,7 @@ const Page: React.FC = () => {
     // this functuon is responsible to genrate acesstoken using refresh token recvived from db
     async function getTokenFromRefreshToken(refreshToken: string) {
       try {
-        const response = await fetch(`/api/auth/ga4-refresh-token`, {
+        const response = await fetch(`/api/auth/googleAds-refresh-token`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -91,6 +90,7 @@ const Page: React.FC = () => {
         });
 
         const data = await response.json();
+        console.log("access token ",data?.access_token)
         setAccessToken(data?.access_token || null);
       } catch (error) {
         console.error("Error getting access token using refresh token:", error);
@@ -120,7 +120,7 @@ const Page: React.FC = () => {
         <div>in progress</div>
       ) : jobData?.message === "Job not found" ? (
         <button onClick={openModal} className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg">
-          Open GA4 Modal
+          Open Google Ads Modal
         </button>
       )
         : (
