@@ -14,7 +14,7 @@ const Page: React.FC = () => {
   const [statusCheck, setStatusCheck] = useState<string>('');
   const { user, setUser } = useUserSession();
 
-  const [jobId, setJobId] = useState(String)
+  const [jobId, setJobId] = useState(String);
 
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
@@ -140,6 +140,7 @@ console.log("connector data object",connectorData)
             setLoadingScreen(true);
 
           }}
+          refreshToken={refreshToken}
           accessToken={accessToken}
           setLoadingScreen={setLoadingScreen}
         />
