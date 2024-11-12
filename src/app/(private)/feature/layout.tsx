@@ -68,13 +68,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                     </Link>
                                 );
                             })}
-                            {!toggle && <div id="label-id"
+                            <div id="label-id"
                                 onClick={handleSignOut}
-                                className="p-2 w-full mt-2 text-xl text-gray-300 rounded-[5px] hover:bg-gray-900
-                                border-b border-b-[#3F5D88] py-5 flex items-center justify-between text-start gap-3 font-bold"
-                            >Sign Out
-                                {/* <img src="/assets/logout1.jpg" className="h-8 w-8" /> */}
-                            </div>}
+                                className="px-[11px] w-full text-xl text-gray-300 rounded-[5px] hover:bg-gray-900
+                                border-b border-b-[#3F5D88] py-5 flex items-center justify-start text-start gap-3 font-bold"
+                            ><img src="/assets/icons8-logout-16.png" alt="logout" className="h-7 w-7 mr-3" />
+                                {!toggle && <div id="label-id">Sign Out</div>}
+                            </div>
                         </nav>
                     </div>
                     <div className="flex flex-col">
@@ -88,7 +88,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                 {!toggle && <div id="label-id" className="text-white text-xl font-bold">Help with MMM</div>}
                             </div>
                         </div>
-                        <div className="bg-[#1D385D] py-3 mt-4 flex justify-center items-center" onClick={toggleMenu}>
+                        <div className="bg-[#1D385D] hover:bg-gray-900 py-3 mt-4 flex justify-center items-center" onClick={toggleMenu}>
                             <img src={`${toggle ? "/assets/arrow_for_max.png" : "/assets/arrow_for_min.png"}`} alt="arrow_left" className="h-8" />
                         </div>
                     </div>
