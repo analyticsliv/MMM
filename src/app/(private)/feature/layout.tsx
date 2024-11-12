@@ -79,11 +79,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     </div>
                     <div className="flex flex-col">
                         <div className={`${toggle ? "" : "px-10"}`}>
-                            <div className="bg-white rounded-md flex justify-center items-center py-3 gap-3 mb-3">
+                            <div className="bg-white cursor-pointer rounded-md flex justify-center items-center py-3 gap-3 mb-3">
                                 <img src="/assets/email.png" alt="email" />
                                 {!toggle && <div id="label-id" className="text-primary text-xl font-bold">Invite teammates</div>}
                             </div>
-                            <div className=" flex justify-center items-center py-3 gap-3">
+                            <div className="flex cursor-pointer justify-center items-center py-3 gap-3">
                                 <img src="/assets/Help.png" alt="Help" className="h-9" />
                                 {!toggle && <div id="label-id" className="text-white text-xl font-bold">Help with MMM</div>}
                             </div>
