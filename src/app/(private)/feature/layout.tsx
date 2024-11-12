@@ -44,19 +44,19 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     <img src="/assets/AnalyticsLiv_white.png" width={170} className="mx-auto" alt="logo" />
                 </div>
                 <nav className="flex text-xl flex-col">
-                    {menuItems.map((item) => {
-                        const isActive = pathname === item.path || (pathname.startsWith(item.path) && item.path !== "/feature");
+                    {menuItems?.map((item) => {
+                        const isActive = pathname === item?.path || (pathname.startsWith(item?.path) && item?.path !== "/feature");
                         return (
-                            <Link key={item.path} href={item.path} className="w-full">
+                            <Link key={item?.path} href={item?.path} className="w-full">
                                 <div className={`w-full border-b border-b-[#3F5D88] py-5 px-4 flex items-center justify-between text-start gap-3 text-xl font-bold
                                     ${isActive ? " text-white bg-custom-gradient"
                                         : "text-white hover:bg-gray-900"
                                     }`}>
                                     <div className="flex items-center justify-between text-start gap-6"
-                                    ><img src={item.imgUrl} className="h-8 w-8" />
-                                        {item.label}
+                                    ><img src={item?.imgUrl} className="h-8 w-8" />
+                                        {item?.label}
                                     </div>
-                                    <img src={`${item.arrow ? item.arrow : ''}`} className="mr-5" />
+                                    <img src={`${item?.arrow ? item?.arrow : ''}`} className="mr-5" />
                                 </div>
                             </Link>
                         );
