@@ -180,8 +180,8 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
                       <>
                         <option value="" disabled>Select a customer</option>
                         {customerSummaries?.map((customer, index) => (
-                          <option key={index} className="bg-white" value={customer.id}>
-                            {customer.name}
+                          <option key={index} className="bg-white" value={customer?.id}>
+                            {customer?.name}
                           </option>
                         ))}
                       </>

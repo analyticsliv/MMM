@@ -81,14 +81,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                         <div className={`${toggle ? "" : "px-10"}`}>
                             <div className="bg-white cursor-pointer rounded-md flex justify-center items-center py-3 gap-3 mb-3">
                                 <img src="/assets/email.png" alt="email" />
-                                {!toggle && <div id="label-id" className="text-primary text-xl font-bold">Invite teammates</div>}
+                                {!toggle && <div id="label-id" className="text-primary text-xl font-normal">Invite teammates</div>}
                             </div>
                             <div className="flex cursor-pointer justify-center items-center py-3 gap-3">
                                 <img src="/assets/Help.png" alt="Help" className="h-9" />
-                                {!toggle && <div id="label-id" className="text-white text-xl font-bold">Help with MMM</div>}
+                                {!toggle && <div id="label-id" className="text-white text-xl font-normal">Help with MMM</div>}
                             </div>
                         </div>
-                        <div className="bg-[#1D385D] hover:bg-gray-900 py-3 mt-4 flex justify-center items-center" onClick={toggleMenu}>
+                        <div className="bg-[#1D385D] hover:bg-gray-900 py-3 mt-4 cursor-pointer flex justify-center items-center" onClick={toggleMenu}>
                             <img src={`${toggle ? "/assets/arrow_for_max.png" : "/assets/arrow_for_min.png"}`} alt="arrow_left" className="h-8" />
                         </div>
                     </div>
