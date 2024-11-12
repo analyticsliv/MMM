@@ -79,7 +79,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     </div>
                     <div className="flex flex-col">
                         <div className={`${toggle ? "" : "px-10"}`}>
-                            <div className="bg-white flex justify-center items-center py-3 gap-3 mb-3">
+                            <div className="bg-white rounded-md flex justify-center items-center py-3 gap-3 mb-3">
                                 <img src="/assets/email.png" alt="email" />
                                 {!toggle && <div id="label-id" className="text-primary text-xl font-bold">Invite teammates</div>}
                             </div>
