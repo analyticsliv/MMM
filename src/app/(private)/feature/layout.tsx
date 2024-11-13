@@ -58,7 +58,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                     <Link key={item?.path} href={item?.path} className="w-full">
                                         <div className={`w-full border-b border-b-[#3F5D88] py-5 px-4 flex items-center justify-between text-start gap-3 text-xl font-bold
                                     ${isActive ? " text-white bg-custom-gradient"
-                                                : "text-white hover:bg-gray-900"
+                                                : "text-white hover:bg-gray-800"
                                             }`}>
                                             <div className="flex items-center justify-between text-start gap-6"
                                             ><img src={item?.imgUrl} className="h-8 w-8" />
