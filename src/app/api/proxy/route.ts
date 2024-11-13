@@ -35,7 +35,6 @@ export async function POST(req: NextRequest) {
         }
 
         if (body?.jobId) {
-            console.log("object", body?.jobId)
             getStatusDetail(body?.jobId, "inProgress");
         }
 

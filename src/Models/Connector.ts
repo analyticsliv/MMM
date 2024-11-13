@@ -14,6 +14,9 @@ const ConnectorSchema = new mongoose.Schema({
     googleAds: {
         type: Object,
     },
+    linkedIn: {
+        type: Object,
+    },
     createdAt: { type: Date, default: Date.now },
 });
 

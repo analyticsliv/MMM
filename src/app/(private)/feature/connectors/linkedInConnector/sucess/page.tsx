@@ -2,7 +2,9 @@
 import React, { useEffect, useState } from "react";
 import SuccessModal from "./success";
 import { createJobId } from '@/utils/helper';
+import { useUser } from "@/app/context/UserContext";
 import useUserSession from "@/components/hooks/useUserSession";
+import { updateOrCreateConnector } from "@/lib/userService";
 import { useSearchParams } from "next/navigation";
 import useConnector from "@/components/hooks/connectors/useConnectors";
 
@@ -13,8 +15,9 @@ const Page: React.FC = () => {
   const [loadingScreen, setLoadingScreen] = useState(false);
   const [statusCheck, setStatusCheck] = useState<string>('');
   const { user, setUser } = useUserSession();
+  // const user = JSON.parse(localStorage.getItem('userSession') || '{}')?.user;
 
-  const [jobId, setJobId] = useState(String);
+  const [jobId, setJobId] = useState(String)
 
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
@@ -25,6 +28,7 @@ const Page: React.FC = () => {
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+
 
   useEffect(() => {
     async function getJobDetail(jobId: string) {
@@ -49,9 +53,9 @@ const Page: React.FC = () => {
         console.error('Error fetching job details:', error);
       }
     }
-
+    
     if (user && !jobId) {
-      setJobId(createJobId('googleAds', user?.email))
+      setJobId(createJobId('linkedIn', user?.email))
     }
     else if (jobId) {
       getJobDetail(jobId);
@@ -63,16 +67,17 @@ const Page: React.FC = () => {
     // this function is responsible to genrate acesstoken if user comes first time...
     async function getTokenFromCode(code: string) {
       try {
-        const response = await fetch(`/api/auth/googleAds-auth?code=${code}`);
+        const response = await fetch(`/api/auth/linkedIn-auth?code=${code}`);
         const data = await response.json();
         setAccessToken(data?.access_token || null);
         setRefreshToken(data?.refresh_token);
+        // const user = JSON.parse(localStorage.getItem('userSession'))?.user;
         const connectorData = {
           refreshToken: data?.refresh_token,
           expriyTime: data?.expiry_date
         }
-console.log("connector data object",connectorData)
-        updateOrCreateConnector(user?.email, 'googleAds', connectorData);
+
+        updateOrCreateConnector(user?.email, 'linkedIn', connectorData);
       } catch (error) {
         console.error("Error getting tokens:", error);
       }
@@ -81,7 +86,7 @@ console.log("connector data object",connectorData)
     // this functuon is responsible to genrate acesstoken using refresh token recvived from db
     async function getTokenFromRefreshToken(refreshToken: string) {
       try {
-        const response = await fetch(`/api/auth/googleAds-refresh-token`, {
+        const response = await fetch(`/api/auth/linkedIn-refresh-token`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -90,7 +95,6 @@ console.log("connector data object",connectorData)
         });
 
         const data = await response.json();
-        console.log("access token ",data?.access_token)
         setAccessToken(data?.access_token || null);
       } catch (error) {
         console.error("Error getting access token using refresh token:", error);
@@ -105,6 +109,8 @@ console.log("connector data object",connectorData)
       setRefreshToken(refreshTokenParam);
     }
   }, [code, refreshTokenParam, user]);
+
+
   return (
     <div className="flex items-center justify-center min-h-screen">
       {loadingScreen ? (
@@ -120,7 +126,7 @@ console.log("connector data object",connectorData)
         <div>in progress</div>
       ) : jobData?.message === "Job not found" ? (
         <button onClick={openModal} className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg">
-          Open Google Ads Modal
+          Open LinkedIn Modal
         </button>
       )
         : (
@@ -140,8 +146,8 @@ console.log("connector data object",connectorData)
             setLoadingScreen(true);
 
           }}
-          refreshToken={refreshToken}
           accessToken={accessToken}
+          refreshToken={refreshToken}
           setLoadingScreen={setLoadingScreen}
         />
       )}

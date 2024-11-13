@@ -7,14 +7,14 @@ import Link from "next/link";
 import React from "react";
 // import { generateAuthUrl } from '@/lib/ga4Auth';
 
-const Subpage1 = () => {
+const Connectors = () => {
   //  const authUrl = generateAuthUrl();
   const connectors = [
     { label: "GA4", path: "/feature/connectors/ga4Connector" },
     { label: "Facebook", path: "/feature/connectors/facebookConnector" },
     { label: "DV360", path: "/feature/connectors/dv360Connector" },
     { label: "Google Ads", path: "/feature/connectors/googleAdsConnector" },
-    { label: "LinkedIn", path: "/feature/connectors/LinkedIn" },
+    { label: "LinkedIn", path: "/feature/connectors/linkedInConnector" },
     { label: "Custom", path: "/feature/connectors/Custom" },
   ];
   return (
@@ -30,7 +30,7 @@ const Subpage1 = () => {
         </div>
         <div className="grid grid-cols-3 gap-6 xl:gap-12 items-center">
           {connectors?.map((connector, index) => {
-            const isDisabled = index > 3;
+            const isDisabled = index > 4;
 
             return (
               <Link key={index}
@@ -49,7 +49,7 @@ const Subpage1 = () => {
   );
 };
 
-export default Subpage1;
+export default Connectors;
 // {/* <Link href={'/feature/connectors/ga4Connector'} className="hover:text-gray-950">
 //   Ga4 connector
 // </Link>

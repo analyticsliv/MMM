@@ -8,7 +8,7 @@ import useCustomerSummaries from "@/components/hooks/connectors/googleAdsCustome
 import useToast from "@/components/hooks/toast";
 import { ToastContainer } from "react-toastify";
 import { format } from 'date-fns';
-import useGa4Details from "@/components/hooks/connectors/useGa4Details";
+import useGoogleAdsDetails from "@/components/hooks/connectors/useGoogleAdsDetails";
 import { createJobId } from "@/utils/helper";
 
 interface SuccessModalProps {
@@ -18,9 +18,10 @@ interface SuccessModalProps {
   setLoadingScreen: (loading: boolean) => void;
   setStatusCheck: (loading: boolean) => void;
   accessToken: string | null;
+  refreshToken: string | null;
 }
 
-const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSuccess, setLoadingScreen, setStatusCheck, accessToken }) => {
+const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSuccess, setLoadingScreen, setStatusCheck, accessToken, refreshToken }) => {
   const [selectedCustomer, setSelectedCustomer] = useState<string | null>(null);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
@@ -28,8 +29,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
   const dropdownRef = useRef(null);
   const searchParams = useSearchParams();
   const code = searchParams.get("code");
-  const [refreshToken, setRefreshToken] = useState<string | null>(null);
-  const { ga4Details } = useGa4Details();
+  const { googleAdsDetails } = useGoogleAdsDetails();
   const user = JSON.parse(localStorage.getItem('userSession') || '{}')?.user;
   const jobId = createJobId('googleAds', user?.email);
 
@@ -101,14 +101,15 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
       end_date: formattedEndDate,
       refresh_token: refreshToken || "N/A",
       report_name: selectedLevel,
-      customer_id: selectedCustomer,
+      login_customer_id: selectedCustomer,
+      jobId: jobId
     };
 
     try {
       setLoadingScreen(true);
       closeModal();
 
-      const response = await ga4Details(data);
+      const response = await googleAdsDetails(data);
 
       setSelectedCustomer(null);
       setSelectedLevel(null);
@@ -179,8 +180,8 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
                       <>
                         <option value="" disabled>Select a customer</option>
                         {customerSummaries?.map((customer, index) => (
-                          <option key={index} className="bg-white" value={customer.id}>
-                            {customer.name}
+                          <option key={index} className="bg-white" value={customer?.id}>
+                            {customer?.name}
                           </option>
                         ))}
                       </>
