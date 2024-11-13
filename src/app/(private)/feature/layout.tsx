@@ -44,7 +44,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
     return (
         <div className="flex">
-            <aside className={`${toggle ? "w-[50px]" : "lg:w-[270px]"} h-screen bg-gray-800 transition-all duration-200 text-white`}>
+            <aside className={`${toggle ? "w-[50px]" : "lg:w-[270px]"} h-screen bg-[#30486A] transition-all duration-200 text-white`}>
                 <div className="flex flex-col justify-between h-full">
                     <div>
                         <div className="p-4 py-10 text-xl mx-auto font-semibold border-gray-700">
@@ -79,7 +79,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     </div>
                     <div className="flex flex-col">
                         <div className={`${toggle ? "" : "px-10"}`}>
-                            <div className="bg-white cursor-pointer rounded-md flex justify-center items-center py-3 gap-3 mb-3">
+                            <div className="bg-white cursor-pointer rounded-md flex justify-center items-center py-3 px-3 gap-3 mb-3">
                                 <img src="/assets/email.png" alt="email" />
                                 {!toggle && <div id="label-id" className="text-primary text-xl font-normal">Invite teammates</div>}
                             </div>
