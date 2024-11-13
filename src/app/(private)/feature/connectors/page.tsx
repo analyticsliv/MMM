@@ -7,7 +7,7 @@ import Link from "next/link";
 import React from "react";
 // import { generateAuthUrl } from '@/lib/ga4Auth';
 
-const Subpage1 = () => {
+const Connectors = () => {
   //  const authUrl = generateAuthUrl();
   const connectors = [
     { label: "GA4", path: "/feature/connectors/ga4Connector" },
@@ -49,7 +49,7 @@ const Subpage1 = () => {
   );
 };
 
-export default Subpage1;
+export default Connectors;
 // {/* <Link href={'/feature/connectors/ga4Connector'} className="hover:text-gray-950">
 //   Ga4 connector
 // </Link>

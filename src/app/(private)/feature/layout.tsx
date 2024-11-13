@@ -12,6 +12,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         { imgUrl: "/assets/nav3.png", label: "MMM", path: "/feature/mmm", arrow: "/assets/triangle.png" },
         { imgUrl: "/assets/nav4.png", label: "Reports", path: "/feature/reports", arrow: "/assets/triangle.png" },
         { imgUrl: "/assets/nav5.png", label: "Admin", path: "/feature/admin" },
+        { imgUrl: "/assets/nav2.png", label: "Previous Connector", path: "/feature/previousConnector" },
     ];
     const { data: session, status } = useSession();
     const router = useRouter();
