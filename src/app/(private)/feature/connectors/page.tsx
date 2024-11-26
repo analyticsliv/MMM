@@ -10,41 +10,41 @@ import React from "react";
 const Connectors = () => {
   //  const authUrl = generateAuthUrl();
   const connectors = [
-    { label: "GA4", path: "/feature/connectors/ga4Connector" },
-    { label: "Facebook", path: "/feature/connectors/facebookConnector" },
-    { label: "DV360", path: "/feature/connectors/dv360Connector" },
-    { label: "Google Ads", path: "/feature/connectors/googleAdsConnector" },
-    { label: "LinkedIn", path: "/feature/connectors/linkedInConnector" },
-    { label: "Custom", path: "/feature/connectors/Custom" },
+    { label: "Google Analytics 4", path: "/feature/connectors/ga4Connector", img: "/assets/GA4_Logo.png" },
+    { label: "Facebook Ads", path: "/feature/connectors/facebookConnector", img: "/assets/meta_logo.png" },
+    { label: "Display & Video 360", path: "/feature/connectors/dv360Connector", img: "/assets/dv360_logo (2).png" },
+    { label: "Google Ads", path: "/feature/connectors/googleAdsConnector", img: "/assets/Google Ads logo.png" },
+    { label: "LinkedIn Ads", path: "/feature/connectors/linkedInConnector", img: "/assets/linkedin_Logo.png" },
+    { label: "Custom Connector", path: "/feature/connectors/CustomConnector", img: "/assets/custom_connector.png" },
   ];
   return (
     <>
-      <div className="w-full flex items-center pl-8 xl:pl-20 h-[50px] xl:h-[70px] bg-[#F6F8FE]">
+      <div className="w-full flex items-center pl-8 xl:pl-12 h-[50px] xl:h-[70px] bg-[#F6F8FE]">
         <SearchBar />
       </div>
-      <div className="flex justify-between items-center max-w-[97%] xl:w-[74%] 2xl:w-[72.5%]">
+      <div className="flex justify-between items-center max-w-[97%] xl:w-[94%] 2xl:w-[95%]">
         <User />
         <div>
           <a href="/feature/connectors/previousConnector" className="px-5 py-3 bg-gray-800 hover:bg-white hover:text-gray-800 transition-all duration-300 border border-gray-900 text-lg font-semibold text-white rounded-[10px]">Previous Connectors</a>
         </div>
       </div>
-      <div className="flex flex-col justify-around h-[220px] xl:h-[250px] ml-8 pl-8 xl:ml-20 xl:pl-20 py-5 rounded-[15px] max-w-[95%] xl:w-[70%] bg-homeGray gap-2 text-gray-700 ">
+      <div className="flex flex-col justify-around h-[220px] xl:h-[250px] ml-8 pl-8 xl:ml-12 xl:pl-10 py-5 rounded-[15px] max-w-[95%] xl:w-[92%] 2xl:w-[94%] bg-homeGray gap-2 text-gray-700 ">
         <SearchBar />
         <div className="text-[#000000] text-2xl font-bold">
           Connectors Available
         </div>
-        <div className="grid grid-cols-3 gap-6 xl:gap-12 items-center">
+        <div className="flex justify-between gap-4 pr-10 items-center">
           {connectors?.map((connector, index) => {
             const isDisabled = index > 4;
 
             return (
               <Link key={index}
-                className={`w-64 p-5 text-center text-lg font-semibold text-[#010101] bg-white hover:text-gray-950 ${isDisabled ? "pointer-events-none opacity-50" : ""
+                className={`max-w-[125px] 2xl:max-w-[135px] px-5 rounded-[10px] h-32 py-8 overflow-hidden gap-5 flex justify-center items-center p-4 2xl:p-5 text-center bg-white hover:text-gray-950 ${isDisabled ? "cursor-not-allowed opacity-50" : ""
                   }`}
-                // className="w-64 p-5 text-center text-lg font-semibold text-[#010101] bg-white hover:text-gray-950"
                 href={isDisabled ? "#" : connector.path}
               >
-                {connector.label}
+                <img src={connector?.img} alt={connector.img} />
+                <div className="text-left text-base 2xl:text-xl font-semibold text-[#010101]">{connector.label}</div>
               </Link>
             );
           })}
