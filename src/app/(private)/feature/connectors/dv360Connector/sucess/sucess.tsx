@@ -238,7 +238,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
                                             Select Reports
                                             <span className="relative ml-2">
                                                 {selectedReport.length > 0 && (
-                                                    <span className="bg-red-500 text-white px-2 py-1 rounded-full absolute left-0 transform translate-y-[-50%]">
+                                                    <span className="bg-primary text-white px-2 py-1 rounded-full absolute left-0 transform translate-y-[-50%]">
                                                         {selectedReport.length}
                                                     </span>
                                                 )}
