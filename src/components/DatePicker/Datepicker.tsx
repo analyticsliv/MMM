@@ -88,11 +88,11 @@ export default function CustomDatepicker({ onDateRangeChange }: CustomDatepicker
   return (
     <div>
 
-      <div className="flex w-full h-[31px] rounded-tl-md border border-gray-400 text-[#000000] text-xl font-semibold bg-[#EDF4FF]">
+      <div className="flex w-full h-[35px] rounded-l-[5px] rounded-r-[5px] text-xl font-semibold text-black bg-white border border-black ">
         <select
           value={selectedRange}
           onChange={handleRangeSelect}
-          className="flex-1 px-4 border-r border-r-gray-500 bg-[#EDF4FF] rounded-tl-md"
+          className="flex-1 pl-3 border-r cursor-pointer border-r-black rounded-l-[5px]"
         >
           <option className='bg-white text-lg font-semibold' value="" disabled>Select Range</option>
           <option className='bg-white' value="week">This Week</option>
@@ -101,7 +101,7 @@ export default function CustomDatepicker({ onDateRangeChange }: CustomDatepicker
           <option className='bg-white' value="next-month">Next Month</option>
         </select>
 
-        <button onClick={openModal} className="flex-1 flex items-center gap-2 font-semibold justify-center px-4 bg-[#EDF4FF]">
+        <button onClick={openModal} className="flex-1 flex items-center gap-2 font-semibold justify-center pr-2">
           <img alt='calender' src='/assets/calender2.webp' className='h-14 w-14' />
           {formatDateRange(dateRange.startDate, dateRange.endDate)}
         </button>

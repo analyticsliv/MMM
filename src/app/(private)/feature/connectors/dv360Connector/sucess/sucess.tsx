@@ -174,30 +174,28 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
                     }}>
 
                     <div className={`fixed inset-0 flex items-center justify-center p-5 ${isModalOpen ? '' : 'hidden'}`}>
-                        <div className="bg-white p-6 flex flex-col justify-between rounded-lg shadow-lg w-[650px] h-[300px] 2xl:w-[700px] 2xl:h-[350px]">
+                        <div className="bg-white p-6 flex relative flex-col justify-between rounded-lg shadow-lg w-[650px] h-[340px] 2xl:w-[700px] 2xl:h-[340px]">
 
                             <div className="flex items-center">
-                                <Dialog.Title className="text-2xl font-bold text-white text-center w-32 py-3 rounded-md mb-4 bg-custom-gradient mx-auto">
-                                    DV360
+                                <Dialog.Title className=" flex justify-center items-center absolute gap-4 top-[-37px] left-[40%] rounded-[10px] shadow-xl text-2xl text-[#010101] bg-white font-bold text-center px-8 py-3 mb-4 mx-auto">
+                                    <img src="/assets/dv360_logo (1).png" alt="dv360" />
+                                    <div>Display &<br></br>Video 360 </div>
                                 </Dialog.Title>
 
                                 <button onClick={closeModal} className="mb-10">
-                                    <img src="/assets/close_icon.png" alt="Close" className="h-8 w-8 rounded-full"
+                                    <img src="/assets/close_icon.png" alt="Close" className="h-8 w-8 absolute right-10 rounded-full"
                                         onMouseOver={(e) => (e.currentTarget.src = '/assets/cross_hover.png')}
                                         onMouseOut={(e) => (e.currentTarget.src = '/assets/close_icon.png')}
                                     />
                                 </button>
                             </div>
-                            <div className="flex flex-col justify-between h-2/5">
-
-                                <CustomDatepicker onDateRangeChange={handleDateRangeChange} />
-
+                            <div className="flex flex-col h-full gap-14 py-10">
                                 {/* Account Summaries and Property Select */}
-                                <div className="flex gap-4 mt-6 justify-between">
+                                <div className="flex gap-4 justify-between">
                                     <select
                                         onChange={handleAdvertiserChange}
                                         value={selectedAdvertiser || ""}
-                                        className="p-2 h-14 text-xl font-semibold rounded-sm bg-homeGray w-1/3"
+                                        className="p-2 h-14 text-xl font-semibold cursor-pointer text-black bg-white border border-black px-4 w-[50%] rounded-[5px]"
                                         disabled={advertiserLoading}
                                         required
                                     >
@@ -232,10 +230,10 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
 
                                     </select> */}
 
-                                    <div className="relative w-1/3" ref={dropdownRef}>
+                                    <div className="relative w-[50%]" ref={dropdownRef}>
                                         <button
                                             onClick={() => setDropdownVisible(!dropdownVisible)}
-                                            className={`p-2 h-14 w-full text-xl font-semibold rounded-sm bg-homeGray flex items-center justify-between ${selectedReport.length > 0}`}
+                                            className={`p-2 h-14 text-xl font-semibold cursor-pointer flex items-center justify-between text-black bg-white border border-black px-4 rounded-[5px] w-full ${selectedReport.length > 0}`}
                                         >
                                             Select Reports
                                             <span className="relative ml-2">
@@ -271,9 +269,16 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
                                         )}
                                     </div>
                                 </div>
-                            </div>
-                            <div>
-                                <button type="submit" onClick={handleSubmit} className="bg-homeGray hover:bg-gray-500 w-40 h-14 text-xl font-bold mx-[43%] border-[#B5B5B5]">Submit</button>
+
+                                <div className="flex justify-between pb-10 2xl:pb-0">
+                                    <div className="flex flex-col pt-16 pb-2 justify-between w-[60%]">
+                                        <CustomDatepicker onDateRangeChange={handleDateRangeChange} />
+                                        <div>
+                                            <button type="submit" onClick={handleSubmit} className="bg-primary hover:bg-[#253955] text-white w-full h-14 text-xl rounded-[10px] font-bold border-[#B5B5B5]">SUBMIT</button>
+                                        </div>
+                                    </div>
+                                    <img src="/assets/dv360_man.png" alt="dv360_man" className="h-full" />
+                                </div>
                             </div>
                         </div>
                     </div>
