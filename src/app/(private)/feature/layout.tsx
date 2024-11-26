@@ -45,7 +45,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
     return (
         <div className="flex">
-            <aside className={`${toggle ? "w-[50px]" : "lg:w-[270px]"} h-screen bg-[#30486A] transition-all duration-200 text-white`}>
+            <aside className={`${toggle ? "w-[50px]" : "lg:w-[270px]"} select-none h-screen bg-[#30486A] transition-all duration-200 text-white`}>
                 <div className="flex flex-col justify-between h-full">
                     <div>
                         <div className="p-4 py-10 text-xl mx-auto font-semibold border-gray-700">
