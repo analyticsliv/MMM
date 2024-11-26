@@ -277,7 +277,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
                       <button type="submit" onClick={handleSubmit} className="bg-primary hover:bg-[#253955] text-white w-full h-14 text-xl rounded-[10px] font-bold border-[#B5B5B5]">SUBMIT</button>
                     </div>
                   </div>
-                  <img src="/assets/dv360_man.png" alt="ga4_man" className="h-full" />
+                  <img src="/assets/Image_for_Ga4.png" alt="ga4_man" className="h-full" />
                 </div>
               </div>
             </div>
