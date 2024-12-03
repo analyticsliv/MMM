@@ -35,7 +35,7 @@ export async function handleFirstFeatureVisit(email: string) {
 
 export async function updateOrCreateConnector(userEmail: string, connectorType: string, newConnectorData: object) {
     // Validate the connector type
-    const validConnectorTypes = ['ga4', 'facebook', 'dv360', 'googleAds'];
+    const validConnectorTypes = ['ga4', 'facebook', 'dv360', 'googleAds', 'linkedIn'];
     if (!validConnectorTypes.includes(connectorType)) {
         throw new Error('Invalid connector type');
     }

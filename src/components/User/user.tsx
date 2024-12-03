@@ -5,7 +5,7 @@ const User = () => {
     const { data: session, status } = useSession();
 
     return (
-        <div className="flex gap-5 p-5 pl-8 xl:pl-20">
+        <div className="flex gap-5 p-5 pl-8 xl:pl-12">
             <div className="border rounded-[5px] p-2 border-[#E5E5E5]">
                 <img src="/assets/Analyticsliv_logo_Vertical_100X100_px 1.png" className='h-full w-full' alt="logo" />
             </div>

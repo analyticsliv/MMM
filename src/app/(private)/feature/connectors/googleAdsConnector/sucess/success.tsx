@@ -147,30 +147,27 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
           }}>
 
           <div className={`fixed inset-0 flex items-center justify-center p-5 ${isModalOpen ? '' : 'hidden'}`}>
-            <div className="bg-white p-6 flex flex-col justify-between rounded-lg shadow-lg w-[650px] h-[300px] 2xl:w-[700px] 2xl:h-[350px]">
+            <div className="bg-white p-6 flex relative flex-col justify-between rounded-lg shadow-lg w-[650px] h-[340px] 2xl:w-[700px] 2xl:h-[340px]">
 
               <div className="flex items-center">
-                <Dialog.Title className="text-2xl font-bold text-white text-center w-44 py-3 rounded-md mb-4 bg-custom-gradient mx-auto">
-                  Google Ads
+                <Dialog.Title className=" flex justify-center items-center absolute gap-4 top-[-32px] left-[40%] rounded-[10px] shadow-xl text-2xl text-[#010101] bg-white font-bold text-center px-8 py-6 mb-4 mx-auto">
+                  <img src="/assets/Google Ads logo.png" alt="dv360" /> <div>Google Ads</div>
                 </Dialog.Title>
-
                 <button onClick={closeModal} className="mb-10">
-                  <img src="/assets/close_icon.png" alt="Close" className="h-8 w-8 rounded-full"
+                  <img src="/assets/close_icon.png" alt="Close" className="h-8 w-8 absolute right-10 rounded-full"
                     onMouseOver={(e) => (e.currentTarget.src = '/assets/cross_hover.png')}
                     onMouseOut={(e) => (e.currentTarget.src = '/assets/close_icon.png')}
                   />
                 </button>
               </div>
-              <div className="flex flex-col justify-between h-2/5">
-
-                <CustomDatepicker onDateRangeChange={handleDateRangeChange} />
+              <div className="flex flex-col h-full gap-14 py-10">
 
                 {/* Customer Summaries and level Select */}
-                <div className="flex gap-4 mt-6 justify-between">
+                <div className="flex gap-4 justify-between">
                   <select
                     onChange={handleCustomerChange}
                     value={selectedCustomer || ""}
-                    className="p-2 h-14 text-xl font-semibold rounded-sm bg-homeGray w-1/2"
+                    className="p-2 h-14 text-xl font-semibold cursor-pointer text-black bg-white border border-black px-4 w-[50%] rounded-[5px]"
                     disabled={customerLoading}
                     required
                   >
@@ -187,7 +184,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
                       </>
                     )}
                   </select>
-                  <select onChange={handleLevelSelect} value={selectedLevel || ""} className="p-2 h-14 text-xl font-semibold rounded-sm bg-homeGray w-1/2">
+                  <select onChange={handleLevelSelect} value={selectedLevel || ""} className="p-2 h-14 text-xl font-semibold cursor-pointer text-black bg-white border border-black px-4 w-[50%] rounded-[5px]">
                     <option className="bg-white" value="">Select Level</option>
                     <option className="bg-white" value="ad_performance">Ad Performance</option>
                     <option className="bg-white" value="campaign">Campaign</option>
@@ -196,8 +193,14 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
                   </select>
                 </div>
               </div>
-              <div>
-                <button type="submit" onClick={handleSubmit} className="bg-homeGray hover:bg-gray-500 w-40 h-14 text-xl font-bold mx-[43%] border-[#B5B5B5]">Submit</button>
+              <div className="flex justify-between pb-10 2xl:pb-0">
+                <div className="flex flex-col pt-16 pb-2 justify-between w-[60%]">
+                  <CustomDatepicker onDateRangeChange={handleDateRangeChange} />
+                  <div>
+                    <button type="submit" onClick={handleSubmit} className="bg-primary hover:bg-[#253955] text-white w-full h-14 text-xl rounded-[10px] font-bold border-[#B5B5B5]">SUBMIT</button>
+                  </div>
+                </div>
+                <img src="/assets/Image_for_G_Ads.png" alt="googleAds_man" className="h-full" />
               </div>
             </div>
           </div>
