@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import connectToDatabase from '@/lib/mongodb';
-import User from '@/models/User';
-import Connector from '@/models/Connector';
+import User from '@/Models/User';
+import Connector from '@/Models/Connector';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
