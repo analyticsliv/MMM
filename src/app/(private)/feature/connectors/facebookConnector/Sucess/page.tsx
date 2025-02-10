@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useEffect, useState } from 'react';
-import SuccessModal from "./sucess";
+import SuccessModal from "./success"
 import { createJobId } from '@/utils/helper';
 import { useUser } from '@/app/context/UserContext';
 import { useSearchParams } from 'next/navigation';
