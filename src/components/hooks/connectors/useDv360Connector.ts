@@ -6,7 +6,7 @@ const useDv360Connector = () => {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    const url = 'https://us-central1-dx-api-project.cloudfunctions.net/function-post-ga4';
+    const url = 'https://us-central1-dx-api-project.cloudfunctions.net/function-dv360'; //dummyy......
     const dv360Connector = async (data: Object) => {
         setLoading(true);
         setError(null);
@@ -20,11 +20,11 @@ const useDv360Connector = () => {
                     return { success: true, data: response.data };
                 } else {
                     console.error("Error:", response.statusText);
-                    return { success: false, message: 'Fetching GA4 details failed' };
+                    return { success: false, message: 'Fetching dv360 details failed' };
                 }
             } catch (error) {
                 console.error("Error:", error);
-                return { success: false, message: 'An error occurred while fetching GA4 details' };
+                return { success: false, message: 'An error occurred while fetching dv360 details' };
             }
         } finally {
             setLoading(false);

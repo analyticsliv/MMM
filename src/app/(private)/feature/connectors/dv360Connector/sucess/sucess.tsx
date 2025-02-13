@@ -25,8 +25,7 @@ interface SuccessModalProps {
 
 const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSuccess, setLoadingScreen, setStatusCheck, accessToken,refreshToken }) => {
     const [selectedAdvertiser, setSelectedAdvertiser] = useState<string | null>(null);
-    const [selectedProperty, setSelectedProperty] = useState<string | null>(null);
-    const [selectedReport, setSelectedReport] = useState <Array<string>>();
+    const [selectedReport, setSelectedReport] = useState([]);
     const [dropdownVisible, setDropdownVisible] = useState(false);
     const dropdownRef = useRef(null);
     const searchParams = useSearchParams();
@@ -35,7 +34,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
     const user = JSON.parse(localStorage.getItem('userSession') || '{}')?.user;
     const jobId = createJobId('dv360', user?.email);
 
-    const handleOutsideClick = (event) => {
+    const handleOutsideClick = (event:any) => {
         if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
             setDropdownVisible(false);
         }
@@ -58,7 +57,6 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
 
     const handleAdvertiserChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedAdvertiser(event.target.value);
-        setSelectedProperty(null);
     };
 
 
@@ -79,9 +77,6 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
     const handleDateRangeChange = (startDate: Date | null, endDate: Date | null) => {
         setDateRange({ startDate, endDate });
     };
-
-    const [jobData, setJobData] = useState<object | null>(null);
-    const [jobStatus, setJobStatus] = useState<string | null>(null); // State to hold the status
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -104,7 +99,6 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
         }
         const data = {
             refresh_token: refreshToken || "N/A",
-            property_id: selectedProperty,
             project_id: "dx-api-project",
             dataset_name: "trial_data",
             start_date: formattedStartDate,
@@ -121,7 +115,6 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
             const response = await dv360Connector(data);
 
             setSelectedAdvertiser(null);
-            setSelectedProperty(null);
             setSelectedReport([]);
             if (response.success) {
                 onSubmitSuccess('DV360 Connector Successful!');
@@ -221,7 +214,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
                                                             type="checkbox"
                                                             id={key}
                                                             value={key}
-                                                            checked={selectedReport.includes(key)}
+                                                            checked={selectedReport?.includes(key)}
                                                             onChange={handleReportChange}
                                                             className="mr-2"
                                                             required

@@ -5,14 +5,14 @@ export async function POST(req: NextRequest) {
     if (req.method !== 'POST') {
         return NextResponse.json({ message: 'Method Not Allowed' }, { status: 405 });
     }
-    async function getStatusDetail(jobId: string, status: string) {
+    async function getStatusDetail(jobId: string, status: string, email : string,connectorType : string) {
         try {
-            const response = await fetch('/api/connectors/jobStatus', {
+            const response = await fetch(`${process.env.BASE_API_URL}api/connectors/jobStatus`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ jobId, status }), // Sending jobId in the body
+                body: JSON.stringify({ jobId, status, email, connectorType }), // Sending jobId in the body
             });
 
             if (!response.ok) {
@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
         }
     }
 
-    const { url, body, headers } = await req.json(); // Parse the JSON body to get the URL, body, and headers
+    const { url, body, headers,connectorType } = await req.json(); // Parse the JSON body to get the URL, body, and headers
     try {
 
         if (!url || !body) {
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
         }
 
         if (body?.jobId) {
-            getStatusDetail(body?.jobId, "inProgress");
+            getStatusDetail(body?.jobId, "inProgress",body?.email, connectorType);
         }
 
         // Forward the request to the provided external API
@@ -43,12 +43,12 @@ export async function POST(req: NextRequest) {
             headers: headers || { 'Content-Type': 'application/json' }, // Use provided headers or default
         });
 
-        getStatusDetail(body?.jobId, "completed");
+        getStatusDetail(body?.jobId, "completed",body?.email, connectorType);
 
         // Send the external API response back to the client
         return NextResponse.json(externalResponse.data, { status: 200 });
     } catch (error) {
-        getStatusDetail(body?.jobId, "failed");
+        getStatusDetail(body?.jobId, "failed",body?.email, connectorType);
         console.error('Error forwarding request:', error);
         return NextResponse.json({ message: 'Error communicating with external API', error: error.message }, { status: 500 });
     }
