@@ -8,7 +8,7 @@ import CustomDatepicker from '@/components/DatePicker/Datepicker';
 import { format } from 'date-fns';
 import useToast from '@/components/hooks/toast';
 import { ToastContainer } from 'react-toastify';
-import useFbDetails from '@/components/hooks/connectors/useFbDetails';
+import useFbConnector from '@/components/hooks/connectors/useFbConnector';
 import { createJobId } from '@/utils/helper';
 import { useUser } from '@/app/context/UserContext';
 import useUserSession from '@/components/hooks/useUserSession';
@@ -22,7 +22,7 @@ interface SuccessModalProps {
 }
 const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSuccess, setLoadingScreen, accessToken }) => {
     const { data: session, status } = useSession();
-    const { fbDetails } = useFbDetails();
+    const { fbConnector } = useFbConnector();
     // const { updateOrCreateConnector, getConnectorData, error, loading } = useConnector()
     // const searchParams = useSearchParams();
     // const accessToken = searchParams.get('accessToken');
@@ -100,14 +100,15 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
             level: selectedLevel,
             table_name: "Facebook_Data.sss1",
             ad_account_id: selectedAccount,
-            jobId: jobId
+            jobId: jobId,
+            email: user?.email
         }
 
         try {
             setLoadingScreen(true);
             closeModal();
 
-            const response = await fbDetails(data);
+            const response = await fbConnector(data);
 
             setSelectedLevel(null);
             setSelectedAccount(null);

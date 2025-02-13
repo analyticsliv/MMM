@@ -12,9 +12,8 @@ import useToast from "@/components/hooks/toast";
 import { ToastContainer } from "react-toastify";
 import { format } from 'date-fns';
 import { reportOptions } from "@/utils/const";
-import useGa4Details from "@/components/hooks/connectors/useGa4Details";
 import { createJobId } from "@/utils/helper";
-import useLinkedInDetails from "@/components/hooks/connectors/useLinkedInDetails";
+import useLinkedInConnector from "@/components/hooks/connectors/useLinkedInConnector";
 
 interface SuccessModalProps {
   isModalOpen: boolean;
@@ -39,7 +38,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
   const code = searchParams.get("code");
   // const refreshTokenParam = searchParams.get("refresh_token");
   // const { updateOrCreateConnector, getConnectorData, error, loading } = useConnector();
-  const { linkedInDetails } = useLinkedInDetails();
+  const { linkedInConnector } = useLinkedInConnector();
   const user = JSON.parse(localStorage.getItem('userSession') || '{}')?.user;
   const jobId = createJobId('linkedIn', user?.email);
 
@@ -131,14 +130,15 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
       start_date: formattedStartDate,
       end_date: formattedEndDate,
       reports_list: selectedReport,
-      jobId: jobId
+      jobId: jobId,
+      email : user?.email
     };
 
     try {
       setLoadingScreen(true);
       closeModal();
 
-      const response = await linkedInDetails(data);
+      const response = await linkedInConnector(data);
 
       setSelectedProperty(null);
       setSelectedAccount(null);

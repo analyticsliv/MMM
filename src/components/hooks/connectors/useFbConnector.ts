@@ -2,18 +2,18 @@
 import axios from 'axios';
 import { useState } from 'react';
 
-const useFbDetails = () => {
+const useFbConnector = () => {
 
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
     const url = 'https://us-central1-dx-api-project.cloudfunctions.net/facebook-api';
-    const fbDetails = async (data: Object) => {
+    const fbConnector = async (data: Object) => {
         setLoading(true);
         setError(null);
         try {
             try {
-                const response = await axios.post('/api/proxy', { url, body: data });
+                const response = await axios.post('/api/proxy', { url, body: data,connectorType: 'facebook' });
 
                 if (response.status === 200) {
                     console.log("API response:", response.data);
@@ -34,10 +34,10 @@ const useFbDetails = () => {
     };
 
     return {
-        fbDetails,
+        fbConnector,
         loading,
         error,
     };
 };
 
-export default useFbDetails;
+export default useFbConnector;

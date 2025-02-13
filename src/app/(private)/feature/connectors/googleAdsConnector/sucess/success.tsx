@@ -8,7 +8,7 @@ import useCustomerSummaries from "@/components/hooks/connectors/googleAdsCustome
 import useToast from "@/components/hooks/toast";
 import { ToastContainer } from "react-toastify";
 import { format } from 'date-fns';
-import useGoogleAdsDetails from "@/components/hooks/connectors/useGoogleAdsDetails";
+import useGooglAdsConnector from "@/components/hooks/connectors/useGooglAdsConnector";
 import { createJobId } from "@/utils/helper";
 
 interface SuccessModalProps {
@@ -29,7 +29,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
   const dropdownRef = useRef(null);
   const searchParams = useSearchParams();
   const code = searchParams.get("code");
-  const { googleAdsDetails } = useGoogleAdsDetails();
+  const { googleAdsConnector } = useGooglAdsConnector();
   const user = JSON.parse(localStorage.getItem('userSession') || '{}')?.user;
   const jobId = createJobId('googleAds', user?.email);
 
@@ -102,14 +102,15 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
       refresh_token: refreshToken || "N/A",
       report_name: selectedLevel,
       login_customer_id: selectedCustomer,
-      jobId: jobId
+      jobId: jobId,
+      email: user?.email
     };
 
     try {
       setLoadingScreen(true);
       closeModal();
 
-      const response = await googleAdsDetails(data);
+      const response = await googleAdsConnector(data);
 
       setSelectedCustomer(null);
       setSelectedLevel(null);

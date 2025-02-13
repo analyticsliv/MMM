@@ -1,18 +1,18 @@
 import axios from 'axios';
 import { useState } from 'react';
 
-const useGoogleAdsDetails = () => {
+const useGooglAdsConnector = () => {
 
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
     const url = 'https://us-central1-dx-api-project.cloudfunctions.net/google-ads-connector';
-    const googleAdsDetails = async (data: Object) => {
+    const googleAdsConnector = async (data: Object) => {
         setLoading(true);
         setError(null);
         try {
             try {
-                const response = await axios.post('/api/proxy', { url, body: data });
+                const response = await axios.post('/api/proxy', { url, body: data, connectorType: 'googleAds' });
 
                 if (response?.status === 200) {
                     console.log("API response:", response?.data);
@@ -32,10 +32,10 @@ const useGoogleAdsDetails = () => {
     };
 
     return {
-        googleAdsDetails,
+        googleAdsConnector,
         loading,
         error,
     };
 };
 
-export default useGoogleAdsDetails;
+export default useGooglAdsConnector;

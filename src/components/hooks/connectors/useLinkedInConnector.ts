@@ -1,30 +1,30 @@
 import axios from 'axios';
 import { useState } from 'react';
 
-const useGa4Details = () => {
+const useLinkedInConnector = () => {
 
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    const url = 'https://us-central1-dx-api-project.cloudfunctions.net/function-post-ga4';
-    const ga4Details = async (data: Object) => {
+    const url = 'https://us-central1-dx-api-project.cloudfunctions.net/function-post-linkedIn';
+    const linkedInConnector = async (data: Object) => {
         setLoading(true);
         setError(null);
         try {
             try {
-                const response = await axios.post('/api/proxy', { url, body: data });
+                const response = await axios.post('/api/proxy', { url, body: data, connectorType: 'linkedIn' });
 
                 if (response.status === 200) {
                     console.log("API response:", response.data);
-                    console.log("status ga4", response?.data?.success)
+                    console.log("status linkedIn", response?.data?.success)
                     return { success: true, data: response.data };
                 } else {
                     console.error("Error:", response.statusText);
-                    return { success: false, message: 'Fetching GA4 details failed' };
+                    return { success: false, message: 'Fetching linkedIn details failed' };
                 }
             } catch (error) {
                 console.error("Error:", error);
-                return { success: false, message: 'An error occurred while fetching GA4 details' };
+                return { success: false, message: 'An error occurred while fetching linkedIn details' };
             }
         } finally {
             setLoading(false);
@@ -32,10 +32,10 @@ const useGa4Details = () => {
     };
 
     return {
-        ga4Details,
+        linkedInConnector,
         loading,
         error,
     };
 };
 
-export default useGa4Details;
+export default useLinkedInConnector;

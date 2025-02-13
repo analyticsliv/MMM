@@ -12,7 +12,7 @@ import useToast from "@/components/hooks/toast";
 import { ToastContainer } from "react-toastify";
 import { format } from 'date-fns';
 import { reportOptions } from "@/utils/const";
-import useGa4Details from "@/components/hooks/connectors/useGa4Details";
+import useGa4Connector from "@/components/hooks/connectors/useGa4Connector";
 import { createJobId } from "@/utils/helper";
 
 interface SuccessModalProps {
@@ -38,7 +38,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
   const code = searchParams.get("code");
   // const refreshTokenParam = searchParams.get("refresh_token");
   // const { updateOrCreateConnector, getConnectorData, error, loading } = useConnector();
-  const { ga4Details } = useGa4Details();
+  const { ga4Connector } = useGa4Connector();
   const user = JSON.parse(localStorage.getItem('userSession') || '{}')?.user;
   const jobId = createJobId('ga4', user?.email);
 
@@ -130,14 +130,15 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
       start_date: formattedStartDate,
       end_date: formattedEndDate,
       reports_list: selectedReport,
-      jobId: jobId
+      jobId: jobId,
+      email: user?.email
     };
 
     try {
       setLoadingScreen(true);
       closeModal();
 
-      const response = await ga4Details(data);
+      const response = await ga4Connector(data);
 
       setSelectedProperty(null);
       setSelectedAccount(null);
