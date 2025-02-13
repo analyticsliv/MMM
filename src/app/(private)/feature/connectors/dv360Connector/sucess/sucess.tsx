@@ -5,14 +5,13 @@ import { Dialog } from "@headlessui/react";
 import CustomDatepicker from "@/components/DatePicker/Datepicker";
 import { useUser } from "@/app/context/UserContext";
 import { useSearchParams } from "next/navigation";
-import useAccountSummaries from "@/components/hooks/connectors/ga4AccountList";
-import useAccountProperties from "@/components/hooks/connectors/ga4PropertyList";
 import useToast from "@/components/hooks/toast";
 import { ToastContainer } from "react-toastify";
 import { format } from 'date-fns';
 import { reportOptions } from "@/utils/const";
 import useDv360Advertisers from "@/components/hooks/connectors/dv360Advertiser";
 import { createJobId } from "@/utils/helper";
+import useDv360Connector from "@/components/hooks/connectors/useDv360Connector";
 
 interface SuccessModalProps {
     isModalOpen: boolean;
@@ -21,16 +20,18 @@ interface SuccessModalProps {
     setLoadingScreen: (loading: boolean) => void;
     setStatusCheck: (loading: boolean) => void;
     accessToken: string | null;
+    refreshToken : string | null
 }
 
-const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSuccess, setLoadingScreen, setStatusCheck, accessToken }) => {
+const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSuccess, setLoadingScreen, setStatusCheck, accessToken,refreshToken }) => {
     const [selectedAdvertiser, setSelectedAdvertiser] = useState<string | null>(null);
     const [selectedProperty, setSelectedProperty] = useState<string | null>(null);
-    const [selectedReport, setSelectedReport] = React.useState('');
+    const [selectedReport, setSelectedReport] = useState <Array<string>>();
     const [dropdownVisible, setDropdownVisible] = useState(false);
     const dropdownRef = useRef(null);
     const searchParams = useSearchParams();
-    const { dv360Details } = useDv360Advertisers(accessToken);
+    const { dv360Connector } = useDv360Connector();
+    
     const user = JSON.parse(localStorage.getItem('userSession') || '{}')?.user;
     const jobId = createJobId('dv360', user?.email);
 
@@ -49,12 +50,6 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
         }
     }, [dropdownVisible]);
 
-    // const {
-    //     accountSummaries,
-    //     loading: accountsLoading,
-    //     error: accountsError,
-    // } = useAccountSummaries(accessToken);
-
     const {
         advertisers,
         loading: advertiserLoading,
@@ -66,10 +61,6 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
         setSelectedProperty(null);
     };
 
-    // const handlePropertyChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    //     const selectedPropertyId = event.target.value;
-    //     setSelectedProperty(selectedPropertyId);
-    // };
 
     const handleReportChange = (event) => {
         const { value, checked } = event.target;
@@ -80,13 +71,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
         );
     };
 
-    // const {
-    //     properties,
-    //     propertyIds,
-    //     loading: propertiesLoading,
-    //     error: propertiesError,
-    // } = useAccountProperties(selectedAccount, accountSummaries, accessToken);
-
+   
     const [dateRange, setDateRange] = useState<{ startDate: Date | null; endDate: Date | null }>({
         startDate: null,
         endDate: null
@@ -112,33 +97,31 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
             notify('Please select an Advertiser first!', 'error');
             return;
         }
-        // if (!selectedProperty) {
-        //     notify('Please select a property first!', 'error');
-        //     return;
-        // }
-        if (selectedReport.length === 0) {
+       
+        if (selectedReport?.length === 0) {
             notify('Please select at least one report!', 'error');
             return;
         }
         const data = {
-            // refresh_token: refreshToken || "N/A",
+            refresh_token: refreshToken || "N/A",
             property_id: selectedProperty,
             project_id: "dx-api-project",
             dataset_name: "trial_data",
             start_date: formattedStartDate,
             end_date: formattedEndDate,
             reports_list: selectedReport,
-            jobId: jobId
+            jobId: jobId,
+            email: user?.email
         };
 
         try {
             setLoadingScreen(true);
             closeModal();
 
-            const response = await dv360Details(data);
+            const response = await dv360Connector(data);
 
+            setSelectedAdvertiser(null);
             setSelectedProperty(null);
-            setSelectedAccount(null);
             setSelectedReport([]);
             if (response.success) {
                 onSubmitSuccess('DV360 Connector Successful!');
@@ -213,33 +196,16 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
                                         )}
                                     </select>
 
-                                    {/* Property Select */}
-                                    {/* <select
-                                        onChange={handlePropertyChange}
-                                        value={selectedProperty || ""}
-                                        className="p-2 h-14 text-xl font-semibold rounded-sm bg-homeGray w-1/3"
-                                        disabled={!selectedAccount} // Disable if no account is selected
-                                        required
-                                    >
-                                        <option value="" disabled>Select a property</option>
-                                        {properties.map((property, index) => (
-                                            <option key={property.property} className="bg-white" value={propertyIds[index]}>
-                                                {property.displayName}
-                                            </option>
-                                        ))}
-
-                                    </select> */}
-
                                     <div className="relative w-[50%]" ref={dropdownRef}>
                                         <button
                                             onClick={() => setDropdownVisible(!dropdownVisible)}
-                                            className={`p-2 h-14 text-xl font-semibold cursor-pointer flex items-center justify-between text-black bg-white border border-black px-4 rounded-[5px] w-full ${selectedReport.length > 0}`}
+                                            className={`p-2 h-14 text-xl font-semibold cursor-pointer flex items-center justify-between text-black bg-white border border-black px-4 rounded-[5px] w-full ${selectedReport?.length > 0}`}
                                         >
                                             Select Reports
                                             <span className="relative ml-2">
-                                                {selectedReport.length > 0 && (
+                                                {selectedReport?.length > 0 && (
                                                     <span className="bg-primary text-white px-2 py-1 rounded-full absolute left-0 transform translate-y-[-50%]">
-                                                        {selectedReport.length}
+                                                        {selectedReport?.length}
                                                     </span>
                                                 )}
                                             </span>
