@@ -60,7 +60,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
     };
 
 
-    const handleReportChange = (event) => {
+    const handleReportChange = (event:any) => {
         const { value, checked } = event.target;
         setSelectedReport(prevSelectedReports =>
             checked
@@ -78,7 +78,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
         setDateRange({ startDate, endDate });
     };
 
-    const handleSubmit = async (event) => {
+    const handleSubmit = async (event:any) => {
         event.preventDefault();
 
         const formattedStartDate = dateRange.startDate ? format(dateRange.startDate, 'yyyy-MM-dd') : null;
