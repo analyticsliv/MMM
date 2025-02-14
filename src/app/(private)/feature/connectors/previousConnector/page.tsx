@@ -23,7 +23,7 @@ const PreviousConnectors = () => {
   const [prevJobs, setPrevJobs] = useState<Connector[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const rowsPerPage = 1;
+  const rowsPerPage = 3;
 
   useEffect(() => {
     const fetchConnectors = async () => {
