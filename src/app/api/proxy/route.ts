@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
             headers: headers || { 'Content-Type': 'application/json' }, // Use provided headers or default
         });
 
-        getStatusDetail(body?.jobId, "completed",body?.email, connectorType);
+        getStatusDetail(body?.jobId, "success",body?.email, connectorType);
 
         // Send the external API response back to the client
         return NextResponse.json(externalResponse.data, { status: 200 });
