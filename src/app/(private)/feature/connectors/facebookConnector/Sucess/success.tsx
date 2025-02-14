@@ -35,6 +35,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
     const { user, setUser } = useUserSession();
     const [jobId, setJobId] = useState(String)
 
+    
 
     useEffect(() => {
         if (user) {
