@@ -49,9 +49,9 @@ const PreviousConnectors = () => {
   console.log("Prevjobsss-->>", prevJobs)
 
   const connectorMapping: any = {
-    ga4: { name: "Google Analytics 4", image: "/images/ga4.png" },
-    googleAds: { name: "Google Ads", image: "/images/google-ads.png" },
-    dv360: { name: "Display & Video 360", image: "/images/dv360.png" },
+    ga4: { name: "Google Analytics 4", image: "/assets/GA4_Logo.png" },
+    googleAds: { name: "Google Ads", image: "/assets/Google Ads logo.png" },
+    dv360: { name: "Display & Video 360", image: "/assets/dv360_logo (2).png" },
   };
 
   const statusStyles: any = {
