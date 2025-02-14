@@ -87,8 +87,8 @@ const PreviousConnectors = () => {
         <User />
       </div>
 
-      <div className='bg-homeGray mx-[1%] px-14 py-3'>
-        <div className='flex items-center justify-between pt-3 pb-6'>
+      <div className='bg-homeGray mx-[1%] py-3 min-h-[200px]'>
+        <div className='flex px-14 items-center justify-between pt-3 pb-6'>
           <input placeholder='Search' className='py-2 w-[40%] px-5 border border-[#D9D9D9] bg-transparent focus:outline-slate-400 placeholder-black' />
           <div className='w-[40%] flex justify-around items-center'>
             <button className='py-2 px-5 border border-[#D9D9D9] bg-transparent rounded-[5px]'>Last 30 days</button>
@@ -98,7 +98,7 @@ const PreviousConnectors = () => {
           </div>
         </div>
         {loading ? (
-          <div className="fixed z-50 w-[85%] flex justify-center items-center bg-homeGray">
+          <div className="fixed z-50 w-[85%] h-[200px] flex justify-center items-center bg-homeGray">
             <div className="flex flex-col justify-center items-center">
               <div className="loader"></div>
               <p className="mt-4 text-xl font-semibold text-gray-700">
@@ -107,44 +107,46 @@ const PreviousConnectors = () => {
             </div>
           </div>
         ) : (
-          <table className='w-full text-center border border-[#D9D9D9]'>
-            <thead className='bg-[#D9D9D9] py-3 h-14'>
-              <tr className='py-3'>
-                <th className='w-[33%]'>Connector Name</th>
-                <th className='w-[10%]'>Status</th>
-                <th className='w-[33%]'>Date-Time</th>
-              </tr>
-            </thead>
-            <tbody>
-              {paginationData ? (
-                paginationData?.map((connector, index) => {
-                  const connectorInfo = connectorMapping[connector?.connectorType] || {};
-                  return (
-                    <tr className="bg-[#FFFFFF] border-b border-[#D9D9D9] h-16" key={index}>
-                      <td className="">
-                        <div className='flex items-center text-start gap-2 justify-center'>
-                          {connectorInfo?.image && (
-                            <img src={connectorInfo?.image} alt={connectorInfo?.name} className="w-6 h-6" />
-                          )}
-                          {connectorInfo?.name || ""}
-                        </div>
-                      </td>
-                      <td>
-                        <div className={`py-1 px-2 rounded-[10px] ${statusStyles[connector?.status] || ""}`}>
-                          {connector?.status}
-                        </div>
-                      </td>
-                      <td>{formatDate(connector?.updatedAt)}</td>
-                    </tr>
-                  );
-                })
-              ) : (
-                <tr className='bg-[#FFFFFF]'>
-                  <td colSpan={3}>No prevJobs found for this user.</td>
+          <div className='px-14'>
+            <table className='w-full text-center border border-[#D9D9D9]'>
+              <thead className='bg-[#D9D9D9] py-3 h-14'>
+                <tr className='py-3'>
+                  <th className='w-[33%]'>Connector Name</th>
+                  <th className='w-[10%]'>Status</th>
+                  <th className='w-[33%]'>Date-Time</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {paginationData ? (
+                  paginationData?.map((connector, index) => {
+                    const connectorInfo = connectorMapping[connector?.connectorType] || {};
+                    return (
+                      <tr className="bg-[#FFFFFF] border-b border-[#D9D9D9] h-16" key={index}>
+                        <td className="">
+                          <div className='flex items-center text-start gap-2 justify-center'>
+                            {connectorInfo?.image && (
+                              <img src={connectorInfo?.image} alt={connectorInfo?.name} className="w-6 h-6" />
+                            )}
+                            {connectorInfo?.name || ""}
+                          </div>
+                        </td>
+                        <td>
+                          <div className={`py-1 px-2 rounded-[10px] ${statusStyles[connector?.status] || ""}`}>
+                            {connector?.status}
+                          </div>
+                        </td>
+                        <td>{formatDate(connector?.updatedAt)}</td>
+                      </tr>
+                    );
+                  })
+                ) : (
+                  <tr className='bg-[#FFFFFF]'>
+                    <td colSpan={3}>No prevJobs found for this user.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         )
         }
 
