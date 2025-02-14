@@ -2,28 +2,40 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongodb';
 import ConnectorJob from '@/Models/JobDetail'; // Ensure the path is correct
+import User from '@/Models/User';
 
 export async function POST(req: NextRequest) {
     try {
         await connectToDatabase();
 
-        const { jobId, status } = await req.json();
+        const { email, connectorType, jobId, status } = await req.json();
 
-        if (!jobId) {
-            return NextResponse.json({ message: 'jobId is required' }, { status: 400 });
+        if (!jobId || !email || !connectorType) {
+            return NextResponse.json({ message: 'jobId, email, and connectorType are required' }, { status: 400 });
+        }
+
+        const user = await User.findOne({ email });
+        if (!user) {
+            return NextResponse.json({ message: 'User not found' }, { status: 404 });
         }
 
         const updatedJob = await ConnectorJob.findOneAndUpdate(
-            { jobId },
+            { jobId }, // Search for an existing job by jobId
             {
                 $set: {
                     status: status || 'inProgress',
                     updatedAt: Date.now(),
+                },
+                $setOnInsert: { // This ONLY applies if a new document is created
+                    jobId,
+                    userId: user._id,
+                    connectorType,
+                    createdAt: Date.now(),
                 }
             },
             {
-                new: true,       // Return the updated document
-                upsert: true     // Create a new document if no match is found
+                new: true,  // Return the updated document
+                upsert: true // Create a new document if no match is found
             }
         );
         console.log('API hit: jobId:', jobId, 'status:', status);

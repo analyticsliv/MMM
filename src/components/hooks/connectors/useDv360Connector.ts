@@ -1,18 +1,18 @@
 import axios from 'axios';
 import { useState } from 'react';
 
-const useGa4Details = () => {
+const useDv360Connector = () => {
 
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    const url = 'https://us-central1-dx-api-project.cloudfunctions.net/function-post-ga4';
-    const ga4Details = async (data: Object) => {
+    const url = 'https://us-central1-dx-api-project.cloudfunctions.net/function-dv360'; //dummyy......
+    const dv360Connector = async (data: Object) => {
         setLoading(true);
         setError(null);
         try {
             try {
-                const response = await axios.post('/api/proxy', { url, body: data });
+                const response = await axios.post('/api/proxy', { url, body: data, connectorType: 'dv360' });
 
                 if (response.status === 200) {
                     console.log("API response:", response.data);
@@ -20,11 +20,11 @@ const useGa4Details = () => {
                     return { success: true, data: response.data };
                 } else {
                     console.error("Error:", response.statusText);
-                    return { success: false, message: 'Fetching GA4 details failed' };
+                    return { success: false, message: 'Fetching dv360 details failed' };
                 }
             } catch (error) {
                 console.error("Error:", error);
-                return { success: false, message: 'An error occurred while fetching GA4 details' };
+                return { success: false, message: 'An error occurred while fetching dv360 details' };
             }
         } finally {
             setLoading(false);
@@ -32,10 +32,10 @@ const useGa4Details = () => {
     };
 
     return {
-        ga4Details,
+        dv360Connector,
         loading,
         error,
     };
 };
 
-export default useGa4Details;
+export default useDv360Connector;

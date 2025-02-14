@@ -11,9 +11,9 @@ const Connectors = () => {
   //  const authUrl = generateAuthUrl();
   const connectors = [
     { label: "Google Analytics 4", path: "/feature/connectors/ga4Connector", img: "/assets/GA4_Logo.png" },
+    { label: "Google Ads", path: "/feature/connectors/googleAdsConnector", img: "/assets/Google Ads logo.png" },
     { label: "Facebook Ads", path: "/feature/connectors/facebookConnector", img: "/assets/meta_logo.png" },
     { label: "Display & Video 360", path: "/feature/connectors/dv360Connector", img: "/assets/dv360_logo (2).png" },
-    { label: "Google Ads", path: "/feature/connectors/googleAdsConnector", img: "/assets/Google Ads logo.png" },
     { label: "LinkedIn Ads", path: "/feature/connectors/linkedInConnector", img: "/assets/linkedin_Logo.png" },
     { label: "Custom Connector", path: "/feature/connectors/CustomConnector", img: "/assets/custom_connector.png" },
   ];
@@ -35,7 +35,7 @@ const Connectors = () => {
         </div>
         <div className="flex justify-between gap-4 pr-10 items-center">
           {connectors?.map((connector, index) => {
-            const isDisabled = index > 4;
+            const isDisabled = index > 3;
 
             return (
               <Link key={index}
@@ -55,9 +55,3 @@ const Connectors = () => {
 };
 
 export default Connectors;
-// {/* <Link href={'/feature/connectors/ga4Connector'} className="hover:text-gray-950">
-//   Ga4 connector
-// </Link>
-// <Link href={'/feature/connectors/facebookConnector'} className="hover:text-gray-950">
-//   Facebook connector
-// </Link> */}

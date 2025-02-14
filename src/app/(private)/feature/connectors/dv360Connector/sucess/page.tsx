@@ -145,6 +145,7 @@ const Page: React.FC = () => {
           }}
           accessToken={accessToken}
           setLoadingScreen={setLoadingScreen}
+          refreshToken = {refreshToken}
         />
       )}
     </div>
