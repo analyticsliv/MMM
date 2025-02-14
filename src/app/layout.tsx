@@ -18,7 +18,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <NextAuthProvider>
-            <SplashScreen />
+            {/* <SplashScreen /> */}
             <UserProvider>
                <main className="mx-auto">{children}</main>
             </UserProvider>
