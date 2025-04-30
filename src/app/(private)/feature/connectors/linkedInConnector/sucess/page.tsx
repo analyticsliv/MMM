@@ -69,12 +69,14 @@ const Page: React.FC = () => {
       try {
         const response = await fetch(`/api/auth/linkedIn-auth?code=${code}`);
         const data = await response.json();
+
         setAccessToken(data?.access_token || null);
         setRefreshToken(data?.refresh_token);
         // const user = JSON.parse(localStorage.getItem('userSession'))?.user;
         const connectorData = {
+          accessToken: data?.access_token,
+          expriyTime: data?.expiry_date,
           refreshToken: data?.refresh_token,
-          expriyTime: data?.expiry_date
         }
 
         updateOrCreateConnector(user?.email, 'linkedIn', connectorData);

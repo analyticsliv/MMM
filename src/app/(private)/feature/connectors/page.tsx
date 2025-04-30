@@ -35,7 +35,7 @@ const Connectors = () => {
         </div>
         <div className="flex justify-between gap-4 pr-10 items-center">
           {connectors?.map((connector, index) => {
-            const isDisabled = index > 3;
+            const isDisabled = index > 4;
 
             return (
               <Link key={index}
