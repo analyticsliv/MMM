@@ -6,7 +6,7 @@ const useLinkedInConnector = () => {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    const url = 'https://us-central1-dx-api-project.cloudfunctions.net/function-post-linkedIn';
+    const url = 'https://linkedin-135392845747.us-central1.run.app';
     const linkedInConnector = async (data: Object) => {
         setLoading(true);
         setError(null);
@@ -15,8 +15,6 @@ const useLinkedInConnector = () => {
                 const response = await axios.post('/api/proxy', { url, body: data, connectorType: 'linkedIn' });
 
                 if (response.status === 200) {
-                    console.log("API response:", response.data);
-                    console.log("status linkedIn", response?.data?.success)
                     return { success: true, data: response.data };
                 } else {
                     console.error("Error:", response.statusText);

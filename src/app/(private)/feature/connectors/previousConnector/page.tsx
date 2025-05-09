@@ -30,7 +30,6 @@ const PreviousConnectors = () => {
       try {
         setLoading(true);
         const response = await axios.get(`/api/connectors/prevConnectors?email=${user?.email}`);
-        console.log("responseee---", response);
         // const data = await response.
         setPrevJobs(response?.data);
       } catch (error) {
@@ -46,12 +45,11 @@ const PreviousConnectors = () => {
     }
   }, [user]);
 
-  console.log("Prevjobsss-->>", prevJobs)
-
   const connectorMapping: any = {
     ga4: { name: "Google Analytics 4", image: "/assets/GA4_Logo.png" },
     googleAds: { name: "Google Ads", image: "/assets/Google Ads logo.png" },
     dv360: { name: "Display & Video 360", image: "/assets/dv360_logo (2).png" },
+    linkedIn: { name: "linkedIn", image: "/assets/dv360_logo (2).png" },
   };
 
   const statusStyles: any = {

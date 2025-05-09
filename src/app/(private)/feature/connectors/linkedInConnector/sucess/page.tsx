@@ -24,6 +24,7 @@ const Page: React.FC = () => {
   const searchParams = useSearchParams();
   const code = searchParams.get("code");
   const refreshTokenParam = searchParams.get("refresh_token");
+  const accessTokenParam = searchParams.get("access_token");
   const { updateOrCreateConnector, getConnectorData, error, loading } = useConnector();
 
   const openModal = () => setIsModalOpen(true);
@@ -33,6 +34,7 @@ const Page: React.FC = () => {
   useEffect(() => {
     async function getJobDetail(jobId: string) {
       try {
+        setLoadingScreen(true);
         const response = await fetch('/api/connectors/jobCheck', {
           method: 'POST',
           headers: {
@@ -42,18 +44,21 @@ const Page: React.FC = () => {
         });
 
         if (!response.ok) {
+          setLoadingScreen(false);
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
+        setLoadingScreen(false);
         setJobData(data); // Store jobId in state
         console.log("API response:", data);
 
       } catch (error) {
+        setLoadingScreen(false);
         console.error('Error fetching job details:', error);
       }
     }
-    
+
     if (user && !jobId) {
       setJobId(createJobId('linkedIn', user?.email))
     }
@@ -102,8 +107,10 @@ const Page: React.FC = () => {
         console.error("Error getting access token using refresh token:", error);
       }
     }
-
-    if (code && !accessToken && user) {
+    if (accessTokenParam) {
+      setAccessToken(accessTokenParam);
+    }
+    else if (code && !accessToken && user) {
       getTokenFromCode(code);
     }
     else if (refreshTokenParam && !accessToken && user) {
