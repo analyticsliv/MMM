@@ -30,6 +30,7 @@ const Page: React.FC = () => {
   useEffect(() => {
     async function getJobDetail(jobId: string) {
       try {
+        setLoadingScreen(true);
         const response = await fetch('/api/connectors/jobCheck', {
           method: 'POST',
           headers: {
@@ -39,14 +40,15 @@ const Page: React.FC = () => {
         });
 
         if (!response.ok) {
+          setLoadingScreen(false);
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
+        setLoadingScreen(false);
         setJobData(data); // Store jobId in state
-        console.log("API response:", data);
-
       } catch (error) {
+        setLoadingScreen(false);
         console.error('Error fetching job details:', error);
       }
     }

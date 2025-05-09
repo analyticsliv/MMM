@@ -10,7 +10,7 @@ import useAccountProperties from "@/components/hooks/connectors/ga4PropertyList"
 import useToast from "@/components/hooks/toast";
 import { ToastContainer } from "react-toastify";
 import { format } from 'date-fns';
-import { reportOptions, reportOptionsLinkedin } from "@/utils/const";
+import { reportOptionsLinkedin } from "@/utils/const";
 import { createJobId } from "@/utils/helper";
 import useLinkedInConnector from "@/components/hooks/connectors/useLinkedInConnector";
 import useLinkedinSummaries from "@/components/hooks/connectors/linkedinAccountList";
