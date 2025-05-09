@@ -39,9 +39,9 @@ const GA4ConnectorPage = () => {
   }, [user])
 
   useEffect(() => {
-    if (isAuthrozie && isAuthrozie.refreshToken) {
+    if (isAuthrozie && isAuthrozie?.refreshToken) {
       // Redirect the user with the refresh_token in the URL
-      const redirectUrl = `/feature/connectors/ga4Connector/sucess?refresh_token=${encodeURIComponent(isAuthrozie.refreshToken)}`;
+      const redirectUrl = `/feature/connectors/ga4Connector/sucess?refresh_token=${encodeURIComponent(isAuthrozie?.refreshToken)}`;
       router.push(redirectUrl); // Next.js navigation
     }
   }, [isAuthrozie, router]);
