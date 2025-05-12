@@ -2,7 +2,7 @@ import { google } from 'googleapis';
 
 const oAuth2Client = new google.auth.OAuth2(
   process.env.LINKEDIN_CLIENT_ID,
-  process.env.LINKEDIN_CLIENT_SECTRET,
+  process.env.LINKEDIN_CLIENT_SECRET,
   process.env.LINKEDIN_REDIRECT_URI // Your redirect URI
 );
 

@@ -11,14 +11,14 @@ export async function POST(request: Request) {
     }
 
     // Fetch a new access token using the refresh token
-    const response = await fetch('https://oauth2.googleapis.com/token', {
+    const response = await fetch('https://www.linkedin.com/oauth/v2/accessToken', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: new URLSearchParams({
         client_id: process.env.LINKEDIN_CLIENT_ID || '',
-        client_secret: process.env.LINKEDIN_CLIENT_SECTRET || '',
+        client_secret: process.env.LINKEDIN_CLIENT_SECRET || '',
         refresh_token: refresh_token,
         grant_type: 'refresh_token',
       }),

@@ -6,14 +6,14 @@ import CustomDatepicker from "@/components/DatePicker/Datepicker";
 import { useUser } from "@/app/context/UserContext";
 import { useSearchParams } from "next/navigation";
 import useConnector from "@/components/hooks/connectors/useConnectors";
-import useAccountSummaries from "@/components/hooks/connectors/ga4AccountList";
 import useAccountProperties from "@/components/hooks/connectors/ga4PropertyList";
 import useToast from "@/components/hooks/toast";
 import { ToastContainer } from "react-toastify";
 import { format } from 'date-fns';
-import { reportOptions } from "@/utils/const";
+import { reportOptionsLinkedin } from "@/utils/const";
 import { createJobId } from "@/utils/helper";
 import useLinkedInConnector from "@/components/hooks/connectors/useLinkedInConnector";
+import useLinkedinSummaries from "@/components/hooks/connectors/linkedinAccountList";
 
 interface SuccessModalProps {
   isModalOpen: boolean;
@@ -27,7 +27,7 @@ interface SuccessModalProps {
 
 const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSuccess, setLoadingScreen, setStatusCheck, accessToken, refreshToken }) => {
   const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
-  const [selectedProperty, setSelectedProperty] = useState<string | null>(null);
+  const [selectedCampaign, setSelectedCampaign] = useState<string | null>(null);
   const [selectedReport, setSelectedReport] = React.useState('');
   const [dropdownVisible, setDropdownVisible] = useState(false);
   // const [accessToken, setAccessToken] = useState<string | null>(null);
@@ -59,18 +59,19 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
 
   const {
     accountSummaries,
+    accountIds,
     loading: accountsLoading,
     error: accountsError,
-  } = useAccountSummaries(accessToken);
+  } = useLinkedinSummaries(accessToken);
 
   const handleAccountChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedAccount(event.target.value);
-    setSelectedProperty(null);
+    setSelectedCampaign(null);
   };
 
   const handlePropertyChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedPropertyId = event.target.value;
-    setSelectedProperty(selectedPropertyId);
+    const selectedCampaignId = event.target.value;
+    setSelectedCampaign(selectedCampaignId);
   };
 
   const handleReportChange = (event) => {
@@ -114,24 +115,25 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
       notify('Please select an account first!', 'error');
       return;
     }
-    if (!selectedProperty) {
-      notify('Please select a property first!', 'error');
-      return;
-    }
+    // if (!selectedCampaign) {
+    //   notify('Please select a property first!', 'error');
+    //   return;
+    // }
     if (selectedReport.length === 0) {
       notify('Please select at least one report!', 'error');
       return;
     }
     const data = {
-      refresh_token: refreshToken || "N/A",
-      property_id: selectedProperty,
-      project_id: "dx-api-project",
-      dataset_name: "trial_data",
+      access_token: accessToken || "N/A",
+      account_id: selectedAccount,
+      // account_id: selectedAccount,
+      campaign_id: "207314706",
+      report_name: 'campaigns',
+      // campaign_id: selectedCampaign,
       start_date: formattedStartDate,
       end_date: formattedEndDate,
-      reports_list: selectedReport,
       jobId: jobId,
-      email : user?.email
+      email: user?.email,
     };
 
     try {
@@ -139,8 +141,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
       closeModal();
 
       const response = await linkedInConnector(data);
-
-      setSelectedProperty(null);
+      setSelectedCampaign(null);
       setSelectedAccount(null);
       setSelectedReport([]);
       if (response.success) {
@@ -180,7 +181,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
             <div className="bg-white p-6 flex relative flex-col justify-between rounded-lg shadow-lg w-[650px] h-[340px] 2xl:w-[700px] 2xl:h-[340px]">
 
               <div className="flex items-center">
-                <Dialog.Title className=" flex justify-center items-center absolute gap-4 top-[-32px] left-[44%] rounded-[10px] shadow-xl text-2xl text-[#010101] bg-white font-bold text-center px-8 py-6 mb-4 mx-auto">
+                <Dialog.Title className=" flex justify-center items-center absolute gap-4 top-[-32px] left-[40%] rounded-[10px] shadow-xl text-2xl text-[#010101] bg-white font-bold text-center px-8 py-6 mb-4 mx-auto">
                   <img src="/assets/linkedin_Logo.png" alt="linkedin" /> <div>LinkedIn</div>
                 </Dialog.Title>
 
@@ -206,9 +207,9 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
                     ) : (
                       <>
                         <option value="" disabled>Select an account</option>
-                        {accountSummaries.map((account, index) => (
-                          <option key={index} className="bg-white" value={account.name}>
-                            {account.displayName}
+                        {accountIds?.map((account, index) => (
+                          <option key={index} className="bg-white" value={account}>
+                            {account}
                           </option>
                         ))}
                       </>
@@ -216,21 +217,23 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
                   </select>
 
                   {/* Property Select */}
-                  <select
-                    onChange={handlePropertyChange}
-                    value={selectedProperty || ""}
-                    className="p-2 h-14 text-xl font-semibold cursor-pointer text-black bg-white border border-black px-4 rounded-[5px] w-1/3"
-                    disabled={!selectedAccount} // Disable if no account is selected
-                    required
-                  >
-                    <option value="" disabled>Select a property</option>
-                    {properties.map((property, index) => (
-                      <option key={property.property} className="bg-white" value={propertyIds[index]}>
-                        {property.displayName}
-                      </option>
-                    ))}
+                  {selectedReport?.includes('campaigns') &&
+                    <select
+                      onChange={handlePropertyChange}
+                      value={selectedCampaign || ""}
+                      className="p-2 h-14 text-xl font-semibold cursor-pointer text-black bg-white border border-black px-4 rounded-[5px] w-1/3"
+                      disabled={!selectedAccount} // Disable if no account is selected
+                      required
+                    >
+                      <option value="" disabled>Select a property</option>
+                      {properties.map((property, index) => (
+                        <option key={property.property} className="bg-white" value={propertyIds[index]}>
+                          {property.displayName}
+                        </option>
+                      ))}
 
-                  </select>
+                    </select>
+                  }
 
                   <div className="relative w-1/3" ref={dropdownRef}>
                     <button
@@ -251,7 +254,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
                     </button>
                     {dropdownVisible && (
                       <div className="absolute bg-white border shadow-lg mt-2 z-10 max-h-80 overflow-y-scroll">
-                        {Object.entries(reportOptions).map(([key, label]) => (
+                        {Object.entries(reportOptionsLinkedin).map(([key, label]) => (
                           <div key={key} className="flex items-center p-2 ">
                             <input
                               type="checkbox"

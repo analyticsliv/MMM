@@ -31,7 +31,7 @@ const LinkedInConnectorPage = () => {
   useEffect(() => {
     async function toTestAuth() {
       const data = await getConnectorData('linkedIn', user?.email);
-      setIsAuthorize(data)
+      setIsAuthorize(data);
     }
     if(user?.email){
       toTestAuth();
@@ -41,7 +41,7 @@ const LinkedInConnectorPage = () => {
   useEffect(() => {
     if (isAuthrozie && isAuthrozie.refreshToken) {
       // Redirect the user with the refresh_token in the URL
-      const redirectUrl = `/feature/connectors/linkedInConnector/sucess?refresh_token=${encodeURIComponent(isAuthrozie.refreshToken)}`;
+      const redirectUrl = `/feature/connectors/linkedInConnector/sucess?access_token=${encodeURIComponent(isAuthrozie.accessToken)}`;
       router.push(redirectUrl); // Next.js navigation
     }
   }, [isAuthrozie, router]);
