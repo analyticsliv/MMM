@@ -127,7 +127,14 @@ const Page: React.FC = () => {
         <button onClick={openModal} className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg">
           Open DV360 Modal
         </button>
-      )
+      ) : jobData?.job?.status === 'failed' ?
+        <div className="flex flex-col items-center gap-2">
+          <p>Connector was failed !</p>
+          <p>Try again !</p>
+          <button onClick={openModal} className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg">
+            Open DV360 Modal
+          </button>
+        </div>
         : (
           <div>
             Connector is already connected!
@@ -147,7 +154,7 @@ const Page: React.FC = () => {
           }}
           accessToken={accessToken}
           setLoadingScreen={setLoadingScreen}
-          refreshToken = {refreshToken}
+          refreshToken={refreshToken}
         />
       )}
     </div>

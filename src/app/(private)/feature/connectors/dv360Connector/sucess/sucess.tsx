@@ -25,7 +25,7 @@ interface SuccessModalProps {
 
 const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSuccess, setLoadingScreen, setStatusCheck, accessToken, refreshToken }) => {
     const [selectedAdvertiser, setSelectedAdvertiser] = useState<string | null>(null);
-    const [selectedReport, setSelectedReport] = useState([]);
+    const [selectedReport, setSelectedReport] = useState('');
     const [dropdownVisible, setDropdownVisible] = useState(false);
     const dropdownRef = useRef(null);
     const searchParams = useSearchParams();
@@ -61,12 +61,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
 
 
     const handleReportChange = (event: any) => {
-        const { value, checked } = event.target;
-        setSelectedReport(prevSelectedReports =>
-            checked
-                ? [...prevSelectedReports, value]
-                : prevSelectedReports.filter(report => report !== value)
-        );
+        setSelectedReport(event.target.value);
     };
 
 
@@ -93,8 +88,8 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
             return;
         }
 
-        if (selectedReport?.length === 0) {
-            notify('Please select at least one report!', 'error');
+        if (!selectedReport) {
+            notify('Please select the report!', 'error');
             return;
         }
         const data = {
@@ -104,7 +99,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
             start_date: formattedStartDate,
             end_date: formattedEndDate,
             advertiser_id: selectedAdvertiser,
-            report_type: selectedReport.join(", "),
+            report_type: selectedReport,
             jobId: jobId,
             email: user?.email
         };
@@ -116,7 +111,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
             const response = await dv360Connector(data);
 
             setSelectedAdvertiser(null);
-            setSelectedReport([]);
+            setSelectedReport('');
             if (response?.success) {
                 onSubmitSuccess('DV360 Connector Successful!');
             } else {
@@ -190,44 +185,21 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
                                         )}
                                     </select>
 
-                                    <div className="relative w-[50%]" ref={dropdownRef}>
-                                        <button
-                                            onClick={() => setDropdownVisible(!dropdownVisible)}
-                                            className={`p-2 h-14 text-xl font-semibold cursor-pointer flex items-center justify-between text-black bg-white border border-black px-4 rounded-[5px] w-full ${selectedReport?.length > 0}`}
-                                        >
-                                            Select Reports
-                                            <span className="relative ml-2">
-                                                {selectedReport?.length > 0 && (
-                                                    <span className="bg-primary text-white px-2 py-1 rounded-full absolute left-0 transform translate-y-[-50%]">
-                                                        {selectedReport?.length}
-                                                    </span>
-                                                )}
-                                            </span>
-                                            <img className="ml-2 max-h-5 max-w-5 "
-                                                src="/assets/dropdown1.webp"
-                                            />
-                                        </button>
-                                        {dropdownVisible && (
-                                            <div className="absolute bg-white border shadow-lg mt-2 z-10 max-h-80 overflow-y-scroll">
-                                                {Object.entries(reportOptionsDv360)?.map(([key, label]) => (
-                                                    <div key={key} className="flex items-center p-2 ">
-                                                        <input
-                                                            type="checkbox"
-                                                            id={key}
-                                                            value={key}
-                                                            checked={selectedReport?.includes(key)}
-                                                            onChange={handleReportChange}
-                                                            className="mr-2"
-                                                            required
-                                                        />
-                                                        <label htmlFor={key} className="text-lg">
-                                                            {label}
-                                                        </label>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
+                                    <select
+                                        onChange={handleReportChange}
+                                        value={selectedReport || ""}
+                                        className="p-2 h-14 text-xl font-semibold cursor-pointer text-black bg-white border border-black px-4 w-[50%] rounded-[5px]"
+                                        required
+                                    >
+                                        <>
+                                            <option value="" disabled>Select Reports</option>
+                                            {reportOptionsDv360?.map((report, index) => (
+                                                <option key={index} className="bg-white" value={report}>
+                                                    {report}
+                                                </option>
+                                            ))}
+                                        </>
+                                    </select>
                                 </div>
 
                                 <div className="flex justify-between pb-10 2xl:pb-0">
