@@ -7,7 +7,8 @@ import useUserSession from "@/components/hooks/useUserSession";
 import { updateOrCreateConnector } from "@/lib/userService";
 import { useSearchParams } from "next/navigation";
 import useConnector from "@/components/hooks/connectors/useConnectors";
-
+import { BarChart3 } from "lucide-react";
+import IntegrationCard from "@/components/IntegrationCard";
 const Page: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [jobData, setJobData] = useState<object | null>(null);
@@ -53,7 +54,7 @@ const Page: React.FC = () => {
         console.error('Error fetching job details:', error);
       }
     }
-    
+
     if (user && !jobId) {
       setJobId(createJobId('ga4', user?.email))
     }
@@ -112,7 +113,7 @@ const Page: React.FC = () => {
 
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
+    <div className="flex items-center justify-center min-h-screen bg-[#f4f7fd] px-4 relative overflow-hidden">
       {loadingScreen ? (
         <div className="flex flex-col justify-center items-center space-y-4">
           <div className="flex items-center">
@@ -125,15 +126,23 @@ const Page: React.FC = () => {
       ) : statusCheck === "inProgress" ? (
         <div>in progress</div>
       ) : jobData?.message === "Job not found" ? (
-        <button onClick={openModal} className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg">
-          Open GA4 Modal
-        </button>
-      )
-        : (
-          <div>
-            Connector is already connected!
-          </div>
-        )}
+        <IntegrationCard
+          icon={<BarChart3 className="w-16 h-16" />}
+          title="Google Analytics 4 Integration"
+          description="Seamlessly connect your GA4 account and start tracking your metrics in real-time."
+          onClick={openModal}
+          primaryColor="bg-blue-600"
+          textColor="text-white"
+          bgColor="bg-[#1e293b]"
+          borderColor="border border-white/20"
+          glowColor="rgba(59,130,246,0.6)"
+          buttonText="🚀 Connect GA4"
+        />
+      ) : (
+        <div className="text-center text-green-700 text-xl font-semibold">
+          Connector is already connected!
+        </div>
+      )}
 
       {isModalOpen && (
         <SuccessModal

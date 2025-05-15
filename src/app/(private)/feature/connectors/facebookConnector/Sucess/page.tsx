@@ -8,6 +8,8 @@ import { useSearchParams } from 'next/navigation';
 import { updateOrCreateConnector } from '@/lib/userService';
 import useUserSession from '@/components/hooks/useUserSession';
 import { useSession } from 'next-auth/react';
+import IntegrationCard from '@/components/IntegrationCard';
+import { BarChart3 } from 'lucide-react';
 
 const Page: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -52,11 +54,11 @@ const Page: React.FC = () => {
     if (user && !jobId) {
       setJobId(createJobId('facebook', user?.email));
     }
-    else if(jobId) {
+    else if (jobId) {
       getJobDetail(jobId);
     }
   }, [user, jobId]);
- 
+
 
   useEffect(() => {
     if (accessToken && user && typeof window !== 'undefined') {
@@ -71,7 +73,7 @@ const Page: React.FC = () => {
 
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
+    <div className="flex items-center justify-center min-h-screen bg-[#f4f7fd] px-4 relative overflow-hidden">
       {loadingScreen ? (
         <div className="flex flex-col justify-center items-center space-y-4">
           <div className="flex items-center">
@@ -82,9 +84,18 @@ const Page: React.FC = () => {
       ) : statusMessage ? (
         <div>{statusMessage}</div> // Display success or error message here
       ) : jobData?.message == "Job not found" ? (
-        <button onClick={openModal} className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg">
-          Open Facebook Modal
-        </button>
+        <IntegrationCard
+          icon={<BarChart3 className="w-16 h-16" />}
+          title="Meta Ads Integration"
+          description="Connect your Meta Ads account to run campaigns across Facebook, Instagram, and Messenger effortlessly."
+          onClick={openModal}
+          primaryColor="bg-[#4267B2]"
+          textColor="text-white"
+          bgColor="bg-[#121d2e]"
+          borderColor="border border-white/20"
+          glowColor="rgba(66,103,178,0.6)"
+          buttonText="📣 Connect Meta Ads"
+        />
       ) : (
         <div>Connector is already connected!</div>
       )}
@@ -94,7 +105,7 @@ const Page: React.FC = () => {
           setIsModalOpen(false);
           setLoadingScreen(true);
         }}
-        accessToken={accessToken}
+          accessToken={accessToken}
           setLoadingScreen={setLoadingScreen}// Pass the callback function
         />
       )}
