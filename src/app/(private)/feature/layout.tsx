@@ -12,8 +12,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         { imgUrl: "/assets/nav3.png", label: "MMM", path: "/feature/mmm", arrow: "/assets/triangle.png" },
         { imgUrl: "/assets/nav4.png", label: "Reports", path: "/feature/reports", arrow: "/assets/triangle.png" },
         { imgUrl: "/assets/nav5.png", label: "Admin", path: "/feature/admin" },
-        { imgUrl: "/assets/nav2.png", label: "Previous Connector", path: "/feature/previousConnector" },
+        { imgUrl: "/assets/nav2.png", label: "Previous Connector", path: "/feature/connectors/previousConnector" },
     ];
+
     const { data: session, status } = useSession();
     const router = useRouter();
 
@@ -53,7 +54,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                         </div>
                         <nav className="flex text-xl flex-col justify-between">
                             {menuItems?.map((item) => {
-                                const isActive = pathname === item?.path || (pathname.startsWith(item?.path) && item?.path !== "/feature");
+                                const isActive = (() => {
+                                    if (item?.path === "/feature/connectors") {
+                                        return pathname.startsWith("/feature/connectors") && !pathname.startsWith("/feature/connectors/previousConnector");
+                                    }
+                                    return pathname === item.path;
+                                })();
                                 return (
                                     <Link key={item?.path} href={item?.path} className="w-full">
                                         <div className={`w-full border-b border-b-[#3F5D88] py-5 px-4 flex items-center justify-between text-start gap-3 text-xl font-bold

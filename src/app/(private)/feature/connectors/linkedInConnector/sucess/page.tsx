@@ -7,6 +7,8 @@ import useUserSession from "@/components/hooks/useUserSession";
 import { updateOrCreateConnector } from "@/lib/userService";
 import { useSearchParams } from "next/navigation";
 import useConnector from "@/components/hooks/connectors/useConnectors";
+import IntegrationCard from "@/components/IntegrationCard";
+import { BarChart3 } from "lucide-react";
 
 const Page: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -121,7 +123,7 @@ const Page: React.FC = () => {
 
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
+    <div className="flex items-center justify-center min-h-screen bg-[#f4f7fd] px-4 relative overflow-hidden">
       {loadingScreen ? (
         <div className="flex flex-col justify-center items-center space-y-4">
           <div className="flex items-center">
@@ -134,9 +136,19 @@ const Page: React.FC = () => {
       ) : statusCheck === "inProgress" ? (
         <div>in progress</div>
       ) : jobData?.message === "Job not found" ? (
-        <button onClick={openModal} className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg">
-          Open LinkedIn Modal
-        </button>
+        <IntegrationCard
+          icon={<BarChart3 className="w-16 h-16" />}
+          title="LinkedIn Ads Integration"
+          description="Connect your LinkedIn Ads account to target professionals and optimize your B2B campaigns."
+          onClick={openModal}
+          primaryColor="bg-[#0077b5]" // LinkedIn Blue
+          textColor="text-white"
+          bgColor="bg-[#0a0f1c]"
+          borderColor="border border-white/20"
+          glowColor="rgba(0,119,181,0.6)"
+          buttonText="🔗 Connect LinkedIn Ads"
+        />
+
       )
         : (
           <div>
