@@ -26,7 +26,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
 
     const { access_token: accessToken } = data;
     
-    const successUrl = `${baseUrl}feature/connectors/facebookConnector/sucess?accessToken=${encodeURIComponent(accessToken)}`;
+    const successUrl = `${baseUrl}feature/connectors/facebookConnector/Sucess?accessToken=${encodeURIComponent(accessToken)}`;
     return NextResponse.redirect(successUrl);
 
 

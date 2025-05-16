@@ -18,7 +18,7 @@ const FacebookAuthButton = () => {
   useEffect(() => {
     if (isAuthrozie?.accessToken) {
       const accessTokenParam = encodeURIComponent(isAuthrozie?.accessToken);
-      const successUrl = `/feature/connectors/facebookConnector/sucess?accessToken=${accessTokenParam}`;
+      const successUrl = `/feature/connectors/facebookConnector/Sucess?accessToken=${accessTokenParam}`;
 
       // Redirect to the success page with the access token
       router.push(successUrl);

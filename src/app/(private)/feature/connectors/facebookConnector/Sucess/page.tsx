@@ -1,15 +1,15 @@
-"use client"
+"use client";
 
 import React, { useEffect, useState } from 'react';
 import SuccessModal from "./success"
 import { createJobId } from '@/utils/helper';
 import { useUser } from '@/app/context/UserContext';
 import { useSearchParams } from 'next/navigation';
-import { updateOrCreateConnector } from '@/lib/userService';
 import useUserSession from '@/components/hooks/useUserSession';
 import { useSession } from 'next-auth/react';
 import IntegrationCard from '@/components/IntegrationCard';
 import { BarChart3 } from 'lucide-react';
+import useConnector from '@/components/hooks/connectors/useConnectors';
 
 const Page: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -19,6 +19,7 @@ const Page: React.FC = () => {
   const { user, setUser } = useUserSession();
   const [jobId, setJobId] = useState(String);
   const { data: session, status } = useSession();
+  const { updateOrCreateConnector, getConnectorData, error, loading } = useConnector();
 
   const searchParams = useSearchParams();
   const accessToken = searchParams.get('accessToken');
