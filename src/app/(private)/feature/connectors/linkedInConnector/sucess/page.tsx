@@ -9,6 +9,7 @@ import { useSearchParams } from "next/navigation";
 import useConnector from "@/components/hooks/connectors/useConnectors";
 import IntegrationCard from "@/components/IntegrationCard";
 import { BarChart3 } from "lucide-react";
+import FullScreenLoader from "@/components/FullScreenLoader";
 
 const Page: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -125,12 +126,7 @@ const Page: React.FC = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-[#f4f7fd] px-4 relative overflow-hidden">
       {loadingScreen ? (
-        <div className="flex flex-col justify-center items-center space-y-4">
-          <div className="flex items-center">
-            <div className="w-12 h-12 border-4 border-t-transparent border-blue-500 border-solid rounded-full animate-spin"></div>
-          </div>
-          <span className="text-lg font-semibold text-gray-700">Loading...</span>
-        </div>
+        <FullScreenLoader message="Verifying connector job..." />
       ) : statusMessage ? (
         <div>{statusMessage}</div>
       ) : statusCheck === "inProgress" ? (

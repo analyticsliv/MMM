@@ -149,7 +149,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
                     <div className="fixed inset-0 flex items-center justify-center p-5">
                         <div className="bg-white p-6 flex relative flex-col justify-between rounded-lg shadow-lg w-[650px] h-[340px] 2xl:w-[700px] 2xl:h-[340px]">
                             <div className="flex items-center">
-                                <Dialog.Title className=" flex justify-center items-center absolute gap-4 top-[-37px] left-[40%] rounded-[10px] shadow-xl text-2xl text-[#010101] bg-white font-bold text-center px-8 py-3 mb-4 mx-auto">
+                                <Dialog.Title className=" flex justify-center items-center absolute gap-4 top-[-23px] left-[40%] rounded-[10px] shadow-xl text-2xl text-[#010101] bg-white font-bold text-center px-8 py-3 mb-4 mx-auto">
                                     <img src="/assets/meta_logo.png" alt="Facebook" />
                                     <div>Facebook </div>
                                 </Dialog.Title>
