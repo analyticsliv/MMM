@@ -10,6 +10,7 @@ import { useSession } from 'next-auth/react';
 import IntegrationCard from '@/components/IntegrationCard';
 import { BarChart3 } from 'lucide-react';
 import useConnector from '@/components/hooks/connectors/useConnectors';
+import FullScreenLoader from '@/components/FullScreenLoader';
 
 const Page: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -80,14 +81,7 @@ const Page: React.FC = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-[#f4f7fd] px-4 relative overflow-hidden">
       {loadingScreen ? (
-        <div className="fixed z-50 h-full w-[85%] flex justify-center items-center bg-white">
-          <div className="flex flex-col justify-center items-center">
-            <div className="loader"></div>
-            <p className="mt-4 text-xl font-semibold text-gray-700">
-              Loading...
-            </p>
-          </div>
-        </div>
+        <FullScreenLoader message="Verifying connector job..." />
       ) : statusMessage ? (
         <div>{statusMessage}</div> // Display success or error message here
       ) : jobData?.message == "Job not found" ? (
