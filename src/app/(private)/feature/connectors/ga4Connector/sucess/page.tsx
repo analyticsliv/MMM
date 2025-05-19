@@ -34,6 +34,7 @@ const Page: React.FC = () => {
   useEffect(() => {
     async function getJobDetail(jobId: string) {
       try {
+        setLoadingScreen(true);
         const response = await fetch('/api/connectors/jobCheck', {
           method: 'POST',
           headers: {
@@ -43,14 +44,17 @@ const Page: React.FC = () => {
         });
 
         if (!response.ok) {
+          setLoadingScreen(false);
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
+        setLoadingScreen(false);
         setJobData(data); // Store jobId in state
         console.log("API response:", data);
 
       } catch (error) {
+        setLoadingScreen(false);
         console.error('Error fetching job details:', error);
       }
     }
@@ -115,11 +119,13 @@ const Page: React.FC = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-[#f4f7fd] px-4 relative overflow-hidden">
       {loadingScreen ? (
-        <div className="flex flex-col justify-center items-center space-y-4">
-          <div className="flex items-center">
-            <div className="w-12 h-12 border-4 border-t-transparent border-blue-500 border-solid rounded-full animate-spin"></div>
+        <div className="fixed z-50 h-full w-[85%] flex justify-center items-center bg-white">
+          <div className="flex flex-col justify-center items-center">
+            <div className="loader"></div>
+            <p className="mt-4 text-xl font-semibold text-gray-700">
+              Loading...
+            </p>
           </div>
-          <span className="text-lg font-semibold text-gray-700">Loading...</span>
         </div>
       ) : statusMessage ? (
         <div>{statusMessage}</div>
