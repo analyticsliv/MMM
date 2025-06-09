@@ -12,7 +12,6 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ message: 'Email and connectorName are required' }, { status: 400 });
     }
 
-    console.log(Connector)
     try {
         await connectToDatabase();
 
