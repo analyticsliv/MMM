@@ -62,7 +62,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                 })();
                                 return (
                                     <Link key={item?.path} href={item?.path} className="w-full">
-                                        <div className={`w-full border-b border-b-[#3F5D88] py-5 px-4 flex items-center justify-between text-start gap-3 text-xl font-bold
+                                        <div title={item?.label} className={`w-full border-b border-b-[#3F5D88] py-5 px-4 flex items-center justify-between text-start gap-3 text-xl font-bold
                                     ${isActive ? " text-white bg-custom-gradient"
                                                 : "text-white hover:bg-gray-800"
                                             }`}>
@@ -83,9 +83,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                 );
                             })}
                             <div id="label-id"
+                                title="Sign Out"
                                 onClick={handleSignOut}
                                 className="px-[11px] w-full text-xl text-gray-300 rounded-[5px] hover:bg-gray-900
-                                border-b border-b-[#3F5D88] py-5 flex items-center justify-start text-start gap-3 font-bold"
+                                border-b border-b-[#3F5D88] py-5 flex items-center justify-start text-start gap-3 font-bold cursor-pointer"
                             ><img src="/assets/icons8-logout-16.png" alt="logout" className="h-7 w-7 mr-3" />
                                 {!toggle && (
                                     <div
@@ -100,7 +101,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     </div>
                     <div className="flex flex-col">
                         <div className={`${toggle ? "" : "px-10"}`}>
-                            <div className="bg-white cursor-pointer rounded-md flex justify-center items-center py-3 px-3 gap-3 mb-3">
+                            <div title="Invite Teammates" className="bg-white cursor-pointer rounded-md flex justify-center items-center py-3 px-3 gap-3 mb-3">
                                 <img src="/assets/email.png" alt="email" />
                                 {!toggle && (
                                     <div
@@ -111,7 +112,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                     </div>
                                 )}
                             </div>
-                            <div className="flex cursor-pointer justify-center items-center py-3 gap-3">
+                            <div title="Help with MMM" className="flex cursor-pointer justify-center items-center py-3 gap-3">
                                 <img src="/assets/Help.png" alt="Help" className="h-9" />
                                 {!toggle && (
                                     <div
