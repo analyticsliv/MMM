@@ -30,8 +30,8 @@ const PreviousConnectors = () => {
       try {
         setLoading(true);
         const response = await axios.get(`/api/connectors/prevConnectors?email=${user?.email}`);
-        // const data = await response.
-        setPrevJobs(response?.data);
+        const data = await response?.data.reverse()
+        setPrevJobs(data);
       } catch (error) {
         console.error('Error fetching prevJobs:', error);
         alert('Error fetching prevJobs. Please try again.');
