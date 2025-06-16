@@ -97,3 +97,51 @@ export async function updateOrCreateConnector(userEmail: string, connectorType: 
 
     return { user, feature, connector };
 }
+
+
+
+export async function handleExpiredRefreshToken(refreshToken: string) {
+    const providers = ['ga4', 'facebook', 'dv360', 'googleAds', 'linkedIn'];
+
+    // Step 1: Find which provider has the matching refresh token
+    const query = {
+        $or: providers.map(provider => ({
+            [`${provider}.refreshToken`]: refreshToken
+        }))
+    };
+
+    const doc = await Connector.findOne(query);
+
+    if (!doc) {
+        console.warn(`⚠️ No matching refresh token found in any provider`);
+        return;
+    }
+
+    // Step 2: Find the exact provider key that matched
+    const matchedProvider = providers.find(provider => 
+        doc[provider]?.refreshToken === refreshToken
+    );
+
+    if (!matchedProvider) {
+        console.warn(`⚠️ Refresh token found, but provider key could not be resolved`);
+        return;
+    }
+
+    // Step 3: Remove only that specific provider field
+    const unsetUpdate = {
+        $unset: {
+            [matchedProvider]: ''
+        }
+    };
+
+    const result = await Connector.updateOne(
+        { _id: doc._id },
+        unsetUpdate
+    );
+
+    if (result.modifiedCount > 0) {
+        console.log(`✅ Deleted '${matchedProvider}' provider with matching refresh token`);
+    } else {
+        console.warn(`⚠️ Failed to unset '${matchedProvider}' field`);
+    }
+}
