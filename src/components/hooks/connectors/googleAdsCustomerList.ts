@@ -18,8 +18,8 @@ const useCustomerSummaries = (accessToken: string | null) => {
     const devToken = 'GADvxdtoU2fCzjFRGNpleg';
 
     // Google Ads API endpoint
-    const listAccessibleCustomersUrl = 'https://googleads.googleapis.com/v17/customers:listAccessibleCustomers';
-    const searchGoogleAdsQueryUrl = 'https://googleads.googleapis.com/v17/customers/{customerId}/googleAds:search'; // Template URL for querying details
+    const listAccessibleCustomersUrl = 'https://googleads.googleapis.com/v18/customers:listAccessibleCustomers';
+    const searchGoogleAdsQueryUrl = 'https://googleads.googleapis.com/v18/customers/{customerId}/googleAds:search'; // Template URL for querying details
 
     // Token endpoint for refreshing the access token
     const tokenUrl = 'https://oauth2.googleapis.com/token';
