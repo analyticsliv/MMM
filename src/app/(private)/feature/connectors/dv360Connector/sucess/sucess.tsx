@@ -8,7 +8,7 @@ import { useSearchParams } from "next/navigation";
 import useToast from "@/components/hooks/toast";
 import { ToastContainer } from "react-toastify";
 import { format } from 'date-fns';
-import { reportOptions } from "@/utils/const";
+import { reportOptionsDv360 } from "@/utils/const";
 import useDv360Advertisers from "@/components/hooks/connectors/dv360Advertiser";
 import { createJobId } from "@/utils/helper";
 import useDv360Connector from "@/components/hooks/connectors/useDv360Connector";
@@ -20,21 +20,21 @@ interface SuccessModalProps {
     setLoadingScreen: (loading: boolean) => void;
     setStatusCheck: (loading: boolean) => void;
     accessToken: string | null;
-    refreshToken : string | null
+    refreshToken: string | null
 }
 
-const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSuccess, setLoadingScreen, setStatusCheck, accessToken,refreshToken }) => {
+const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSuccess, setLoadingScreen, setStatusCheck, accessToken, refreshToken }) => {
     const [selectedAdvertiser, setSelectedAdvertiser] = useState<string | null>(null);
-    const [selectedReport, setSelectedReport] = useState([]);
+    const [selectedReport, setSelectedReport] = useState('');
     const [dropdownVisible, setDropdownVisible] = useState(false);
     const dropdownRef = useRef(null);
     const searchParams = useSearchParams();
     const { dv360Connector } = useDv360Connector();
-    
+
     const user = JSON.parse(localStorage.getItem('userSession') || '{}')?.user;
     const jobId = createJobId('dv360', user?.email);
 
-    const handleOutsideClick = (event:any) => {
+    const handleOutsideClick = (event: any) => {
         if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
             setDropdownVisible(false);
         }
@@ -60,16 +60,11 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
     };
 
 
-    const handleReportChange = (event:any) => {
-        const { value, checked } = event.target;
-        setSelectedReport(prevSelectedReports =>
-            checked
-                ? [...prevSelectedReports, value]
-                : prevSelectedReports.filter(report => report !== value)
-        );
+    const handleReportChange = (event: any) => {
+        setSelectedReport(event.target.value);
     };
 
-   
+
     const [dateRange, setDateRange] = useState<{ startDate: Date | null; endDate: Date | null }>({
         startDate: null,
         endDate: null
@@ -78,11 +73,11 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
         setDateRange({ startDate, endDate });
     };
 
-    const handleSubmit = async (event:any) => {
+    const handleSubmit = async (event: any) => {
         event.preventDefault();
 
-        const formattedStartDate = dateRange.startDate ? format(dateRange.startDate, 'yyyy-MM-dd') : null;
-        const formattedEndDate = dateRange.endDate ? format(dateRange.endDate, 'yyyy-MM-dd') : null;
+        const formattedStartDate = dateRange?.startDate ? format(dateRange?.startDate, 'yyyy-MM-dd') : null;
+        const formattedEndDate = dateRange?.endDate ? format(dateRange?.endDate, 'yyyy-MM-dd') : null;
 
         if (!formattedStartDate || !formattedEndDate) {
             notify('Please select Date Range!', 'error');
@@ -92,9 +87,9 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
             notify('Please select an Advertiser first!', 'error');
             return;
         }
-       
-        if (selectedReport?.length === 0) {
-            notify('Please select at least one report!', 'error');
+
+        if (!selectedReport) {
+            notify('Please select the report!', 'error');
             return;
         }
         const data = {
@@ -103,7 +98,8 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
             dataset_name: "trial_data",
             start_date: formattedStartDate,
             end_date: formattedEndDate,
-            reports_list: selectedReport,
+            advertiser_id: selectedAdvertiser,
+            report_type: selectedReport,
             jobId: jobId,
             email: user?.email
         };
@@ -115,8 +111,8 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
             const response = await dv360Connector(data);
 
             setSelectedAdvertiser(null);
-            setSelectedReport([]);
-            if (response.success) {
+            setSelectedReport('');
+            if (response?.success) {
                 onSubmitSuccess('DV360 Connector Successful!');
             } else {
                 onSubmitSuccess('DV360 Connector Failed!');
@@ -181,7 +177,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
                                             <>
                                                 <option value="" disabled>Select an Advertiser</option>
                                                 {advertisers?.map((advertiser, index) => (
-                                                    <option key={index} className="bg-white" value={advertiser?.id}>
+                                                    <option key={index} className="bg-white" value={advertiser?.advertiserId}>
                                                         {advertiser?.displayName}
                                                     </option>
                                                 ))}
@@ -189,44 +185,21 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
                                         )}
                                     </select>
 
-                                    <div className="relative w-[50%]" ref={dropdownRef}>
-                                        <button
-                                            onClick={() => setDropdownVisible(!dropdownVisible)}
-                                            className={`p-2 h-14 text-xl font-semibold cursor-pointer flex items-center justify-between text-black bg-white border border-black px-4 rounded-[5px] w-full ${selectedReport?.length > 0}`}
-                                        >
-                                            Select Reports
-                                            <span className="relative ml-2">
-                                                {selectedReport?.length > 0 && (
-                                                    <span className="bg-primary text-white px-2 py-1 rounded-full absolute left-0 transform translate-y-[-50%]">
-                                                        {selectedReport?.length}
-                                                    </span>
-                                                )}
-                                            </span>
-                                            <img className="ml-2 max-h-5 max-w-5 "
-                                                src="/assets/dropdown1.webp"
-                                            />
-                                        </button>
-                                        {dropdownVisible && (
-                                            <div className="absolute bg-white border shadow-lg mt-2 z-10 max-h-80 overflow-y-scroll">
-                                                {Object.entries(reportOptions).map(([key, label]) => (
-                                                    <div key={key} className="flex items-center p-2 ">
-                                                        <input
-                                                            type="checkbox"
-                                                            id={key}
-                                                            value={key}
-                                                            checked={selectedReport?.includes(key)}
-                                                            onChange={handleReportChange}
-                                                            className="mr-2"
-                                                            required
-                                                        />
-                                                        <label htmlFor={key} className="text-lg">
-                                                            {label}
-                                                        </label>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
+                                    <select
+                                        onChange={handleReportChange}
+                                        value={selectedReport || ""}
+                                        className="p-2 h-14 text-xl font-semibold cursor-pointer text-black bg-white border border-black px-4 w-[50%] rounded-[5px]"
+                                        required
+                                    >
+                                        <>
+                                            <option value="" disabled>Select Reports</option>
+                                            {reportOptionsDv360?.map((report, index) => (
+                                                <option key={index} className="bg-white" value={report}>
+                                                    {report}
+                                                </option>
+                                            ))}
+                                        </>
+                                    </select>
                                 </div>
 
                                 <div className="flex justify-between pb-10 2xl:pb-0">

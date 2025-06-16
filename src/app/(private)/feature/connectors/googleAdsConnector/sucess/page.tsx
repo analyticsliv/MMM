@@ -5,6 +5,9 @@ import { createJobId } from '@/utils/helper';
 import useUserSession from "@/components/hooks/useUserSession";
 import { useSearchParams } from "next/navigation";
 import useConnector from "@/components/hooks/connectors/useConnectors";
+import IntegrationCard from "@/components/IntegrationCard";
+import { BarChart3 } from "lucide-react";
+import FullScreenLoader from "@/components/FullScreenLoader";
 
 const Page: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -29,6 +32,7 @@ const Page: React.FC = () => {
   useEffect(() => {
     async function getJobDetail(jobId: string) {
       try {
+        setLoadingScreen(true);
         const response = await fetch('/api/connectors/jobCheck', {
           method: 'POST',
           headers: {
@@ -38,14 +42,17 @@ const Page: React.FC = () => {
         });
 
         if (!response.ok) {
+          setLoadingScreen(false);
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
+        setLoadingScreen(false);
         setJobData(data); // Store jobId in state
         console.log("API response:", data);
 
       } catch (error) {
+        setLoadingScreen(false);
         console.error('Error fetching job details:', error);
       }
     }
@@ -71,7 +78,7 @@ const Page: React.FC = () => {
           refreshToken: data?.refresh_token,
           expriyTime: data?.expiry_date
         }
-console.log("connector data object",connectorData)
+        console.log("connector data object", connectorData)
         updateOrCreateConnector(user?.email, 'googleAds', connectorData);
       } catch (error) {
         console.error("Error getting tokens:", error);
@@ -90,7 +97,7 @@ console.log("connector data object",connectorData)
         });
 
         const data = await response.json();
-        console.log("access token ",data?.access_token)
+        console.log("access token ", data?.access_token)
         setAccessToken(data?.access_token || null);
       } catch (error) {
         console.error("Error getting access token using refresh token:", error);
@@ -106,22 +113,27 @@ console.log("connector data object",connectorData)
     }
   }, [code, refreshTokenParam, user]);
   return (
-    <div className="flex items-center justify-center min-h-screen">
+    <div className="flex items-center justify-center min-h-screen bg-[#f4f7fd] px-4 relative overflow-hidden">
       {loadingScreen ? (
-        <div className="flex flex-col justify-center items-center space-y-4">
-          <div className="flex items-center">
-            <div className="w-12 h-12 border-4 border-t-transparent border-blue-500 border-solid rounded-full animate-spin"></div>
-          </div>
-          <span className="text-lg font-semibold text-gray-700">Loading...</span>
-        </div>
+        <FullScreenLoader message="Verifying connector job..." />
       ) : statusMessage ? (
         <div>{statusMessage}</div>
       ) : statusCheck === "inProgress" ? (
         <div>in progress</div>
       ) : jobData?.message === "Job not found" ? (
-        <button onClick={openModal} className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg">
-          Open Google Ads Modal
-        </button>
+        <IntegrationCard
+          icon={<BarChart3 className="w-16 h-16" />}
+          title="Google Ads Integration"
+          description="Easily connect your Google Ads account to manage ad performance across search and display networks."
+          onClick={openModal}
+          primaryColor="bg-[#4285F4]" // Google Blue
+          textColor="text-white"
+          bgColor="bg-[#1a1a2e]"
+          borderColor="border border-white/20"
+          glowColor="rgba(66,133,244,0.6)"
+          buttonText="💡 Connect Google Ads"
+        />
+
       )
         : (
           <div>

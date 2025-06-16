@@ -49,7 +49,7 @@ const PreviousConnectors = () => {
     ga4: { name: "Google Analytics 4", image: "/assets/GA4_Logo.png" },
     googleAds: { name: "Google Ads", image: "/assets/Google Ads logo.png" },
     dv360: { name: "Display & Video 360", image: "/assets/dv360_logo (2).png" },
-    linkedIn: { name: "linkedIn", image: "/assets/dv360_logo (2).png" },
+    linkedIn: { name: "linkedIn", image: "/assets/linkedin_Logo.png" },
   };
 
   const statusStyles: any = {
@@ -68,7 +68,7 @@ const PreviousConnectors = () => {
         minute: "2-digit",
         second: "2-digit",
         hour12: true,
-        timeZone: "UTC",
+        timeZone: "Asia/Kolkata",
       })
       : "";
 

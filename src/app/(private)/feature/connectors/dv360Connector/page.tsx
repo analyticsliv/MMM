@@ -3,8 +3,8 @@ import { useUser } from '@/app/context/UserContext';
 import useConnector from '@/components/hooks/connectors/useConnectors';
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import SplashScreen from '@/app/SplashScreen';
 import useUserSession from '@/components/hooks/useUserSession';
+import FullScreenLoader from '@/components/FullScreenLoader';
 
 const DV360ConnectorPage = () => {
   const { getConnectorData, error, loading } = useConnector();
@@ -47,29 +47,13 @@ const DV360ConnectorPage = () => {
 
   if (loading) {
     return (
-      // <SplashScreen />
-      <div className="fixed z-50 h-full w-[85%] flex justify-center items-center bg-white">
-        <div className="flex flex-col justify-center items-center">
-          <div className="loader"></div>
-          <p className="mt-4 text-xl font-semibold text-gray-700">
-            Loading...
-          </p>
-        </div>
-      </div>
+      <FullScreenLoader message="Checking authorization..." />
     )
     //  <h1>Its loading </h1>
   }
   else if (isAuthrozie) {
     return (
-      // <SplashScreen />
-      <div className="fixed z-50 h-full w-[85%] flex justify-center items-center bg-white">
-        <div className="flex flex-col justify-center items-center">
-          <div className="loader"></div>
-          <p className="mt-4 text-xl font-semibold text-gray-700">
-            Loading...
-          </p>
-        </div>
-      </div>
+      <FullScreenLoader message="Checking authorization..." />
     )
     // <h1>Altredy authenticated</h1>
   }

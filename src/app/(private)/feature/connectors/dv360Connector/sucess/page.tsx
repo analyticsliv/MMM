@@ -6,6 +6,9 @@ import { useUser } from "@/app/context/UserContext";
 import useUserSession from "@/components/hooks/useUserSession";
 import { useSearchParams } from "next/navigation";
 import useConnector from "@/components/hooks/connectors/useConnectors";
+import IntegrationCard from "@/components/IntegrationCard";
+import { BarChart3 } from "lucide-react";
+import FullScreenLoader from "@/components/FullScreenLoader";
 
 const Page: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -30,6 +33,7 @@ const Page: React.FC = () => {
   useEffect(() => {
     async function getJobDetail(jobId: string) {
       try {
+        setLoadingScreen(true);
         const response = await fetch('/api/connectors/jobCheck', {
           method: 'POST',
           headers: {
@@ -39,14 +43,15 @@ const Page: React.FC = () => {
         });
 
         if (!response.ok) {
+          setLoadingScreen(false);
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
+        setLoadingScreen(false);
         setJobData(data); // Store jobId in state
-        console.log("API response:", data);
-
       } catch (error) {
+        setLoadingScreen(false);
         console.error('Error fetching job details:', error);
       }
     }
@@ -109,23 +114,43 @@ const Page: React.FC = () => {
 
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
+    <div className="flex items-center justify-center min-h-screen bg-[#f4f7fd] px-4 relative overflow-hidden">
       {loadingScreen ? (
-        <div className="flex flex-col justify-center items-center space-y-4">
-          <div className="flex items-center">
-            <div className="w-12 h-12 border-4 border-t-transparent border-blue-500 border-solid rounded-full animate-spin"></div>
-          </div>
-          <span className="text-lg font-semibold text-gray-700">Loading...</span>
-        </div>
+        <FullScreenLoader message="Verifying connector job..." />
       ) : statusMessage ? (
         <div>{statusMessage}</div>
       ) : statusCheck === "inProgress" ? (
         <div>in progress</div>
       ) : jobData?.message === "Job not found" ? (
-        <button onClick={openModal} className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg">
-          Open DV360 Modal
-        </button>
-      )
+        <IntegrationCard
+          icon={<BarChart3 className="w-16 h-16" />}
+          title="DV360 Integration"
+          description="Connect your DV360 account to manage campaigns and measure performance across the web."
+          onClick={openModal}
+          primaryColor="bg-[#10b981]"
+          textColor="text-[#e0f2f1]"
+          bgColor="bg-[#0f2c2c]"
+          borderColor="border border-[#2e4a4a]"
+          glowColor="rgba(16,185,129,0.6)"
+          buttonText="🔗 Connect DV360"
+        />
+      ) : jobData?.job?.status === 'failed' ?
+        <div className="flex flex-col items-center gap-2">
+          <p>Connector was failed !</p>
+          <p>Try again !</p>
+          <IntegrationCard
+            icon={<BarChart3 className="w-16 h-16" />}
+            title="DV360 Integration"
+            description="Connect your DV360 account to manage campaigns and measure performance across the web."
+            onClick={openModal}
+            primaryColor="bg-[#10b981]"
+            textColor="text-[#e0f2f1]"
+            bgColor="bg-[#0f2c2c]"
+            borderColor="border border-[#2e4a4a]"
+            glowColor="rgba(16,185,129,0.6)"
+            buttonText="🔗 Connect DV360"
+          />
+        </div>
         : (
           <div>
             Connector is already connected!
@@ -145,7 +170,7 @@ const Page: React.FC = () => {
           }}
           accessToken={accessToken}
           setLoadingScreen={setLoadingScreen}
-          refreshToken = {refreshToken}
+          refreshToken={refreshToken}
         />
       )}
     </div>

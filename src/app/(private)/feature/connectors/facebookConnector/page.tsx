@@ -1,6 +1,7 @@
 // src/components/FacebookAuthButton.tsx
 "use client";
 import { useUser } from '@/app/context/UserContext';
+import FullScreenLoader from '@/components/FullScreenLoader';
 import useConnector from '@/components/hooks/connectors/useConnectors';
 import useUserSession from '@/components/hooks/useUserSession';
 // import { useRouter } from 'next/router';
@@ -18,7 +19,7 @@ const FacebookAuthButton = () => {
   useEffect(() => {
     if (isAuthrozie?.accessToken) {
       const accessTokenParam = encodeURIComponent(isAuthrozie?.accessToken);
-      const successUrl = `/feature/connectors/facebookConnector/sucess?accessToken=${accessTokenParam}`;
+      const successUrl = `/feature/connectors/facebookConnector/Sucess?accessToken=${accessTokenParam}`;
 
       // Redirect to the success page with the access token
       router.push(successUrl);
@@ -51,24 +52,14 @@ const FacebookAuthButton = () => {
   }, [user])
 
   if (loading) {
-    return (<div className="fixed z-50 h-full w-[85%] flex justify-center items-center bg-white">
-      <div className="flex flex-col justify-center items-center">
-        <div className="loader"></div>
-        <p className="mt-4 text-xl font-semibold text-gray-700">
-          Loading...
-        </p>
-      </div>
-    </div>)
+    return (
+      <FullScreenLoader message="Checking authorization..." />
+    )
   }
   else if (isAuthrozie) {
-    return (<div className="fixed z-50 h-full w-[85%] flex justify-center items-center bg-white">
-      <div className="flex flex-col justify-center items-center">
-        <div className="loader"></div>
-        <p className="mt-4 text-xl font-semibold text-gray-700">
-          Loading...
-        </p>
-      </div>
-    </div>)
+    return (
+      <FullScreenLoader message="Checking authorization..." />
+    )
   }
 
 
