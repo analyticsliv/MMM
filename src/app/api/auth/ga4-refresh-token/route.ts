@@ -1,3 +1,4 @@
+import { handleExpiredRefreshToken } from '@/lib/userService';
 import { NextResponse } from 'next/server';
 
 // The `POST` method is used to handle the request, since you're handling `POST` requests for token refresh
@@ -27,7 +28,13 @@ export async function POST(request: Request) {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.error || 'Failed to refresh token');
+      // Token is expired or revoked — clean up and redirect user
+      await handleExpiredRefreshToken(refresh_token);
+
+      return NextResponse.json({
+        error: 'Refresh token expired or revoked',
+        redirect: true, // frontend can use this flag to redirect to login
+      }, { status: 401 });
     }
 
     // Respond with the new access token
