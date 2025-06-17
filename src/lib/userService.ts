@@ -1,5 +1,6 @@
 import User from '@/Models/User';
 import Feature from '@/Models/Feature';
+import connectToDatabase from './mongodb';
 import Connector from '@/Models/Connector';
 
 export async function handleFirstFeatureVisit(email: string) {
@@ -101,6 +102,7 @@ export async function updateOrCreateConnector(userEmail: string, connectorType: 
 
 
 export async function handleExpiredRefreshToken(refreshToken: string) {
+    await connectToDatabase();
     const providers = ['ga4', 'facebook', 'dv360', 'googleAds', 'linkedIn'];
 
     // Step 1: Find which provider has the matching refresh token
@@ -118,7 +120,7 @@ export async function handleExpiredRefreshToken(refreshToken: string) {
     }
 
     // Step 2: Find the exact provider key that matched
-    const matchedProvider = providers.find(provider => 
+    const matchedProvider = providers.find(provider =>
         doc[provider]?.refreshToken === refreshToken
     );
 
