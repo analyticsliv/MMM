@@ -4,6 +4,7 @@
 import SearchBar from "@/components/searchbar/search";
 import User from "@/components/User/user";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React from "react";
 // import { generateAuthUrl } from '@/lib/ga4Auth';
 
@@ -17,6 +18,13 @@ const Connectors = () => {
     { label: "LinkedIn Ads", path: "/feature/connectors/linkedInConnector", img: "/assets/linkedin_Logo.png" },
     { label: "Custom Connector", path: "/feature/connectors/CustomConnector", img: "/assets/custom_connector.png" },
   ];
+
+  const router = useRouter();
+
+  const handleRedirect = () =>{
+    router.push('/feature/connectors/previousConnector')
+  }
+
   return (
     <>
       <div className="w-full flex items-center pl-8 xl:pl-12 h-[50px] xl:h-[70px] bg-[#F6F8FE]">
@@ -25,7 +33,7 @@ const Connectors = () => {
       <div className="flex justify-between items-center max-w-[97%] xl:w-[97%] 2xl:w-[97%]">
         <User />
         <div>
-          <a href="/feature/connectors/previousConnector" className="px-5 py-3 bg-gray-800 hover:bg-white hover:text-gray-800 transition-all duration-300 border border-gray-900 text-lg font-semibold text-white rounded-[10px]">Previous Connectors</a>
+          <button onClick={handleRedirect} className="px-5 py-3 bg-gray-800 hover:bg-white hover:text-gray-800 transition-all duration-300 border border-gray-900 text-lg font-semibold text-white rounded-[10px]">Previous Connectors</button>
         </div>
       </div>
       <div className="flex flex-col justify-around h-[220px] xl:h-[250px] ml-8 pl-8 xl:ml-12 xl:pl-10 py-5 rounded-[15px] max-w-[95%] xl:w-[94.6%] 2xl:w-[97%] bg-homeGray gap-2 text-gray-700 ">

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import useUserSession from '@/components/hooks/useUserSession';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import SearchBar from '@/components/searchbar/search';
 import User from '@/components/User/user';
 
@@ -16,7 +16,7 @@ interface Connector {
 
 const PreviousConnectors = () => {
   const { user, setUser } = useUserSession();
-
+  const router = useRouter();
   const searchParams = useSearchParams();
   const code = searchParams.get("code");
 
@@ -75,6 +75,10 @@ const PreviousConnectors = () => {
   const totalPages = Math.ceil(prevJobs?.length / rowsPerPage);
   const paginationData = prevJobs?.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)
 
+  const handleRedirect = () => {
+    router.push('/feature/connectors')
+  }
+
   return (
 
     <>
@@ -90,9 +94,7 @@ const PreviousConnectors = () => {
           <input placeholder='Search' className='py-2 w-[40%] px-5 border border-[#D9D9D9] bg-transparent focus:outline-slate-400 placeholder-black' />
           <div className='w-[40%] flex justify-around items-center'>
             <button className='py-2 px-5 border border-[#D9D9D9] bg-transparent rounded-[5px]'>Last 30 days</button>
-            <a href='/feature/connectors'>
-              <button className='bg-primary py-2 px-6 text-base font-normal text-white rounded-[5px] border border-[#D9D9D9] hover:bg-[#253a5a] hover:text-white'>+ Add New</button>
-            </a>
+            <button onClick={handleRedirect} className='bg-primary py-2 px-6 text-base font-normal text-white rounded-[5px] border border-[#D9D9D9] hover:bg-[#253a5a] hover:text-white'>+ Add New</button>
           </div>
         </div>
         {loading ? (

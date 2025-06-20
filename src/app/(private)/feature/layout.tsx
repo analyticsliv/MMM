@@ -58,8 +58,21 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                     if (item?.path === "/feature/connectors") {
                                         return pathname.startsWith("/feature/connectors") && !pathname.startsWith("/feature/connectors/previousConnector");
                                     }
-                                    return pathname === item.path;
+                                    if (item?.path === "/feature/mmm") {
+                                        return pathname.startsWith("/feature/mmm");
+                                    }
+                                    if (item?.path === "/feature/reports") {
+                                        return pathname.startsWith("/feature/reports");
+                                    }
+                                    if (item?.path === "/feature/admin") {
+                                        return pathname.startsWith("/feature/admin");
+                                    }
+                                    if (item?.path === "/feature/connectors/previousConnector") {
+                                        return pathname === item?.path;
+                                    }
+                                    return pathname === item?.path;
                                 })();
+
                                 return (
                                     <Link key={item?.path} href={item?.path} className="w-full">
                                         <div title={item?.label} className={`w-full border-b border-b-[#3F5D88] py-5 px-4 flex items-center justify-between text-start gap-3 text-xl font-bold

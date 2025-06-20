@@ -12,7 +12,7 @@ export const reportOptions = {
     Demographics_details_Interests: 'Demographics Details Interests',
     Demographics_details_Geo_Language: 'Demographics Details Geo Language',
     Tech_details: 'Tech Details',
-  };
+};
 
 export const reportOptionsLinkedin = [
     'campaign_analytics',
@@ -26,4 +26,11 @@ export const reportOptionsDv360 = [
     'Insertion_Order_Line_Item_Level_Data',
     'App_URL_Data',
     'Creative_Level_Data',
+];
+
+export const controlStatic = [
+    'Is_Holiday_Week',
+    'Total_Users',
+    'New_Users',
+    'Screen_Page_Views',
 ];
