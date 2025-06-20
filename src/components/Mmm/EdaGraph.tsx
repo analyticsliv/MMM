@@ -21,6 +21,8 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF'];
 
 const EdaGraph = () => {
     const { campaigns } = useMMMStore();
+        console.log("campaign-",campaigns)
+
     const pieData = response?.eda_plot_json_values?.pie_chart_data;
     const lineChartRaw = response?.eda_plot_json_values?.line_chart_data;
 

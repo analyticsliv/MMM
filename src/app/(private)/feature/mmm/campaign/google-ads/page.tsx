@@ -50,8 +50,8 @@ const Page: React.FC = () => {
                 'client_id': client_id, connector_type: 'ga'
             }
             const response = await GetCampaignData(data);
-            if (response?.campaigns) {
-                setCampaigns(response.campaigns);
+            if (response) {
+                setCampaigns(response || []);
                 setSubmitted(true);
                 setCurrentStep(2);
                 setJobStatusMsg('');
@@ -127,7 +127,7 @@ const Page: React.FC = () => {
                 client_id, connector_type: 'ga'
             }
             const response = await GetCampaignData(data);
-            if (response?.campaigns) setCampaigns(response.campaigns);
+            if (response) setCampaigns(response || []);
             setSubmitted(true);
             setCurrentStep(2);
 
