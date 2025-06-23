@@ -32,7 +32,7 @@ const GoogleAdsTable: React.FC<Props> = ({ handleBack, onTableSubmit }) => {
     if (selectAll) {
       setSelectedCampaigns([]);
     } else {
-      setSelectedCampaigns(campaigns?.map((c) => c.Campaign_Name));
+      setSelectedCampaigns(campaigns?.campaigns?.map((c) => c.Campaign_Name));
     }
     setSelectAll(!selectAll);
   };
@@ -94,7 +94,7 @@ const GoogleAdsTable: React.FC<Props> = ({ handleBack, onTableSubmit }) => {
             </tr>
           </thead>
           <tbody className="divide-y">
-            {campaigns?.map((c, idx) => (
+            {campaigns?.campaigns?.map((c, idx) => (
               <tr
                 key={idx}
                 className={`hover:bg-blue-50 transition-colors duration-200 ${selectedCampaigns.includes(c?.Campaign_Name) ? 'bg-blue-50' : ''
