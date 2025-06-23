@@ -22,7 +22,8 @@ const MMMOptionsSection: React.FC<MMMOptionsSectionProps> = ({ handleBack }) => 
         selectedMediaSpend, setSelectedMediaSpend,
         selectedMedia, setSelectedMedia,
         selectedControl, setSelectedControl,
-        client_id
+        uniqueId, hasSubmitted, setHasSubmitted,
+        isSubmittingModal, setIsSubmittingModal
     } = useMMMStore();
 
     type SelectableFields = 'mediaSpend' | 'media' | 'control';
@@ -36,8 +37,10 @@ const MMMOptionsSection: React.FC<MMMOptionsSectionProps> = ({ handleBack }) => 
     });
 
     const [openDropdown, setOpenDropdown] = useState<null | string>(null);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [hasSubmitted, setHasSubmitted] = useState(false);
+      const [html, setHtml] = useState<string>('');
+
+    // const [isSubmittingModal, setIsSubmittingModal] = useState(false);
+    // const [hasSubmitted, setHasSubmitted] = useState(false);
     const { user, setUser } = useUserSession();
 
     const toggleDropdown = (field: string) => {
@@ -122,184 +125,248 @@ const MMMOptionsSection: React.FC<MMMOptionsSectionProps> = ({ handleBack }) => 
             controls: selectedControl,
             mean: roiMean,
             sigma: roiSigma,
-            client_id: client_id,
+            client_id: uniqueId,
             email: user?.email
         };
 
         try {
-            setIsSubmitting(true);
+            setIsSubmittingModal(true);
             setHasSubmitted(true);
-
-            const result = await runMMMModal(MmmModalData);
-            console.log('Modal result:', result);
-            alert('MMM Modal Run Success!');
             document.getElementById('eda-graph-section')?.scrollIntoView({ behavior: 'smooth' });
+            const result = await runMMMModal(MmmModalData);
+            setHtml(result)
+            alert('MMM Modal Run Success!');
 
         } catch (err) {
             alert('Failed to run modal');
         } finally {
-            setIsSubmitting(false);
+            setIsSubmittingModal(false);
         }
         console.log('Selected MMM Config:', MmmModalData);
     };
 
     return (
-        <div className='max-h-[90dvh] overflow-y-auto'>
-            <motion.div
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="lg:max-w-7xl mx-auto shadow-lg rounded-xl p-10 bg-white"
+      <div className="max-h-[90dvh] overflow-y-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="lg:max-w-7xl mx-auto shadow-lg rounded-xl p-10 bg-white"
+        >
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-bold text-gray-800">
+              MMM Configuration Options
+            </h2>
+            <button
+              onClick={handleBack}
+              disabled={isSubmittingModal}
+              className={`text-blue-600 hover:underline font-medium ${
+                isSubmittingModal ? "cursor-not-allowed" : "cursor-pointer"
+              }`}
             >
-                <div className="flex justify-between items-center">
-                    <h2 className="text-2xl font-bold text-gray-800">MMM Configuration Options</h2>
-                    <button onClick={handleBack} className={`text-blue-600 hover:underline font-medium ${isSubmitting ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
-                        ← Back to Campaigns
-                    </button>
-                </div>
+              ← Back to Campaigns
+            </button>
+          </div>
 
-                <div className='space-y-6 mt-10'>
-                    {/* Static Time & KPI */}
-                    <div className='flex justify-between items-center'>
-                        <div className="flex flex-col w-[47%]">
-                            <label className="text-lg font-medium text-gray-700 mb-1">Time</label>
-                            <select
-                                disabled
-                                value="Date"
-                                className="border border-gray-300 rounded-lg px-4 py-3 text-lg bg-gray-100 cursor-not-allowed"
-                            >
-                                <option value="Date">Date</option>
-                            </select>
-                        </div>
-
-                        <div className="flex flex-col w-[47%]">
-                            <label className="text-lg font-medium text-gray-700 mb-1">KPI</label>
-                            <select
-                                disabled
-                                value="Revenue"
-                                className="border border-gray-300 rounded-lg px-4 py-3 text-lg bg-gray-100 cursor-not-allowed"
-                            >
-                                <option value="Revenue">Revenue</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    {/* Dropdowns with checkbox */}
-                    {renderCheckboxDropdown('Media Spend', 'mediaSpend', mediaSpendOptions, toggleDropdown, selectedOptions, openDropdown, handleMultiSelect, handleSelectAll)}
-
-                    {/* Media Dropdown */}
-                    <div className="relative">
-                        <label className="text-lg font-medium text-gray-700 mb-2">Media</label>
-
-                        <button
-                            type="button"
-                            onClick={() => toggleDropdown('media')}
-                            disabled={selectedOptions?.mediaSpend.length < 2}
-                            className={`border w-full rounded-lg px-4 py-3 text-left text-lg flex justify-between items-center 
-      ${selectedOptions?.mediaSpend?.length < 2 ? 'bg-gray-100 text-gray-500 cursor-not-allowed border-gray-400' : 'border-gray-400'}
-    `}
-                        >
-                            <span>
-                                {selectedOptions?.media?.length > 0
-                                    ? `${selectedOptions?.media?.length} selected`
-                                    : 'Select...'}
-                            </span>
-                            <ChevronDown className="w-5 h-5 text-gray-500" />
-                        </button>
-
-                        {openDropdown === 'media' && selectedOptions?.mediaSpend?.length >= 2 && (
-                            <div className="absolute z-10 mt-1 bg-white border border-gray-400 rounded-lg shadow-lg max-h-80 overflow-y-auto w-full p-5 space-y-3">
-                                <div
-                                    className="text-sm text-blue-600 cursor-pointer"
-                                    onClick={() => handleSelectAll('media', mediaOptions)}
-                                >
-                                    {selectedOptions?.media?.length === mediaOptions?.length ? 'Clear All' : 'Select All'}
-                                </div>
-                                {mediaOptions?.map((opt, idx) => (
-                                    <label key={idx} className="flex items-center space-x-2">
-                                        <input
-                                            type="checkbox"
-                                            checked={selectedOptions?.media?.includes(opt)}
-                                            onChange={() => handleMultiSelect('media', opt)}
-                                            className="accent-blue-600"
-                                        />
-                                        <span>{opt}</span>
-                                    </label>
-                                ))}
-                            </div>
-                        )}
-
-                        {selectedOptions?.mediaSpend?.length < 2 && (
-                            <span className="text-sm text-[#797f8c] mt-2 pl-1">
-                                Please select at least 2 Media Spend options to enable Media selection.
-                            </span>
-                        )}
-                    </div>
-
-                    {renderCheckboxDropdown('Control', 'control', controlOptions, toggleDropdown, selectedOptions, openDropdown, handleMultiSelect, handleSelectAll)}
-
-                    <div className="space-y-6 pt-2">
-                        {/* ROI Mean */}
-                        <div className="flex flex-col">
-                            <label className="text-lg font-medium text-gray-700 mb-2">
-                                ROI Mean: <span className="text-blue-600 font-semibold">{roiMean.toFixed(1)}</span>
-                            </label>
-                            <input
-                                type="range"
-                                min={0}
-                                max={3}
-                                step={0.1}
-                                value={roiMean}
-                                onChange={(e) => setRoiMean(parseFloat(e.target.value))}
-                                className="w-full h-3 bg-blue-200 rounded-full appearance-none cursor-pointer"
-                            />
-                            <div className="flex justify-between text-sm text-[#737883] mt-1 px-[2px]">
-                                {[0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0]?.map((val) => (
-                                    <span key={val} className="w-[6px] text-center" style={{ transform: 'translateX(-50%)' }}>
-                                        {val?.toFixed(1)}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* ROI Sigma */}
-                        <div className="flex flex-col mt-6">
-                            <label className="text-lg font-medium text-gray-700 mb-2">
-                                ROI Sigma: <span className="text-blue-600 font-semibold">{roiSigma.toFixed(1)}</span>
-                            </label>
-                            <input
-                                type="range"
-                                min={0}
-                                max={3}
-                                step={0.1}
-                                value={roiSigma}
-                                onChange={(e) => setRoiSigma(parseFloat(e.target.value))}
-                                className="w-full h-3 bg-blue-200 rounded-full appearance-none cursor-pointer"
-                            />
-                            <div className="flex justify-between text-sm text-[#737883] mt-1 px-[2px]">
-                                {[0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0]?.map((val) => (
-                                    <span key={val} className="w-[6px] text-center" style={{ transform: 'translateX(-50%)' }}>
-                                        {val?.toFixed(1)}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <button
-                    onClick={handleSubmit}
-                    disabled={isSubmitting}
-                    className={`bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg mt-10 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
-                        }`}
+          <div className="space-y-6 mt-10">
+            {/* Static Time & KPI */}
+            <div className="flex justify-between items-center">
+              <div className="flex flex-col w-[47%]">
+                <label className="text-lg font-medium text-gray-700 mb-1">
+                  Time
+                </label>
+                <select
+                  disabled
+                  value="Date"
+                  className="border border-gray-300 rounded-lg px-4 py-3 text-lg bg-gray-100 cursor-not-allowed"
                 >
-                    {isSubmitting ? 'Generating MMM Report (5–7 mins)...' : 'Submit & Run Modal'}
-                </button>
+                  <option value="Date">Date</option>
+                </select>
+              </div>
 
-            </motion.div>
+              <div className="flex flex-col w-[47%]">
+                <label className="text-lg font-medium text-gray-700 mb-1">
+                  KPI
+                </label>
+                <select
+                  disabled
+                  value="Revenue"
+                  className="border border-gray-300 rounded-lg px-4 py-3 text-lg bg-gray-100 cursor-not-allowed"
+                >
+                  <option value="Revenue">Revenue</option>
+                </select>
+              </div>
+            </div>
 
-            {hasSubmitted && <EdaGraph />}
-        </div>
+            {/* Dropdowns with checkbox */}
+            {renderCheckboxDropdown(
+              "Media Spend",
+              "mediaSpend",
+              mediaSpendOptions,
+              toggleDropdown,
+              selectedOptions,
+              openDropdown,
+              handleMultiSelect,
+              handleSelectAll
+            )}
+
+            {/* Media Dropdown */}
+            <div className="relative">
+              <label className="text-lg font-medium text-gray-700 mb-2">
+                Media
+              </label>
+
+              <button
+                type="button"
+                onClick={() => toggleDropdown("media")}
+                disabled={selectedOptions?.mediaSpend.length < 2}
+                className={`border w-full rounded-lg px-4 py-3 text-left text-lg flex justify-between items-center 
+      ${
+        selectedOptions?.mediaSpend?.length < 2
+          ? "bg-gray-100 text-gray-500 cursor-not-allowed border-gray-400"
+          : "border-gray-400"
+      }
+    `}
+              >
+                <span>
+                  {selectedOptions?.media?.length > 0
+                    ? `${selectedOptions?.media?.length} selected`
+                    : "Select..."}
+                </span>
+                <ChevronDown className="w-5 h-5 text-gray-500" />
+              </button>
+
+              {openDropdown === "media" &&
+                selectedOptions?.mediaSpend?.length >= 2 && (
+                  <div className="absolute z-10 mt-1 bg-white border border-gray-400 rounded-lg shadow-lg max-h-80 overflow-y-auto w-full p-5 space-y-3">
+                    <div
+                      className="text-sm text-blue-600 cursor-pointer"
+                      onClick={() => handleSelectAll("media", mediaOptions)}
+                    >
+                      {selectedOptions?.media?.length === mediaOptions?.length
+                        ? "Clear All"
+                        : "Select All"}
+                    </div>
+                    {mediaOptions?.map((opt, idx) => (
+                      <label key={idx} className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          checked={selectedOptions?.media?.includes(opt)}
+                          onChange={() => handleMultiSelect("media", opt)}
+                          className="accent-blue-600"
+                        />
+                        <span>{opt}</span>
+                      </label>
+                    ))}
+                  </div>
+                )}
+
+              {selectedOptions?.mediaSpend?.length < 2 && (
+                <span className="text-sm text-[#797f8c] mt-2 pl-1">
+                  Please select at least 2 Media Spend options to enable Media
+                  selection.
+                </span>
+              )}
+            </div>
+
+            {renderCheckboxDropdown(
+              "Control",
+              "control",
+              controlOptions,
+              toggleDropdown,
+              selectedOptions,
+              openDropdown,
+              handleMultiSelect,
+              handleSelectAll
+            )}
+
+            <div className="pt-2 flex items-center w-full gap-10">
+              {/* ROI Mean */}
+              <div className="w-[47%] flex flex-col">
+                <label className="text-lg font-medium text-gray-700 mb-2">
+                  ROI Mean:{" "}
+                  <span className="text-blue-600 font-semibold">
+                    {roiMean.toFixed(1)}
+                  </span>
+                </label>
+                <input
+                  type="range"
+                  min={0}
+                  max={1}
+                  step={0.1}
+                  value={roiMean}
+                  onChange={(e) => setRoiMean(parseFloat(e.target.value))}
+                  className="w-full h-3 bg-blue-200 rounded-full appearance-none cursor-pointer"
+                />
+                <div className="flex justify-between text-sm text-[#737883] mt-1 px-[2px]">
+                  {[0.0, 0.2, 0.4, 0.6, 0.8, 1.0]?.map((val) => (
+                    <span
+                      key={val}
+                      className="w-[6px] text-center"
+                      style={{ transform: "translateX(-50%)" }}
+                    >
+                      {val?.toFixed(1)}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* ROI Sigma */}
+              <div className="w-[47%] flex flex-col max-md:mt-6">
+                <label className="text-lg font-medium text-gray-700 mb-2">
+                  ROI Sigma:{" "}
+                  <span className="text-blue-600 font-semibold">
+                    {roiSigma.toFixed(1)}
+                  </span>
+                </label>
+                <input
+                  type="range"
+                  min={0}
+                  max={1}
+                  step={0.1}
+                  value={roiSigma}
+                  onChange={(e) => setRoiSigma(parseFloat(e.target.value))}
+                  className="w-full h-3 bg-blue-200 rounded-full appearance-none cursor-pointer"
+                />
+                <div className="flex justify-between text-sm text-[#737883] mt-1 px-[2px]">
+                  {[0.0, 0.2, 0.4, 0.6, 0.8, 1.0]?.map((val) => (
+                    <span
+                      key={val}
+                      className="w-[6px] text-center"
+                      style={{ transform: "translateX(-50%)" }}
+                    >
+                      {val?.toFixed(1)}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button
+            onClick={handleSubmit}
+            disabled={isSubmittingModal}
+            className={`bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg mt-10 ${
+              isSubmittingModal ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+          >
+            {isSubmittingModal
+              ? "Generating MMM Report (5–7 mins)..."
+              : "Submit & Run Modal"}
+          </button>
+        </motion.div>
+
+        {html && (
+          <iframe
+            srcDoc={html}
+            title="MMM Report"
+            className="w-full h-[1000px] my-16 border rounded-lg shadow"
+            sandbox="allow-scripts allow-same-origin"
+          />
+        )}
+
+        {!html && hasSubmitted && <EdaGraph />}
+      </div>
     );
 };
 
