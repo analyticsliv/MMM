@@ -102,6 +102,7 @@ const Page: React.FC = () => {
     const handleRetryConnector = async () => {
         setIsSubmittingCustomerBtn(true);
         const client_id = generateUniqueId('mmm_campaign_typeee', `${user?.email}`, selectedCustomer, 'googleAds');
+        setUniqueId(client_id);
         const today = new Date();
         const endDate = new Date(today);
         endDate.setDate(today.getDate() - 2);
