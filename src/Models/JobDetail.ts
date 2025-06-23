@@ -7,6 +7,11 @@ const connectorJobSchema = new mongoose.Schema({
     status: { type: String, default: 'initialized' },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
+    // New fields for file handling
+    fileName: { type: String },
+    fileContent: { type: String },
+    fileType: { type: String },
+    fileSize: { type: Number }
 });
 
 

@@ -8,7 +8,16 @@ export async function POST(req: NextRequest) {
     try {
         await connectToDatabase();
 
-        const { email, connectorType, jobId, status } = await req.json();
+        return await handleJsonStatusUpdate(req);
+    } catch (error) {
+        console.error('Error in update job status API:', error);
+        return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+    }
+}
+
+async function handleJsonStatusUpdate(req: NextRequest) {
+    try {
+        const { email, connectorType, jobId, fileContent, status } = await req.json();
 
         if (!jobId || !email || !connectorType) {
             return NextResponse.json({ message: 'jobId, email, and connectorType are required' }, { status: 400 });
@@ -19,14 +28,22 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ message: 'User not found' }, { status: 404 });
         }
 
+        // Prepare update fields
+        const updateFields: any = {
+            status: status || 'inProgress',
+            updatedAt: Date.now(),
+        };
+
+        if (fileContent) {
+            updateFields.fileContent = fileContent;
+            console.log('Added file content to update fields');
+        }
+
         const updatedJob = await ConnectorJob.findOneAndUpdate(
-            { jobId }, // Search for an existing job by jobId
+            { jobId },
             {
-                $set: {
-                    status: status || 'inProgress',
-                    updatedAt: Date.now(),
-                },
-                $setOnInsert: { // This ONLY applies if a new document is created
+                $set: updateFields,
+                $setOnInsert: {
                     jobId,
                     userId: user._id,
                     connectorType,
@@ -34,15 +51,21 @@ export async function POST(req: NextRequest) {
                 }
             },
             {
-                new: true,  // Return the updated document
-                upsert: true // Create a new document if no match is found
+                new: true,
+                upsert: true
             }
         );
-        console.log('API hit: jobId:', jobId, 'status:', status);
 
-        return NextResponse.json({ message: 'Job status updated', updatedJob }, { status: 200 });
+        console.log('API hit: jobId:', jobId, 'status:', status);
+        const responseMessage = fileContent ? 'Job status updated with HTML content' : 'Job status updated';
+
+        return NextResponse.json({
+            message: responseMessage,
+            updatedJob,
+            fileContentReceived: !!fileContent
+        }, { status: 200 });
     } catch (error) {
         console.error('Error updating job status:', error);
-        return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+        return NextResponse.json({ message: 'Error updating job status' }, { status: 500 });
     }
 }
