@@ -1,7 +1,7 @@
 // pages/api/get-job-status/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import connectToDatabase from '@/lib/mongodb';  // Adjust the import path if necessary
-import ConnectorJob from '@/Models/JobDetail'; // Adjust the import path if necessary
+import connectToDatabase from '@/lib/mongodb';  
+import ConnectorJob from '@/Models/JobDetail'; 
 
 export async function POST(req: NextRequest) {
     try {
