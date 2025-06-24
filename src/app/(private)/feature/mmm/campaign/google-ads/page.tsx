@@ -1,245 +1,325 @@
-'use client';
-import React, { useEffect, useState } from 'react';
-import useCustomerSummaries from '@/components/hooks/connectors/googleAdsCustomerList';
-import useGooglAdsConnector from '@/components/hooks/connectors/useGooglAdsConnector';
-import useUserSession from '@/components/hooks/useUserSession';
-import GoogleAdsTable from '@/components/Mmm/googleAdsTable';
-import MMMOptionsSection from '@/components/Mmm/MMMOptionsSection';
-import { useMMMStore } from '@/store/useMMMStore';
-import { checkJobStatus } from '@/utils/checkJobStatus';
-import { getGaAccessTokenFromRefreshToken } from '@/utils/getAccessToken';
-import { GetCampaignData } from '@/utils/getCampaignData';
-import { generateUniqueId } from '@/utils/helper';
+"use client";
+import React, { useEffect, useState } from "react";
+import useCustomerSummaries from "@/components/hooks/connectors/googleAdsCustomerList";
+import useGooglAdsConnector from "@/components/hooks/connectors/useGooglAdsConnector";
+import useUserSession from "@/components/hooks/useUserSession";
+import GoogleAdsTable from "@/components/Mmm/googleAdsTable";
+import MMMOptionsSection from "@/components/Mmm/MMMOptionsSection";
+import { useMMMStore } from "@/store/useMMMStore";
+import { checkJobStatus } from "@/utils/checkJobStatus";
+import { getGaAccessTokenFromRefreshToken } from "@/utils/getAccessToken";
+import { GetCampaignData } from "@/utils/getCampaignData";
+import { generateUniqueId } from "@/utils/helper";
 
 const Page: React.FC = () => {
-    const { user } = useUserSession();
-    const [accessToken, setAccessToken] = useState<string | null>(null);
-    const [submitted, setSubmitted] = useState(false);
-    const [currentStep, setCurrentStep] = useState(1);
-    const [jobStatusMsg, setJobStatusMsg] = useState('');
-    const [showRetryConnector, setShowRetryConnector] = useState(false);
-    const { googleAdsConnector } = useGooglAdsConnector();
-    const { isSubmittingCustomerBtn, setIsSubmittingCustomerBtn, googleAdsRefreshToken, selectedCustomer, setSelectedCustomer, setCampaigns, uniqueId, setUniqueId } = useMMMStore();
+  const { user } = useUserSession();
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState(false);
+  const [currentStep, setCurrentStep] = useState(1);
+  const [jobStatusMsg, setJobStatusMsg] = useState("");
+  const [showRetryConnector, setShowRetryConnector] = useState(false);
+  const [mmmFileContent, setMmmFileContent] = useState<string>("");
+  const [showMmmIframe, setShowMmmIframe] = useState(false);
+  const [mmmStatus, setMmmStatus] = useState<
+    "success" | "inProgress" | "failed" | ""
+  >("");
 
-    useEffect(() => {
-        if (googleAdsRefreshToken && user && !accessToken) {
-            getGaAccessTokenFromRefreshToken(googleAdsRefreshToken).then((res) => {
-                if (res) setAccessToken(res);
-            });
-        }
-    }, [googleAdsRefreshToken, user, accessToken]);
+  const { googleAdsConnector } = useGooglAdsConnector();
+  const {
+    isSubmittingCustomerBtn,
+    setIsSubmittingCustomerBtn,
+    googleAdsRefreshToken,
+    selectedCustomer,
+    setSelectedCustomer,
+    setCampaigns,
+    uniqueId,
+    setUniqueId,
+  } = useMMMStore();
 
-    const { customerSummaries, loading: customerLoading } = useCustomerSummaries(accessToken);
+  useEffect(() => {
+    if (googleAdsRefreshToken && user && !accessToken) {
+      getGaAccessTokenFromRefreshToken(googleAdsRefreshToken).then((res) => {
+        if (res) setAccessToken(res);
+      });
+    }
+  }, [googleAdsRefreshToken, user, accessToken]);
 
-    const handleCustomerChange = (e: React.ChangeEvent<HTMLSelectElement>) => setSelectedCustomer(e.target.value);
+  const { customerSummaries, loading: customerLoading } =
+    useCustomerSummaries(accessToken);
 
-    const handleMmmJob = async (mmmJobId: string,client_id: string) => {
-      const MmmJobCheck = await checkJobStatus(mmmJobId);
+  // const handleCustomerChange = (e: React.ChangeEvent<HTMLSelectElement>) => setSelectedCustomer(e.target.value);
 
-      const mmmStatus = MmmJobCheck?.job?.status;
+  const handleCustomerChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedCustomer(e.target.value);
+    setMmmFileContent("");
+    setShowMmmIframe(false);
+    setMmmStatus("");
+  };
 
-      if (mmmStatus === "success") {
-      } else if (mmmStatus === "inProgress") {
-        setTimeout(() => handleMmmJob(mmmJobId, client_id), 60000);
-      } else {
-        const data = {
-          client_id: client_id,
-          connector_type: "ga",
-        };
-        const response = await GetCampaignData(data);
-        if (response) {
-          setCampaigns(response || []);
-          setSubmitted(true);
-          setCurrentStep(2);
-          setJobStatusMsg("");
-          setShowRetryConnector(false);
-        }
-        setIsSubmittingCustomerBtn(false);
+  const handleMmmJob = async (mmmJobId: string, client_id: string) => {
+    const MmmJobCheck = await checkJobStatus(mmmJobId);
+
+    const mmmStatus = MmmJobCheck?.job?.status;
+
+    if (mmmStatus === "success") {
+      setMmmStatus("success");
+      setMmmFileContent(MmmJobCheck?.job?.fileContent);
+      const wantsToSee = window.confirm(
+        "MMM report already exists. Do you want to view it?"
+      );
+      if (wantsToSee) {
+        setJobStatusMsg("")
+        setShowMmmIframe(true);
       }
-    };
+      setIsSubmittingCustomerBtn(false);
+    } else if (mmmStatus === "inProgress") {
+      setMmmStatus("inProgress");
 
-    const pollJobStatus = async (client_id: string, data: any) => {
-        const jobCheck = await checkJobStatus(client_id);
+      setJobStatusMsg("⏳ Your Report is being generated. Please wait...");
+      setTimeout(() => handleMmmJob(mmmJobId, client_id), 60000);
+    } else {
+      setMmmStatus("");
 
-        if (jobCheck?.message === 'Job not found') {
-            setJobStatusMsg('🔌 You are not yet connected. Please connect to proceed.');
-            setShowRetryConnector(true);
-            setIsSubmittingCustomerBtn(false);
-            return;
-        }
-
-        const status = jobCheck?.job?.status;
-
-        if (status === 'success') {
-
-             const mmmJobId = generateUniqueId(
-               "mmm_modal",
-               `${user?.email}`,
-               selectedCustomer,
-               "googleAds"
-             );
-             handleMmmJob(mmmJobId, client_id);
- 
-        } else if (status === 'failed') {
-            setJobStatusMsg('⚠️ Previous connection failed. Would you like to reconnect?');
-            setShowRetryConnector(true);
-            setIsSubmittingCustomerBtn(false);
-        } else if (status === 'inProgress') {
-            setJobStatusMsg('⏳ Connector is working. Will retry shortly...');
-            setTimeout(() => pollJobStatus(client_id, data), 45000); // retry in 45 seconds
-        }
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (!selectedCustomer) return;
-
-        setIsSubmittingCustomerBtn(true);
-        setJobStatusMsg('');
+      const data = {
+        client_id: client_id,
+        connector_type: "ga",
+      };
+      const response = await GetCampaignData(data);
+      if (response) {
+        setCampaigns(response || []);
+        setSubmitted(true);
+        setCurrentStep(2);
+        setJobStatusMsg("");
         setShowRetryConnector(false);
+      }
+      setIsSubmittingCustomerBtn(false);
+    }
+  };
 
-        const client_id = generateUniqueId('mmm_campaign_typeee', `${user?.email}`, selectedCustomer, 'googleAds');
-        setUniqueId(client_id);
-        const today = new Date();
-        const endDate = new Date(today);
-        endDate.setDate(today.getDate() - 2);
-        const startDate = new Date(today);
-        startDate.setDate(today.getDate() - 740);
-        const formatDate = (d: Date) => d.toISOString().split('T')[0];
+  const pollJobStatus = async (client_id: string, data: any) => {
+    const jobCheck = await checkJobStatus(client_id);
 
-        const data = {
-            start_date: formatDate(startDate),
-            end_date: formatDate(endDate),
-            refresh_token: googleAdsRefreshToken || 'N/A',
-            report_name: 'campaign_mmm_report_for_ads',
-            login_customer_id: selectedCustomer,
-            jobId: client_id,
-            email: user?.email,
-            client_id,
-        };
+    if (jobCheck?.message === "Job not found") {
+      setJobStatusMsg(
+        "🔌 You are not yet connected. Please connect to proceed."
+      );
+      setShowRetryConnector(true);
+      setIsSubmittingCustomerBtn(false);
+      return;
+    }
 
-        await pollJobStatus(client_id, data);
-    };
+    const status = jobCheck?.job?.status;
 
-    const handleRetryConnector = async () => {
-        setIsSubmittingCustomerBtn(true);
-        const client_id = generateUniqueId('mmm_campaign_typeee', `${user?.email}`, selectedCustomer, 'googleAds');
-        setUniqueId(client_id);
-        const today = new Date();
-        const endDate = new Date(today);
-        endDate.setDate(today.getDate() - 2);
-        const startDate = new Date(today);
-        startDate.setDate(today.getDate() - 740);
-        const formatDate = (d: Date) => d.toISOString().split('T')[0];
-        const data = {
-            start_date: formatDate(startDate),
-            end_date: formatDate(endDate),
-            refresh_token: googleAdsRefreshToken || 'N/A',
-            report_name: 'campaign_mmm_report_for_ads',
-            login_customer_id: selectedCustomer,
-            jobId: client_id,
-            email: user?.email,
-            client_id,
-        };
+    if (status === "success") {
+      const mmmJobId = generateUniqueId(
+        "mmm_modal",
+        `${user?.email}`,
+        selectedCustomer,
+        "googleAds"
+      );
+      handleMmmJob(mmmJobId, client_id);
+    } else if (status === "failed") {
+      setJobStatusMsg(
+        "⚠️ Previous connection failed. Would you like to reconnect?"
+      );
+      setShowRetryConnector(true);
+      setIsSubmittingCustomerBtn(false);
+    } else if (status === "inProgress") {
+      setJobStatusMsg("⏳ Connector is working. Will retry shortly...");
+      setTimeout(() => pollJobStatus(client_id, data), 45000); // retry in 45 seconds
+    }
+  };
 
-        const connectorRes = await googleAdsConnector(data);
-        console.log("responseConnector--", connectorRes)
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!selectedCustomer) return;
 
-        if (connectorRes) {
-            const data = {
-                client_id, connector_type: 'ga'
-            }
-            const response = await GetCampaignData(data);
-            if (response) setCampaigns(response || []);
-            setSubmitted(true);
-            setCurrentStep(2);
+    setIsSubmittingCustomerBtn(true);
+    setJobStatusMsg("");
+    setShowRetryConnector(false);
 
-            setJobStatusMsg('');
-            setShowRetryConnector(false);
-        }
-        setIsSubmittingCustomerBtn(false);
-    };
-
-    return (
-        <div className="min-h-screen bg-gray-100 py-10 px-6 flex justify-center items-start">
-            <div className="w-full">
-                {currentStep === 1 && (
-                    <div className='shadow-lg rounded-xl p-8 space-y-6 bg-white max-w-4xl mx-auto'>
-                        <h2 className="text-2xl font-bold text-gray-800">Select a Google Ads Customer</h2>
-                        <form onSubmit={handleSubmit} className="space-y-6">
-                            <div>
-                                <label htmlFor="customer" className="block text-lg font-semibold text-gray-700 mb-2">
-                                    Customers
-                                </label>
-                                <select
-                                    id="customer"
-                                    onChange={handleCustomerChange}
-                                    value={selectedCustomer || ''}
-                                    className={`${isSubmittingCustomerBtn ? 'cursor-not-allowed' : 'cursor-pointer'} w-full border border-gray-300 rounded-lg px-4 py-3 text-lg`}
-                                    disabled={customerLoading || isSubmittingCustomerBtn}
-                                    required
-                                >
-                                    {customerLoading ? (
-                                        <option>Loading...</option>
-                                    ) : (
-                                        <>
-                                            <option value="" disabled>
-                                                Select a customer
-                                            </option>
-                                            {customerSummaries?.map((customer, index) => (
-                                                <option key={index} value={customer?.id}>
-                                                    {customer?.name}
-                                                </option>
-                                            ))}
-                                        </>
-                                    )}
-                                </select>
-                            </div>
-                            <button
-                                type="submit"
-                                className={`w-full text-white font-semibold py-3 text-lg rounded-lg transition-all ${isSubmittingCustomerBtn ? 'cursor-not-allowed bg-gray-500' : 'cursor-pointer bg-blue-600 hover:bg-blue-700'}`}
-                            >
-                                {isSubmittingCustomerBtn ? 'Submitting...' : 'Submit & Next'}
-                            </button>
-                        </form>
-
-                        {jobStatusMsg && <p className="text-sm text-center text-yellow-600 mt-4 font-medium">{jobStatusMsg}</p>}
-
-                        {showRetryConnector && (
-                            <div className="mt-4 text-center">
-                                <button
-                                    onClick={handleRetryConnector}
-                                    className={`text-white px-4 py-2 rounded-lg font-medium ${isSubmittingCustomerBtn ? 'cursor-not-allowed bg-gray-500' : 'cursor-pointer bg-green-600 hover:bg-green-700'}`}
-                                >
-                                    {isSubmittingCustomerBtn ? 'Connecting...' : 'Yes, Connect'}
-                                </button>
-                            </div>
-                        )}
-                    </div>
-                )}
-
-                {currentStep === 2 && (
-                    <GoogleAdsTable
-                        handleBack={() => setCurrentStep(1)}
-                        onTableSubmit={() => setCurrentStep(3)}
-                    />)}
-
-                {currentStep === 3 && (
-                    <MMMOptionsSection handleBack={() => setCurrentStep(2)} />
-                )}
-            </div>
-        </div>
+    const client_id = generateUniqueId(
+      "mmm_campaign_typeee",
+      `${user?.email}`,
+      selectedCustomer,
+      "googleAds"
     );
+    setUniqueId(client_id);
+    const today = new Date();
+    const endDate = new Date(today);
+    endDate.setDate(today.getDate() - 2);
+    const startDate = new Date(today);
+    startDate.setDate(today.getDate() - 740);
+    const formatDate = (d: Date) => d.toISOString().split("T")[0];
+
+    const data = {
+      start_date: formatDate(startDate),
+      end_date: formatDate(endDate),
+      refresh_token: googleAdsRefreshToken || "N/A",
+      report_name: "campaign_mmm_report_for_ads",
+      login_customer_id: selectedCustomer,
+      jobId: client_id,
+      email: user?.email,
+      client_id,
+    };
+
+    await pollJobStatus(client_id, data);
+  };
+
+  const handleRetryConnector = async () => {
+    setIsSubmittingCustomerBtn(true);
+    const client_id = generateUniqueId(
+      "mmm_campaign_typeee",
+      `${user?.email}`,
+      selectedCustomer,
+      "googleAds"
+    );
+    setUniqueId(client_id);
+    const today = new Date();
+    const endDate = new Date(today);
+    endDate.setDate(today.getDate() - 2);
+    const startDate = new Date(today);
+    startDate.setDate(today.getDate() - 740);
+    const formatDate = (d: Date) => d.toISOString().split("T")[0];
+    const data = {
+      start_date: formatDate(startDate),
+      end_date: formatDate(endDate),
+      refresh_token: googleAdsRefreshToken || "N/A",
+      report_name: "campaign_mmm_report_for_ads",
+      login_customer_id: selectedCustomer,
+      jobId: client_id,
+      email: user?.email,
+      client_id,
+    };
+
+    const connectorRes = await googleAdsConnector(data);
+
+    if (connectorRes) {
+      const data = {
+        client_id,
+        connector_type: "ga",
+      };
+      const response = await GetCampaignData(data);
+      if (response) setCampaigns(response || []);
+      setSubmitted(true);
+      setCurrentStep(2);
+
+      setJobStatusMsg("");
+      setShowRetryConnector(false);
+    }
+    setIsSubmittingCustomerBtn(false);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-100 py-10 px-6 flex justify-center items-start">
+      <div className="w-full">
+        {currentStep === 1 && (
+          <div className="">
+            <div className="shadow-lg rounded-xl p-8 space-y-6 bg-white max-w-4xl mx-auto">
+              <h2 className="text-2xl font-bold text-gray-800">
+                Select a Google Ads Customer
+              </h2>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <label
+                    htmlFor="customer"
+                    className="block text-lg font-semibold text-gray-700 mb-2"
+                  >
+                    Customers
+                  </label>
+                  <select
+                    id="customer"
+                    onChange={handleCustomerChange}
+                    value={selectedCustomer || ""}
+                    className={`${
+                      isSubmittingCustomerBtn
+                        ? "cursor-not-allowed"
+                        : "cursor-pointer"
+                    } w-full border border-gray-300 rounded-lg px-4 py-3 text-lg`}
+                    disabled={customerLoading || isSubmittingCustomerBtn}
+                    required
+                  >
+                    {customerLoading ? (
+                      <option>Loading...</option>
+                    ) : (
+                      <>
+                        <option value="" disabled>
+                          Select a customer
+                        </option>
+                        {customerSummaries?.map((customer, index) => (
+                          <option key={index} value={customer?.id}>
+                            {customer?.name}
+                          </option>
+                        ))}
+                      </>
+                    )}
+                  </select>
+                </div>
+                <button
+                  type="submit"
+                  disabled={isSubmittingCustomerBtn || mmmStatus === "success"}
+                  className={`w-full text-white font-semibold py-3 text-lg rounded-lg transition-all ${
+                    isSubmittingCustomerBtn
+                      ? "cursor-not-allowed bg-gray-500"
+                      : "cursor-pointer bg-blue-600 hover:bg-blue-700"
+                  }`}
+                >
+                  {isSubmittingCustomerBtn
+                    ? "Submitting..."
+                    : mmmStatus === "success"
+                    ? "Report Already Generated"
+                    : "Submit & Next"}
+                </button>
+              </form>
+
+              {jobStatusMsg && (
+                <p className="text-sm text-center text-yellow-600 mt-4 font-medium">
+                  {jobStatusMsg}
+                </p>
+              )}
+
+              {showRetryConnector && (
+                <div className="mt-4 text-center">
+                  <button
+                    onClick={handleRetryConnector}
+                    className={`text-white px-4 py-2 rounded-lg font-medium ${
+                      isSubmittingCustomerBtn
+                        ? "cursor-not-allowed bg-gray-500"
+                        : "cursor-pointer bg-green-600 hover:bg-green-700"
+                    }`}
+                  >
+                    {isSubmittingCustomerBtn ? "Connecting..." : "Yes, Connect"}
+                  </button>
+                </div>
+              )}
+            </div>
+            {showMmmIframe && mmmFileContent && (
+              <iframe
+                srcDoc={mmmFileContent}
+                title="MMM Report"
+                className="w-full h-[450px] my-8 border rounded-lg shadow"
+                sandbox="allow-scripts allow-same-origin"
+              />
+            )}
+          </div>
+        )}
+
+        {currentStep === 2 && (
+          <GoogleAdsTable
+            handleBack={() => setCurrentStep(1)}
+            onTableSubmit={() => setCurrentStep(3)}
+          />
+        )}
+
+        {currentStep === 3 && (
+          <MMMOptionsSection handleBack={() => setCurrentStep(2)} />
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default Page;
-
-
-
-
-
-
-
 
 // 'use client';
 // import React, { useEffect, useState } from 'react';
@@ -454,15 +534,6 @@ export default Page;
 
 // export default Page;
 
-
-
-
-
-
-
-
-
-
 // 'use client'
 
 // import useCustomerSummaries from '@/components/hooks/connectors/googleAdsCustomerList';
@@ -557,7 +628,6 @@ export default Page;
 //         const jobCheckResponse = await checkJobStatus(client_id);
 //         console.log("jobCheckResponse -->", jobCheckResponse);
 
-
 //         const responseConnector = await googleAdsConnector(data);
 //         console.log("responseConnector--", responseConnector)
 //         const response = await GetCampaignData(client_id);
@@ -635,16 +705,6 @@ export default Page;
 
 // export default Page
 
-
-
-
-
-
-
-
-
-
-
 //   start_date: formattedStartDate,
 //   end_date: formattedEndDate,
 //   refresh_token: refreshToken || "N/A",
@@ -663,7 +723,6 @@ export default Page;
 
 //     fetchAccessToken();
 // }, [googleAdsRefreshToken, accessToken, user]);
-
 
 // const handleBack = () => {
 //     setSubmitted(false);
