@@ -1,3 +1,4 @@
+import { useMMMStore } from '@/store/useMMMStore';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
@@ -13,12 +14,25 @@ interface Advertiser {
 
 const useDv360Advertisers = (accessToken: string | null) => {
   const [partners, setPartners] = useState<Partner[]>([]);
-  const [advertisers, setAdvertisers] = useState<Advertiser[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const advertisers = useMMMStore((state) => state.advertisers);
+  const setAdvertisers = useMMMStore((state) => state.setAdvertisers);
 
   useEffect(() => {
     const fetchDV360Data = async () => {
+
+      if (!accessToken) {
+        console.log("❌ No accessToken available");
+        setLoading(false); // Already in store or no token
+        return;
+      }
+      if (advertisers.length > 0) {
+        console.log("✅ advertisers already set");
+        setLoading(false);
+        return;
+      }
+
       setLoading(true);
       setError(null);
 
@@ -57,9 +71,7 @@ const useDv360Advertisers = (accessToken: string | null) => {
       }
     };
 
-    if (accessToken) {
-      fetchDV360Data();
-    }
+    fetchDV360Data();
   }, [accessToken]);
 
   return { partners, advertisers, loading, error };

@@ -139,8 +139,27 @@ const Page: React.FC = () => {
           buttonText="🚀 Connect GA4"
         />
       ) : (
-        <div className="text-center text-green-700 text-xl font-semibold">
-          Connector is already connected!
+        <div className="flex items-start gap-20 text-center">
+          {/* <div className="flex flex-col items-center justify-center p-8 bg-[#1e293b] text-white rounded-2xl shadow-xl border border-white/20 animate-fadeIn max-w-md mx-auto">
+            <div className="flex items-center justify-center w-16 h-16 bg-blue-600 text-white rounded-full mb-4 shadow-lg">
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h2 className="text-2xl font-bold mb-1">Google Analytics 4 Connected</h2>
+            <p className="text-sm text-white/80 text-center">
+              You’ve already connected the <span className="font-semibold text-blue-400">Google Analytics 4</span> connector.
+            </p>
+          </div> */}
+          <div className="flex flex-col items-center justify-center p-8 bg-white rounded-2xl shadow-xl border border-green-100 animate-fadeIn">
+            <div className="flex items-center justify-center w-16 h-16 bg-green-100 text-green-700 rounded-full mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h2 className="text-2xl font-bold text-green-700 mb-2">Connector Active</h2>
+            <p className="text-gray-600">You're all set! The connector is already linked and working.</p>
+          </div>
         </div>
       )}
 
