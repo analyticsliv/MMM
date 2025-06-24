@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Missing client_id' }, { status: 400 });
         }
 
-        const response = await axios.post(EXTERNAL_API_URL, payload, {
+        const response = await axios.post('https://meridian-mmm-ga-135392845747.us-central1.run.app/campaign-data', payload, {
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -22,6 +22,6 @@ export async function POST(req: NextRequest) {
         return NextResponse.json(response.data, { status: 200 });
     } catch (error: any) {
         console.error('Campaign fetch error:', error?.message);
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+        return NextResponse.json({ error: `Internal Server Error-${error.message}` }, { status: 500 });
     }
 }
