@@ -10,6 +10,7 @@ import { updateStoreField } from '@/utils/updateStoreField';
 import { runMMMModal } from '@/utils/runModal';
 import EdaGraph from './EdaGraph';
 import useUserSession from '../hooks/useUserSession';
+import { generateUniqueId } from '@/utils/helper';
 
 interface MMMOptionsSectionProps {
     handleBack: () => void;
@@ -23,7 +24,7 @@ const MMMOptionsSection: React.FC<MMMOptionsSectionProps> = ({ handleBack }) => 
         selectedMedia, setSelectedMedia,
         selectedControl, setSelectedControl,
         uniqueId, hasSubmitted, setHasSubmitted,
-        isSubmittingModal, setIsSubmittingModal
+        isSubmittingModal, setIsSubmittingModal, selectedCustomer
     } = useMMMStore();
 
     type SelectableFields = 'mediaSpend' | 'media' | 'control';
@@ -38,6 +39,9 @@ const MMMOptionsSection: React.FC<MMMOptionsSectionProps> = ({ handleBack }) => 
 
     const [openDropdown, setOpenDropdown] = useState<null | string>(null);
       const [html, setHtml] = useState<string>('');
+      const [progress, setProgress] = useState(0);
+const [showBanner, setShowBanner] = useState(false);
+
 
     // const [isSubmittingModal, setIsSubmittingModal] = useState(false);
     // const [hasSubmitted, setHasSubmitted] = useState(false);
@@ -102,6 +106,8 @@ const MMMOptionsSection: React.FC<MMMOptionsSectionProps> = ({ handleBack }) => 
     });
 
     const handleSubmit = async () => {
+          if (isSubmittingModal) return;
+
         if (selectedMediaSpend.length < 2) {
             alert('Please select at least 2 Media Spend options.');
             return;
@@ -111,42 +117,81 @@ const MMMOptionsSection: React.FC<MMMOptionsSectionProps> = ({ handleBack }) => 
             return;
         }
         if (selectedControl.length < 1) {
-            alert('Please select at least 1 Control option.');
-            return;
+          alert("Please select at least 1 Control option.");
+          return;
         }
 
+        const createMmmJobId = generateUniqueId(
+          "mmm_modal",
+          `${user?.email}`,
+          selectedCustomer,
+          "googleAds"
+        );
+
         const MmmModalData = {
-            country: selectedCountry,
-            ga4_linked: ga4Linked,
-            date: selectedTime,
-            kpi: selectedKpi,
-            media_spend: selectedMediaSpend,
-            media: selectedMedia,
-            controls: selectedControl,
-            mean: roiMean,
-            sigma: roiSigma,
-            client_id: uniqueId,
-            email: user?.email
+          country: selectedCountry,
+          ga4_linked: ga4Linked,
+          date: selectedTime,
+          kpi: selectedKpi,
+          media_spend: selectedMediaSpend,
+          media: selectedMedia,
+          controls: selectedControl,
+          mean: roiMean,
+          sigma: roiSigma,
+          client_id: uniqueId,
+          email: user?.email,
+          jobId: createMmmJobId,
         };
 
+        setShowBanner(true);
+    setProgress(0);
+    setIsSubmittingModal(true);
+    setHasSubmitted(true);
+    document.getElementById('eda-graph-section')?.scrollIntoView({ behavior: 'smooth' });
+
+    const progressInterval = setInterval(() => {
+        setProgress((prev) => {
+            if (prev >= 90) {
+                clearInterval(progressInterval);
+                return 90;
+            }
+            return prev + Math.floor(Math.random() * 10 + 5); // +5–14
+        });
+    }, 1000);
+
         try {
-            setIsSubmittingModal(true);
-            setHasSubmitted(true);
-            document.getElementById('eda-graph-section')?.scrollIntoView({ behavior: 'smooth' });
+            // setIsSubmittingModal(true);
+            // setHasSubmitted(true);
+            // document.getElementById('eda-graph-section')?.scrollIntoView({ behavior: 'smooth' });
             const result = await runMMMModal(MmmModalData);
-            setHtml(result)
+            setHtml(result);
+                    setProgress(100);
+
             alert('MMM Modal Run Success!');
 
         } catch (err) {
             alert('Failed to run modal');
         } finally {
+                  clearInterval(progressInterval);
+
             setIsSubmittingModal(false);
+                    setShowBanner(false);
+
         }
         console.log('Selected MMM Config:', MmmModalData);
     };
 
     return (
       <div className="max-h-[90dvh] overflow-y-auto">
+        {showBanner && (
+          <div className="fixed top-7 left-[40%] animate-pulse duration-[1500ms] mx-auto w-[520px] z-[9999] bg-blue-600 text-white text-center px-2 py-3 shadow-md rounded-lg">
+            <p className="text-lg font-medium">
+              Running the MMM model... This may take 5–7 minutes. Please do not
+              close or refresh the page.
+            </p>
+          </div>
+        )}
+
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
@@ -343,7 +388,27 @@ const MMMOptionsSection: React.FC<MMMOptionsSectionProps> = ({ handleBack }) => 
             </div>
           </div>
 
-          <button
+          {isSubmittingModal ? (
+            <div className="w-full mt-10 animate-pulse">
+              <div className="w-full bg-gray-200 rounded-full h-5">
+                <div
+                  className="bg-blue-600 h-5 rounded-full transition-all duration-500 text-white text-sm text-center"
+                  style={{ width: `${progress}%` }}
+                >
+                  {progress < 100 ? `${progress}%` : "Finalizing..."}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <button
+              onClick={handleSubmit}
+              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg mt-10"
+            >
+              Submit & Run Modal
+            </button>
+          )}
+
+          {/* <button
             onClick={handleSubmit}
             disabled={isSubmittingModal}
             className={`bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg mt-10 ${
@@ -353,7 +418,7 @@ const MMMOptionsSection: React.FC<MMMOptionsSectionProps> = ({ handleBack }) => 
             {isSubmittingModal
               ? "Generating MMM Report (5–7 mins)..."
               : "Submit & Run Modal"}
-          </button>
+          </button> */}
         </motion.div>
 
         {html && (

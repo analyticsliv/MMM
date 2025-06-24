@@ -33,6 +33,31 @@ const Page: React.FC = () => {
 
     const handleCustomerChange = (e: React.ChangeEvent<HTMLSelectElement>) => setSelectedCustomer(e.target.value);
 
+    const handleMmmJob = async (mmmJobId: string,client_id: string) => {
+      const MmmJobCheck = await checkJobStatus(mmmJobId);
+
+      const mmmStatus = MmmJobCheck?.job?.status;
+
+      if (mmmStatus === "success") {
+      } else if (mmmStatus === "inProgress") {
+        setTimeout(() => handleMmmJob(mmmJobId, client_id), 60000);
+      } else {
+        const data = {
+          client_id: client_id,
+          connector_type: "ga",
+        };
+        const response = await GetCampaignData(data);
+        if (response) {
+          setCampaigns(response || []);
+          setSubmitted(true);
+          setCurrentStep(2);
+          setJobStatusMsg("");
+          setShowRetryConnector(false);
+        }
+        setIsSubmittingCustomerBtn(false);
+      }
+    };
+
     const pollJobStatus = async (client_id: string, data: any) => {
         const jobCheck = await checkJobStatus(client_id);
 
@@ -46,18 +71,15 @@ const Page: React.FC = () => {
         const status = jobCheck?.job?.status;
 
         if (status === 'success') {
-            const data = {
-                'client_id': client_id, connector_type: 'ga'
-            }
-            const response = await GetCampaignData(data);
-            if (response) {
-                setCampaigns(response || []);
-                setSubmitted(true);
-                setCurrentStep(2);
-                setJobStatusMsg('');
-                setShowRetryConnector(false);
-            }
-            setIsSubmittingCustomerBtn(false);
+
+             const mmmJobId = generateUniqueId(
+               "mmm_modal",
+               `${user?.email}`,
+               selectedCustomer,
+               "googleAds"
+             );
+             handleMmmJob(mmmJobId, client_id);
+ 
         } else if (status === 'failed') {
             setJobStatusMsg('⚠️ Previous connection failed. Would you like to reconnect?');
             setShowRetryConnector(true);
