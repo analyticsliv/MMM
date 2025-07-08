@@ -5,6 +5,7 @@ on:
     branches: [ main ]
 
 env:
+  MONGODB_URI: ${{ secrets.MONGODB_URI }}
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
   SERVICE: my-nextjs-app
   REGION: us-central1
