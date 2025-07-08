@@ -6,7 +6,7 @@ on:
 
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-  SERVICE: my-nextjs-app
+  SERVICE: my-nextjs-app-v2
   REGION: us-central1
 
 jobs:
