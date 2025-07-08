@@ -5,7 +5,6 @@ on:
     branches: [ main ]
 
 env:
-  MONGODB_URI: ${{ secrets.MONGODB_URI }}
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
   SERVICE: my-nextjs-app
   REGION: us-central1
@@ -30,7 +29,9 @@ jobs:
 
     - name: 'Build and Push'
       run: |
-        docker build -t gcr.io/$PROJECT_ID/$SERVICE:$GITHUB_SHA .
+        docker build \
+          --build-arg MONGODB_URI="${{ secrets.MONGODB_URI }}" \
+          -t gcr.io/$PROJECT_ID/$SERVICE:$GITHUB_SHA .
         docker push gcr.io/$PROJECT_ID/$SERVICE:$GITHUB_SHA
 
     - name: 'Deploy to Cloud Run'
@@ -39,4 +40,8 @@ jobs:
           --image gcr.io/$PROJECT_ID/$SERVICE:$GITHUB_SHA \
           --platform managed \
           --region $REGION \
-          --allow-unauthenticated
+          --allow-unauthenticated \
+          --set-env-vars="NODE_ENV=production" \
+          --update-env-vars="MONGODB_URI=${{ secrets.MONGODB_URI }}" \
+          --port 3000 \
+          --memory 1Gi
