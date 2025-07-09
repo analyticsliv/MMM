@@ -167,7 +167,7 @@ const [showBanner, setShowBanner] = useState(false);
             setHtml(result);
                     setProgress(100);
 
-            alert('MMM Modal Run Success!');
+            // alert('MMM Modal Run Success!');
 
         } catch (err) {
             alert('Failed to run modal');
@@ -331,14 +331,14 @@ const [showBanner, setShowBanner] = useState(false);
                 <label className="text-lg font-medium text-gray-700 mb-2">
                   ROI Mean:{" "}
                   <span className="text-blue-600 font-semibold">
-                    {roiMean.toFixed(1)}
+                    {roiMean.toFixed(2)}
                   </span>
                 </label>
                 <input
                   type="range"
                   min={0}
                   max={1}
-                  step={0.1}
+                  step={0.05}
                   value={roiMean}
                   onChange={(e) => setRoiMean(parseFloat(e.target.value))}
                   className="w-full h-3 bg-blue-200 rounded-full appearance-none cursor-pointer"
@@ -350,7 +350,7 @@ const [showBanner, setShowBanner] = useState(false);
                       className="w-[6px] text-center"
                       style={{ transform: "translateX(-50%)" }}
                     >
-                      {val?.toFixed(1)}
+                      {val?.toFixed(2)}
                     </span>
                   ))}
                 </div>
@@ -361,14 +361,14 @@ const [showBanner, setShowBanner] = useState(false);
                 <label className="text-lg font-medium text-gray-700 mb-2">
                   ROI Sigma:{" "}
                   <span className="text-blue-600 font-semibold">
-                    {roiSigma.toFixed(1)}
+                    {roiSigma.toFixed(2)}
                   </span>
                 </label>
                 <input
                   type="range"
                   min={0}
                   max={1}
-                  step={0.1}
+                  step={0.05}
                   value={roiSigma}
                   onChange={(e) => setRoiSigma(parseFloat(e.target.value))}
                   className="w-full h-3 bg-blue-200 rounded-full appearance-none cursor-pointer"
@@ -380,7 +380,7 @@ const [showBanner, setShowBanner] = useState(false);
                       className="w-[6px] text-center"
                       style={{ transform: "translateX(-50%)" }}
                     >
-                      {val?.toFixed(1)}
+                      {val?.toFixed(2)}
                     </span>
                   ))}
                 </div>
