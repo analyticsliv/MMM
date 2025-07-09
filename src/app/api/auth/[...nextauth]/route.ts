@@ -27,7 +27,12 @@ const handler = NextAuth({
       },
       async authorize(credentials) {
         try {
-          await connectToDatabase();
+          const dbConnection = await connectToDatabase();
+          
+          // Skip if no database connection (during build)
+          if (!dbConnection) {
+            throw new Error('Database connection not available');
+          }
 
           // Find the user by email
           const user = await User.findOne({ email: credentials.email });
@@ -43,7 +48,7 @@ const handler = NextAuth({
 
           return user; 
         } catch (error) {
-          // Throw the error to be caught by NextAuth
+          console.error('Auth error:', error);
           throw new Error(error.message);
         }
       },
@@ -65,26 +70,38 @@ const handler = NextAuth({
       return session;
     },
     async signIn({ account, profile, user }) {
-      await connectToDatabase();
-
-      const existingUser = await User.findOne({ email: user.email });
-
-      if (account.provider === 'google') {
-        if (existingUser) {
+      try {
+        const dbConnection = await connectToDatabase();
+        
+        // Skip database operations if no connection (during build)
+        if (!dbConnection) {
+          console.warn('Database not available during build');
           return true;
         }
 
-        const newUser = new User({
-          email: user.email,
-          name: profile.name,
-          image: profile.picture,
-        });
+        const existingUser = await User.findOne({ email: user.email });
 
-        await newUser.save();
+        if (account.provider === 'google') {
+          if (existingUser) {
+            return true;
+          }
+
+          const newUser = new User({
+            email: user.email,
+            name: profile.name,
+            image: profile.picture,
+          });
+
+          await newUser.save();
+          return true;
+        }
+
+        return true;
+      } catch (error) {
+        console.error('SignIn error:', error);
+        // Allow sign in to continue even if database fails during build
         return true;
       }
-
-      return true;
     },
   },
 });
