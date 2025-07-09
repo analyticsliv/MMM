@@ -15,15 +15,20 @@ export async function GET(req: NextRequest) {
     try {
         await connectToDatabase();
 
-        // Find the user by email
-        const user = await User.findOne({ email }).populate('connectors');
+        // Find the user by email (without populate)
+        const user = await User.findOne({ email });
 
         if (!user) {
             return NextResponse.json({ message: 'User not found' }, { status: 404 });
         }
 
-        // Assuming connectors are stored as an array of references and we want to check each connector
-        const connector = user.connectors.find(connector => connector[connectorName]);
+        // Manually fetch connectors using the IDs from user.connectors
+        const connectors = await Connector.find({ 
+            _id: { $in: user.connectors } 
+        });
+
+        // Same logic as before - find the connector with the specific connectorName
+        const connector = connectors.find((connector: any) => connector[connectorName]);
 
         if (!connector) {
             return NextResponse.json({ message: 'Connector not found for the given name' }, { status: 404 });
