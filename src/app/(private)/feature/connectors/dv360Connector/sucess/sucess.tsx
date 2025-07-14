@@ -10,7 +10,7 @@ import { ToastContainer } from "react-toastify";
 import { format } from 'date-fns';
 import { reportOptionsDv360 } from "@/utils/const";
 import useDv360Advertisers from "@/components/hooks/connectors/dv360Advertiser";
-import { createJobId } from "@/utils/helper";
+import { createJobId, generateUniqueId } from "@/utils/helper";
 import useDv360Connector from "@/components/hooks/connectors/useDv360Connector";
 
 interface SuccessModalProps {
@@ -92,6 +92,13 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
             notify('Please select the report!', 'error');
             return;
         }
+        const createDv360UniqueId = generateUniqueId(
+            "connector",
+            `${user?.email}`,
+            selectedAdvertiser,
+            "dv360"
+        );
+
         const data = {
             refresh_token: refreshToken || "N/A",
             project_id: "dx-api-project",
@@ -101,7 +108,8 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
             advertiser_id: selectedAdvertiser,
             report_type: selectedReport,
             jobId: jobId,
-            email: user?.email
+            email: user?.email,
+            unique_ada_id: createDv360UniqueId
         };
 
         try {

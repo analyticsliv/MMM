@@ -11,7 +11,7 @@ import useToast from "@/components/hooks/toast";
 import { ToastContainer } from "react-toastify";
 import { format } from 'date-fns';
 import { reportOptionsLinkedin } from "@/utils/const";
-import { createJobId } from "@/utils/helper";
+import { createJobId, generateUniqueId } from "@/utils/helper";
 import useLinkedInConnector from "@/components/hooks/connectors/useLinkedInConnector";
 import useLinkedinSummaries from "@/components/hooks/connectors/linkedinAccountList";
 
@@ -118,6 +118,12 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
       notify('Please select the report!', 'error');
       return;
     }
+    const createLinkedInUniqueId = generateUniqueId(
+      "connector",
+      `${user?.email}`,
+      selectedAccount,
+      "likedIn"
+    );
     const data = {
       access_token: accessToken || "N/A",
       account_id: selectedAccount,
@@ -129,6 +135,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
       end_date: formattedEndDate,
       jobId: jobId,
       email: user?.email,
+      unique_ada_id: createLinkedInUniqueId
     };
 
     try {

@@ -13,7 +13,7 @@ import { ToastContainer } from "react-toastify";
 import { format } from 'date-fns';
 import { reportOptions } from "@/utils/const";
 import useGa4Connector from "@/components/hooks/connectors/useGa4Connector";
-import { createJobId } from "@/utils/helper";
+import { createJobId, generateUniqueId } from "@/utils/helper";
 
 interface SuccessModalProps {
   isModalOpen: boolean;
@@ -122,6 +122,12 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
       notify('Please select at least one report!', 'error');
       return;
     }
+    const createGa4UniqueId = generateUniqueId(
+      "connector",
+      `${user?.email}`,
+      selectedProperty,
+      "ga4"
+    );
     const data = {
       refresh_token: refreshToken || "N/A",
       property_id: selectedProperty,
@@ -131,7 +137,8 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
       end_date: formattedEndDate,
       reports_list: selectedReport,
       jobId: jobId,
-      email: user?.email
+      email: user?.email,
+      unique_ada_id: createGa4UniqueId
     };
 
     try {

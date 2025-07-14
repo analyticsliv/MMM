@@ -9,7 +9,7 @@ import useToast from "@/components/hooks/toast";
 import { ToastContainer } from "react-toastify";
 import { format } from 'date-fns';
 import useGooglAdsConnector from "@/components/hooks/connectors/useGooglAdsConnector";
-import { createJobId } from "@/utils/helper";
+import { createJobId, generateUniqueId } from "@/utils/helper";
 
 interface SuccessModalProps {
   isModalOpen: boolean;
@@ -96,6 +96,12 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
       return;
     }
 
+    const createGaUniqueId = generateUniqueId(
+      "connector",
+      `${user?.email}`,
+      selectedCustomer,
+      "googleAds"
+    );
     const data = {
       start_date: formattedStartDate,
       end_date: formattedEndDate,
@@ -103,7 +109,8 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
       report_name: selectedLevel,
       login_customer_id: selectedCustomer,
       jobId: jobId,
-      email: user?.email
+      email: user?.email,
+      unique_ada_id: createGaUniqueId
     };
 
     try {

@@ -9,7 +9,7 @@ import { format } from 'date-fns';
 import useToast from '@/components/hooks/toast';
 import { ToastContainer } from 'react-toastify';
 import useFbConnector from '@/components/hooks/connectors/useFbConnector';
-import { createJobId } from '@/utils/helper';
+import { createJobId, generateUniqueId } from '@/utils/helper';
 import { useUser } from '@/app/context/UserContext';
 import useUserSession from '@/components/hooks/useUserSession';
 
@@ -34,8 +34,6 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
 
     const { user, setUser } = useUserSession();
     const [jobId, setJobId] = useState(String)
-
-    
 
     useEffect(() => {
         if (user) {
@@ -94,6 +92,12 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
             notify('Please select a Level first!', 'error');
             return;
         }
+        const createFbUniqueId = generateUniqueId(
+            "connector",
+            `${user?.email}`,
+            selectedAccount,
+            "facebook"
+        );
         const data = {
             access_token: accessToken,
             start_date: formattedStartDate, // Use formatted start date
@@ -102,7 +106,8 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
             table_name: "Facebook_Data.sss1",
             ad_account_id: selectedAccount,
             jobId: jobId,
-            email: user?.email
+            email: user?.email,
+            unique_ada_id: createFbUniqueId
         }
 
         try {
