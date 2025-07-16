@@ -56,8 +56,8 @@ const useCustomerSummaries = (accessToken: string | null) => {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
-    const customerSummaries = useMMMStore((state) => state.customerSummaries);
-    const setCustomerSummaries = useMMMStore((state) => state.setCustomerSummaries);
+    const customerSummaries = useMMMStore((state) => state.googleAdvertiser);
+    const setCustomerSummaries = useMMMStore((state) => state.setGoogleAdvertiser);
 
     // Helper function to make API requests with proper error handling
     const makeApiRequest = async (url: string, data?: any, customerId?: string) => {
@@ -114,7 +114,7 @@ const useCustomerSummaries = (accessToken: string | null) => {
                 return;
             }
 
-            if (customerSummaries.length > 0) {
+            if (customerSummaries?.length > 0) {
                 console.log("✅ customerSummaries already set");
                 setLoading(false);
                 return;
@@ -175,7 +175,7 @@ const useCustomerSummaries = (accessToken: string | null) => {
                 }
 
                 // Log summary
-                const managerCount = customerDetails.filter(c => c.isManager).length;
+                const managerCount = customerDetails.filter(c => c.isManager)?.length;
                 const clientCount = customerDetails.reduce((sum, c) => sum + (c.clients?.length || 0), 0);
                 console.log(`📈 Summary: ${managerCount} manager accounts, ${clientCount} total clients`);
 
@@ -188,8 +188,8 @@ const useCustomerSummaries = (accessToken: string | null) => {
                 setLoading(false);
             }
         };
-           getGoogleAdsCustomers();
-    }, [accessToken, customerSummaries.length, setCustomerSummaries]);
+        getGoogleAdsCustomers();
+    }, [accessToken, customerSummaries?.length, setCustomerSummaries]);
 
     return { customerSummaries, loading, error };
 };
