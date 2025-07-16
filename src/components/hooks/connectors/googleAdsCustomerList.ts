@@ -2,11 +2,11 @@ import { useMMMStore } from "@/store/useMMMStore";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-
-
 interface CustomerSummary {
+    id: string;
     name: string;
-    displayName: string;
+    isManager?: boolean;
+    clients?: CustomerSummary[];
     // Add any other properties you expect from the API response
 }
 
@@ -25,193 +25,173 @@ const useCustomerSummaries = (accessToken: string | null) => {
     // Token endpoint for refreshing the access token
     const tokenUrl = 'https://oauth2.googleapis.com/token';
 
-    // GAQL query to fetch customer ID and name
+    // GAQL query to fetch customer ID and name (for individual accounts)
     const gaqlQuery = `
-  SELECT
-    customer.id,
-    customer.descriptive_name
-  FROM
-    customer
-`;
+        SELECT
+            customer.id,
+            customer.descriptive_name,
+            customer.manager
+        FROM
+            customer
+    `;
+
+    // GAQL query to fetch all clients under a manager account
+    const clientsGaqlQuery = `
+        SELECT 
+            customer_client.id,
+            customer_client.descriptive_name,
+            customer_client.client_customer,
+            customer_client.status,
+            customer_client.currency_code,
+            customer_client.time_zone,
+            customer_client.manager,
+            customer_client.level,
+            customer_client.hidden,
+            customer_client.test_account
+        FROM customer_client
+        WHERE customer_client.status = 'ENABLED'
+        ORDER BY customer_client.level, customer_client.descriptive_name
+    `;
+
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
     const customerSummaries = useMMMStore((state) => state.customerSummaries);
     const setCustomerSummaries = useMMMStore((state) => state.setCustomerSummaries);
 
+    // Helper function to make API requests with proper error handling
+    const makeApiRequest = async (url: string, data?: any, customerId?: string) => {
+        const headers = {
+            'Authorization': `Bearer ${accessToken}`,
+            'developer-token': devToken,
+            'Content-Type': 'application/json',
+            ...(customerId && { 'login-customer-id': customerId.replace(/-/g, '') })
+        };
+
+        if (data) {
+            return await axios.post(url, data, { headers });
+        } else {
+            return await axios.get(url, { headers });
+        }
+    };
+
+    // Helper function to fetch clients for a manager account
+    const fetchClientsForManager = async (managerId: string): Promise<CustomerSummary[]> => {
+        try {
+            const formattedUrl = searchGoogleAdsQueryUrl.replace('{customerId}', managerId);
+            const clientsResponse = await makeApiRequest(
+                formattedUrl,
+                { query: clientsGaqlQuery },
+                managerId
+            );
+
+            const clients: CustomerSummary[] = [];
+            const results = clientsResponse?.data?.results || [];
+
+            results.forEach((item: any) => {
+                const clientData = item?.customerClient;
+                if (clientData && clientData.id !== managerId) { // Exclude self
+                    clients.push({
+                        id: clientData.id,
+                        name: clientData.descriptiveName || `Account ${clientData.id}`,
+                        isManager: clientData.manager || false
+                    });
+                }
+            });
+
+            return clients;
+        } catch (err: any) {
+            console.error(`Error fetching clients for manager ${managerId}:`, err.response?.data || err.message);
+            return [];
+        }
+    };
+
     useEffect(() => {
         const getGoogleAdsCustomers = async () => {
             if (!accessToken) {
                 console.log("❌ No accessToken available");
-                setLoading(false); // Already in store or no token
+                setLoading(false);
                 return;
             }
+
             if (customerSummaries.length > 0) {
                 console.log("✅ customerSummaries already set");
                 setLoading(false);
                 return;
             }
+
             setLoading(true);
             setError(null);
-            try {
-                // accessToken = "ya29.a0AcM612xjdS_2Qizud4cXp2u4n15gwgbidooE3vqJl6dHdBZn7nV8xDlLEF4jDZD72C5KS9RMhC03-xynvYiNNhc9ZgRK7t00v_-3J0H6W09C67Jc1b8_HP9TYvHWC97MKiFk-Io4fVR4XQVQmrpCpJMJroMhhwYzVKMe3rxSaCgYKAWQSARASFQHGX2MihqTXKqVItIG2QfopyFfeNw0175"
-                // Step 1: Fetch the list of accessible customer IDs
-                // const accessToken = 'ya29.a0AcM612yZgVOdK_DjwWdrw0KxxAQrvYEvqcy2NnotxImbFlDzc605IRiX8OIor95pYOKSsQiLlfznZKUNpv8SPGm3QWdGANWop9GE8caWElKN1QkZB46xtH-XmCmsQJRqstJvoXBg2eWXHedFq01I-6bZV7vvV2V2EhrLXdeqBBIaCgYKAf8SARASFQHGX2Mi2VrdbU0n71gCHTuVLOaqSg0178'
-                //         // await getNewAccessToken();
-                const listResponse = await axios.get(listAccessibleCustomersUrl, {
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`, // OAuth access token
-                        'developer-token': devToken,              // Developer token
-                        'Content-Type': 'application/json',
-                    },
-                });
 
-                const customerIds = listResponse?.data?.resourceNames?.map(name => name.split('/')[1]);
+            try {
+                // Step 1: Fetch the list of accessible customer IDs
+                const listResponse = await makeApiRequest(listAccessibleCustomersUrl);
+
+                const customerIds = listResponse?.data?.resourceNames?.map((name: string) => name.split('/')[1]);
+
                 if (!customerIds?.length) {
                     console.log('No accessible customer IDs found.');
+                    setLoading(false);
                     return;
                 }
 
                 const customerDetails: CustomerSummary[] = [];
 
+                // Step 2: Fetch basic customer details for each customer ID
                 for (const customerId of customerIds) {
                     try {
                         const formattedUrl = searchGoogleAdsQueryUrl.replace('{customerId}', customerId);
-                        const customerResponse = await axios.post(formattedUrl, { query: gaqlQuery }, {
-                            headers: {
-                                'Authorization': `Bearer ${accessToken}`,
-                                'developer-token': devToken,
-                                'Content-Type': 'application/json',
-                            },
-                        });
+                        const customerResponse = await makeApiRequest(
+                            formattedUrl,
+                            { query: gaqlQuery }
+                        );
 
                         const results = customerResponse?.data?.results || [];
-                        results?.forEach((item: any) => {
-                            customerDetails.push({
-                                id: item?.customer?.id,
-                                name: item?.customer?.descriptiveName,
-                            });
-                        });
+
+                        for (const item of results) {
+                            const customerData = item?.customer;
+                            if (customerData) {
+                                const customer: CustomerSummary = {
+                                    id: customerData.id,
+                                    name: customerData.descriptiveName || `Account ${customerData.id}`,
+                                    isManager: customerData.manager || false
+                                };
+
+                                // Step 3: If this is a manager account, fetch its clients
+                                if (customer.isManager) {
+                                    const clients = await fetchClientsForManager(customer.id);
+                                    customer.clients = clients;
+                                }
+
+                                customerDetails.push(customer);
+                            }
+                        }
                     } catch (err: any) {
-                        console.error(`Error fetching details for ${customerId}:`, err.customerResponse?.data || err.message);
-                        setError(err.message);
+                        // Continue with other customers instead of breaking
+                        if (err.response?.status === 403) {
+                            console.warn(`⚠️  Access denied for customer ${customerId}, skipping...`);
+                        }
                     }
                 }
 
-                setCustomerSummaries(customerDetails); // ✅ Store in Zustand
+                // Log summary
+                const managerCount = customerDetails.filter(c => c.isManager).length;
+                const clientCount = customerDetails.reduce((sum, c) => sum + (c.clients?.length || 0), 0);
+                console.log(`📈 Summary: ${managerCount} manager accounts, ${clientCount} total clients`);
+
+                setCustomerSummaries(customerDetails);
+
             } catch (err: any) {
+                console.error('❌ Error in getGoogleAdsCustomers:', err.response?.data || err.message);
                 setError(err.message);
             } finally {
                 setLoading(false);
             }
         };
-
-        getGoogleAdsCustomers();
-    }, [accessToken]);
+           getGoogleAdsCustomers();
+    }, [accessToken, customerSummaries.length, setCustomerSummaries]);
 
     return { customerSummaries, loading, error };
 };
 
-// const useCustomerSummaries = (accessToken: string | null) => {
-//     // Developer token
-//     const devToken = 'GADvxdtoU2fCzjFRGNpleg';
-
-//     // Google Ads API endpoint
-//     const listAccessibleCustomersUrl = 'https://googleads.googleapis.com/v18/customers:listAccessibleCustomers';
-//     const searchGoogleAdsQueryUrl = 'https://googleads.googleapis.com/v18/customers/{customerId}/googleAds:search'; // Template URL for querying details
-
-//     // Token endpoint for refreshing the access token
-//     const tokenUrl = 'https://oauth2.googleapis.com/token';
-
-//     // GAQL query to fetch customer ID and name
-//     const gaqlQuery = `
-//   SELECT
-//     customer.id,
-//     customer.descriptive_name
-//   FROM
-//     customer
-// `;
-//     // const [customerSummaries, setCustomerSummaries] = useState<CustomerSummary[]>([]);
-//     const [loading, setLoading] = useState<boolean>(true);
-//     const [error, setError] = useState<string | null>(null);
-
-//     const customerSummaries = useMMMStore((state) => state.customerSummaries);
-//     const setCustomerSummaries = useMMMStore((state) => state.setCustomerSummaries);
-
-//     useEffect(() => {
-//         if (!accessToken || customerSummaries.length > 0) {
-//             setLoading(false); // Already in store or no token
-//             return;
-//         } 
-
-//         const getGoogleAdsCustomers = async () => {
-//             setLoading(true);
-//             setError(null);
-//             try {
-//                 // accessToken = "ya29.a0AcM612xjdS_2Qizud4cXp2u4n15gwgbidooE3vqJl6dHdBZn7nV8xDlLEF4jDZD72C5KS9RMhC03-xynvYiNNhc9ZgRK7t00v_-3J0H6W09C67Jc1b8_HP9TYvHWC97MKiFk-Io4fVR4XQVQmrpCpJMJroMhhwYzVKMe3rxSaCgYKAWQSARASFQHGX2MihqTXKqVItIG2QfopyFfeNw0175"
-//                 // Step 1: Fetch the list of accessible customer IDs
-//                 // const accessToken = 'ya29.a0AcM612yZgVOdK_DjwWdrw0KxxAQrvYEvqcy2NnotxImbFlDzc605IRiX8OIor95pYOKSsQiLlfznZKUNpv8SPGm3QWdGANWop9GE8caWElKN1QkZB46xtH-XmCmsQJRqstJvoXBg2eWXHedFq01I-6bZV7vvV2V2EhrLXdeqBBIaCgYKAf8SARASFQHGX2Mi2VrdbU0n71gCHTuVLOaqSg0178'
-//                 //         // await getNewAccessToken();
-//                 const listResponse = await axios.get(listAccessibleCustomersUrl, {
-//                     headers: {
-//                         'Authorization': `Bearer ${accessToken}`, // OAuth access token
-//                         'developer-token': devToken,              // Developer token
-//                         'Content-Type': 'application/json',
-//                     },
-//                 });
-
-//                 const customerIds = listResponse?.data?.resourceNames?.map(name => name.split('/')[1]);
-
-//                 if (!customerIds || customerIds.length === 0) {
-//                     console.log('No accessible customer IDs found.');
-//                     return {};
-//                 }
-
-//                 // Step 2: Fetch customer details for each customer ID
-//                 const customerDetails: Array<[]> = [];
-//                 for (const customerId of customerIds) {
-
-//                     try {
-//                         const formattedUrl = searchGoogleAdsQueryUrl.replace('{customerId}', customerId);
-//                         const customerResponse = await axios.post(formattedUrl, { query: gaqlQuery }, {
-//                             headers: {
-//                                 'Authorization': `Bearer ${accessToken}`,
-//                                 'developer-token': devToken,
-//                                 'Content-Type': 'application/json',
-//                             },
-//                         });
-
-//                         const accounts = customerResponse.data.results;
-//                         accounts.forEach(account => {
-//                             customerDetails.push({
-//                                 'id': account.customer.id,
-//                                 'name': account.customer.descriptiveName
-//                             })
-//                         });
-
-//                     } catch (err: any) {
-//                         setError(err.message);
-//                         console.error(`Error fetching details for customer ID ${customerId}:`, err.response?.data || err.message);
-//                     }
-//                 }
-//                 setCustomerSummaries(customerDetails);
-//                 return { customerDetails, loading, error };
-
-//             } catch (error) {
-//                 console.error('Error fetching accounts:', error.response?.data || error.message);
-//             } finally {
-//                 setLoading(false);
-//             }
-//         };
-//         if (accessToken) {
-//             getGoogleAdsCustomers();
-//         } else {
-//             setLoading(false);
-//         }
-//     }, [accessToken]);
-
-//     return { customerSummaries, loading, error };
-// };
-
-
-export default useCustomerSummaries
+export default useCustomerSummaries;
