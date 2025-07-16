@@ -121,9 +121,6 @@ const ConnectGa4: React.FC<ConnectGa4Props> = ({
 
         try {
             setLoadingGa4(true);
-
-            console.log("ga4 uniq id",ga4uniqueId)
-
             const response = await ga4Connector(data);
 
             setSelectedProperty(null);
