@@ -235,12 +235,12 @@ const MMMPlatformPage = ({ platform }) => {
                   setMmmStatus("");
                 }}
                 value={selectedId || ""}
-                className={`w-full border px-4 py-3 text-lg rounded-lg ${isSubmitting ? "cursor-not-allowed" : "cursor-pointer"}`}
+                className={`w-full border px-4 py-3 text-lg rounded-lg ${isSubmitting || isLoading ? "cursor-not-allowed" : "cursor-pointer"}`}
                 disabled={isLoading || isSubmitting}
                 required
               >
                 <option value="" disabled>
-                  {isGoogle ? "Select an advertiser" : "Select an advertiser"}
+                  {isLoading ? 'Loading...' : 'Select an advertiser'}
                 </option>
                 {options?.map((opt) => (
                   <option key={opt.id} value={opt.id}>
