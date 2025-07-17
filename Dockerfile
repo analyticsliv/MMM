@@ -15,7 +15,7 @@ ENV NEXTAUTH_SECRET="build-time-secret"
 ENV NEXTAUTH_URL="https://placeholder.com"
 ENV GOOGLE_CLIENT_ID="placeholder"
 ENV GOOGLE_CLIENT_SECRET="placeholder"
-ENV DV360_REDIRECT_URI="placeholder"
+ENV NEXT_PUBLIC_DV360_REDIRECT_URI="placeholder"
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
