@@ -22,6 +22,7 @@ interface SuccessModalProps {
 }
 
 const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSuccess, setLoadingScreen, setStatusCheck, accessToken, refreshToken }) => {
+  const [selectedAdvertiser, setSelectedAdvertiser] = useState<string | null>(null);
   const [selectedCustomer, setSelectedCustomer] = useState<string | null>(null);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
@@ -172,26 +173,61 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
 
                 {/* Customer Summaries and level Select */}
                 <div className="flex gap-4 justify-between">
-                  <select
-                    onChange={handleCustomerChange}
-                    value={selectedCustomer || ""}
-                    className="p-2 h-14 text-xl font-semibold cursor-pointer text-black bg-white border border-black px-4 w-[50%] rounded-[5px]"
-                    disabled={customerLoading}
-                    required
-                  >
-                    {customerLoading ? (
-                      <option>Loading...</option>
-                    ) : (
-                      <>
-                        <option value="" disabled>Select a customer</option>
-                        {customerSummaries?.map((customer, index) => (
-                          <option key={index} className="bg-white" value={customer?.id}>
-                            {customer?.name}
-                          </option>
-                        ))}
-                      </>
-                    )}
-                  </select>
+                  <div>
+                    <select
+                      onChange={(e) => {
+                        const selectedVal = e.target.value;
+                        setSelectedAdvertiser(selectedVal);
+                        const selectedAdv = customerSummaries?.find(opt => opt.id === selectedVal);
+
+                        if (!selectedAdv?.isManager || !selectedAdv?.clients?.length) {
+                          setSelectedCustomer(selectedVal);
+                          console.log("check in if-----first---",selectedVal,selectedAdvertiser)
+                        } else {
+                          setSelectedCustomer(""); // Wait for second dropdown
+                          console.log("check in else-----first----",selectedAdv,selectedAdvertiser)
+                        }
+                      }}
+                      value={selectedAdvertiser || ""}
+                      className={`w-full border px-4 py-3 text-lg rounded-lg ${customerLoading ? "cursor-not-allowed" : "cursor-pointer"}`}
+                      disabled={customerLoading}
+                      required
+                    >
+                      <option value="" disabled>
+                        {customerLoading ? 'Loading...' : 'Select a Google Ads Customer'}
+                      </option>
+                      {customerSummaries?.map((opt) => (
+                        <option key={opt.id} value={opt.id}>
+                          {opt.name}
+                        </option>
+                      ))}
+                    </select>
+
+                    {(() => {
+                      const selectedCustomer = customerSummaries?.find(opt => opt.id === selectedAdvertiser?.id);
+                      if (!selectedAdvertiser?.isManager || !selectedAdvertiser?.clients?.length) return null;
+                      console.log("check in second--------",selectedAdvertiser,selectedCustomer)
+                      return (
+                        <select
+                          onChange={(e) => {
+                            setSelectedCustomer(e.target.value);
+
+                          }}
+                          value={selectedCustomer || ""}
+                          className="w-full border px-4 py-3 text-lg rounded-lg mt-2"
+                          required
+                        >
+                          <option value="" disabled>Select advertiser under manager</option>
+                          <option value={selectedCustomer.id}>{selectedCustomer.name} (Manager)</option>
+                          {selectedCustomer?.clients?.map((client) => (
+                            <option key={client.id} value={client.id}>
+                              {client.name}
+                            </option>
+                          ))}
+                        </select>
+                      );
+                    })()}
+                  </div>
                   <select onChange={handleLevelSelect} value={selectedLevel || ""} className="p-2 h-14 text-xl font-semibold cursor-pointer text-black bg-white border border-black px-4 w-[50%] rounded-[5px]">
                     <option className="bg-white" value="">Select Level</option>
                     <option className="bg-white" value="ad_performance">Ad Performance</option>
@@ -219,3 +255,25 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
 };
 
 export default Page;
+
+
+{/* <select
+                    onChange={handleCustomerChange}
+                    value={selectedCustomer || ""}
+                    className="p-2 h-14 text-xl font-semibold cursor-pointer text-black bg-white border border-black px-4 w-[50%] rounded-[5px]"
+                    disabled={customerLoading}
+                    required
+                  >
+                    {customerLoading ? (
+                      <option>Loading...</option>
+                    ) : (
+                      <>
+                        <option value="" disabled>Select a customer</option>
+                        {customerSummaries?.map((customer, index) => (
+                          <option key={index} className="bg-white" value={customer?.id}>
+                            {customer?.name}
+                          </option>
+                        ))}
+                      </>
+                    )}
+                  </select> */}
