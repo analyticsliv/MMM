@@ -156,8 +156,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
           }}>
 
           <div className={`fixed inset-0 flex items-center justify-center p-5 ${isModalOpen ? '' : 'hidden'}`}>
-            <div className="bg-white p-6 flex relative flex-col justify-between rounded-lg shadow-lg w-[650px] h-[340px] 2xl:w-[700px] 2xl:h-[340px]">
-
+            <div className="bg-white p-6 flex relative flex-col justify-between rounded-lg shadow-lg w-[650px] max-h-[370px] 2xl:w-[700px] 2xl:max-h-[370px]">
               <div className="flex items-center">
                 <Dialog.Title className=" flex justify-center items-center absolute gap-4 top-[-32px] left-[40%] rounded-[10px] shadow-xl text-2xl text-[#010101] bg-white font-bold text-center px-8 py-6 mb-4 mx-auto">
                   <img src="/assets/Google Ads logo.png" alt="dv360" /> <div>Google Ads</div>
@@ -173,7 +172,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
 
                 {/* Customer Summaries and level Select */}
                 <div className="flex gap-4 justify-between">
-                  <div>
+                  <div className="w-[50%]">
                     <select
                       onChange={(e) => {
                         const selectedVal = e.target.value;
@@ -182,19 +181,17 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
 
                         if (!selectedAdv?.isManager || !selectedAdv?.clients?.length) {
                           setSelectedCustomer(selectedVal);
-                          console.log("check in if-----first---",selectedVal,selectedAdvertiser)
                         } else {
-                          setSelectedCustomer(""); // Wait for second dropdown
-                          console.log("check in else-----first----",selectedAdv,selectedAdvertiser)
+                          setSelectedCustomer("");
                         }
                       }}
                       value={selectedAdvertiser || ""}
-                      className={`w-full border px-4 py-3 text-lg rounded-lg ${customerLoading ? "cursor-not-allowed" : "cursor-pointer"}`}
+                      className={`p-2 h-14 text-xl font-semibold text-black bg-white border border-black px-4 w-full rounded-[5px] py-3 ${customerLoading ? "cursor-not-allowed" : "cursor-pointer"}`}
                       disabled={customerLoading}
                       required
                     >
                       <option value="" disabled>
-                        {customerLoading ? 'Loading...' : 'Select a Google Ads Customer'}
+                        {customerLoading ? 'Loading...' : 'Select an Advertiser'}
                       </option>
                       {customerSummaries?.map((opt) => (
                         <option key={opt.id} value={opt.id}>
@@ -204,24 +201,20 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
                     </select>
 
                     {(() => {
-                      const selectedCustomer = customerSummaries?.find(opt => opt.id === selectedAdvertiser?.id);
-                      if (!selectedAdvertiser?.isManager || !selectedAdvertiser?.clients?.length) return null;
-                      console.log("check in second--------",selectedAdvertiser,selectedCustomer)
+                      const selectedAdv = customerSummaries?.find(opt => opt?.id === selectedAdvertiser);
+                      if (!selectedAdv?.isManager || !selectedAdv?.clients?.length) return null;
                       return (
                         <select
-                          onChange={(e) => {
-                            setSelectedCustomer(e.target.value);
-
-                          }}
+                          onChange={(e) => setSelectedCustomer(e.target.value)}
                           value={selectedCustomer || ""}
-                          className="w-full border px-4 py-3 text-lg rounded-lg mt-2"
+                          className='p-2 h-14 text-xl font-semibold text-black bg-white border border-black px-4 w-full rounded-[5px] py-3 cursor-pointer mt-3'
                           required
                         >
-                          <option value="" disabled>Select advertiser under manager</option>
-                          <option value={selectedCustomer.id}>{selectedCustomer.name} (Manager)</option>
-                          {selectedCustomer?.clients?.map((client) => (
-                            <option key={client.id} value={client.id}>
-                              {client.name}
+                          <option value="" disabled>Select a Customer</option>
+                          <option value={selectedAdv?.id}>{selectedAdv?.name}</option>
+                          {selectedAdv?.clients?.map((client) => (
+                            <option key={client?.id} value={client?.id}>
+                              {client?.name}
                             </option>
                           ))}
                         </select>
