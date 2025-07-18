@@ -178,7 +178,9 @@ const MMMPlatformPage = ({ platform }) => {
       end_date: formatDate(endDate),
       refresh_token: refreshToken || "N/A",
       report_name: isGoogle ? "campaign_mmm_report_for_ads" : "MMM_Data",
+      report_type: "MMM_Data",
       customer_id: selectedCustomerId,
+      advertiser_id: selectedId,
       login_customer_id: selectedId,
       jobId: unique_ada_id,
       email: user?.email,
@@ -214,82 +216,95 @@ const MMMPlatformPage = ({ platform }) => {
             </h2>
             <form onSubmit={handleSubmit} className="space-y-6">
 
-              {/* First Dropdown: Customer/Advertiser selection */}
-              <select
-                onChange={(e) => {
-                  const selectedVal = e.target.value;
-                  setSelectedId(selectedVal);
-
-                  const selectedCustomer = options?.find((opt) => opt.id === selectedVal);
-
-                  // Auto-set selectedCustomerId based on client presence
-                  if (!selectedCustomer?.isManager || !selectedCustomer?.clients?.length) {
-                    setSelectedCustomerId(selectedVal); // Directly select parent
-                  } else {
-                    setSelectedCustomerId(""); // Wait for user to choose in second dropdown
-                  }
-
-                  // Reset iframe and status
-                  setMmmFileContent("");
-                  setShowMmmIframe(false);
-                  setMmmStatus("");
-                }}
-                value={selectedId || ""}
-                className={`w-full border px-4 py-3 text-lg rounded-lg ${isSubmitting || isLoading ? "cursor-not-allowed" : "cursor-pointer"}`}
-                disabled={isLoading || isSubmitting}
-                required
-              >
-                <option value="" disabled>
-                  {isLoading ? 'Loading...' : 'Select an advertiser'}
-                </option>
-                {options?.map((opt) => (
-                  <option key={opt.id} value={opt.id}>
-                    {opt.name || opt.displayName}
-                  </option>
-                ))}
-              </select>
-
-              {/* Second Dropdown: Only if manager with clients */}
-              {(() => {
-                const selectedCustomer = options?.find((opt) => opt.id === selectedId);
-
-                if (!selectedCustomer || !selectedCustomer.isManager || !selectedCustomer.clients?.length) {
-                  return null;
-                }
-
-                const clientsToShow = selectedCustomer.clients || [];
-
-                return (
+              {/* Google Ads Flow (2 dropdowns if manager) */}
+              {isGoogle ? (
+                <>
+                  {/* First Dropdown: Manager/Customer or Individual */}
                   <select
                     onChange={(e) => {
-                      setSelectedCustomerId(e.target.value);
+                      const selectedVal = e.target.value;
+                      setSelectedId(selectedVal);
+                      const selectedCustomer = customerSummaries?.find(opt => opt.id === selectedVal);
+
+                      if (!selectedCustomer?.isManager || !selectedCustomer?.clients?.length) {
+                        setSelectedCustomerId(selectedVal);
+                      } else {
+                        setSelectedCustomerId(""); // Wait for second dropdown
+                      }
+
                       setMmmFileContent("");
                       setShowMmmIframe(false);
                       setMmmStatus("");
                     }}
-                    value={selectedCustomerId || ""}
-                    className={`w-full border px-4 py-3 text-lg rounded-lg ${isSubmitting ? "cursor-not-allowed" : "cursor-pointer"}`}
+                    value={selectedId || ""}
+                    className={`w-full border px-4 py-3 text-lg rounded-lg ${isSubmitting || isLoading ? "cursor-not-allowed" : "cursor-pointer"}`}
                     disabled={isLoading || isSubmitting}
                     required
                   >
                     <option value="" disabled>
-                      Select a customer
+                      {isLoading ? 'Loading...' : 'Select an advertiser'}
                     </option>
-
-                    {/* Show parent as selectable */}
-                    <option value={selectedCustomer.id}>
-                      {selectedCustomer.name}
-                    </option>
-
-                    {/* Show clients */}
-                    {clientsToShow?.map((client) => (
-                      <option key={client.id} value={client.id}>
-                        {client.name}
+                    {customerSummaries?.map((opt) => (
+                      <option key={opt.id} value={opt.id}>
+                        {opt.name}
                       </option>
                     ))}
                   </select>
-                );
-              })()}
+
+                  {/* Second Dropdown: Clients under selected manager */}
+                  {(() => {
+                    const selectedCustomer = customerSummaries?.find(opt => opt.id === selectedId);
+                    if (!selectedCustomer?.isManager || !selectedCustomer?.clients?.length) return null;
+
+                    return (
+                      <select
+                        onChange={(e) => {
+                          setSelectedCustomerId(e.target.value);
+                          setMmmFileContent("");
+                          setShowMmmIframe(false);
+                          setMmmStatus("");
+                        }}
+                        value={selectedCustomerId || ""}
+                        className="w-full border px-4 py-3 text-lg rounded-lg mt-2"
+                        required
+                      >
+                        <option value="" disabled>Select a customer</option>
+                        <option value={selectedCustomer.id}>{selectedCustomer.name}</option>
+                        {selectedCustomer?.clients?.map((client) => (
+                          <option key={client.id} value={client.id}>
+                            {client.name}
+                          </option>
+                        ))}
+                      </select>
+                    );
+                  })()}
+                </>
+              ) : (
+                // DV360: One flat dropdown
+                <select
+                  onChange={(e) => {
+                    const selectedVal = e.target.value;
+                    setSelectedDv360Advertiser(selectedVal);
+                    setSelectedId(selectedVal);
+                    setSelectedCustomerId(selectedVal);
+                    setMmmFileContent("");
+                    setShowMmmIframe(false);
+                    setMmmStatus("");
+                  }}
+                  value={selectedId || ""}
+                  className="w-full border px-4 py-3 text-lg rounded-lg"
+                  required
+                >
+                  <option value="" disabled>
+                    {isLoading ? 'Loading...' : 'Select a DV360 Advertiser'}
+                  </option>
+                  {advertisers?.map((adv) => (
+                    <option key={adv?.advertiserId} value={adv?.advertiserId}>
+                      {adv?.displayName}
+                    </option>
+                  ))}
+                </select>
+              )}
 
               <button
                 type="submit"
@@ -337,7 +352,18 @@ const MMMPlatformPage = ({ platform }) => {
 export default MMMPlatformPage;
 
 
+// dv proxy--
+// {
 
+//     "unique_ada_id": "123",
+//     "start_date": "2025-01-06",
+//     "end_date": "2025-01-09",
+//     "advertiser_id":"6629990832",
+//     "report_type":"MMM_Data",
+//     "jobId":"wertyuiuyt",
+//     "email":"data.analytics@analyticsliv.com"
+
+// }
 // const handleChange = (e) => {
 //   setSelectedId(e.target.value);
 //   // setMmmFileContent("");
