@@ -8,8 +8,8 @@ import User from "@/Models/User";
 const handler = NextAuth({
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET!,
       profile(profile) {
         return {
           id: profile.id || profile.sub,
@@ -33,21 +33,21 @@ const handler = NextAuth({
           if (!dbConnection) {
             throw new Error('Database connection not available');
           }
-
+          
           // Find the user by email
           const user = await User.findOne({ email: credentials.email });
           if (!user) {
             throw new Error('No user found with the entered email');
           }
-
+          
           // Validate the password
           const isValid = await compare(credentials.password, user.password);
           if (!isValid) {
             throw new Error('Invalid credentials');
           }
-
-          return user; 
-        } catch (error) {
+          
+          return user;
+         } catch (error) {
           console.error('Auth error:', error);
           throw new Error(error.message);
         }
@@ -55,6 +55,8 @@ const handler = NextAuth({
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
+  // Add this for production
+  url: process.env.NEXTAUTH_URL,
   pages: {
     signIn: "/login",
   },
@@ -78,24 +80,24 @@ const handler = NextAuth({
           console.warn('Database not available during build');
           return true;
         }
-
+        
         const existingUser = await User.findOne({ email: user.email });
-
+        
         if (account.provider === 'google') {
           if (existingUser) {
             return true;
           }
-
+          
           const newUser = new User({
             email: user.email,
             name: profile.name,
             image: profile.picture,
           });
-
+          
           await newUser.save();
           return true;
         }
-
+        
         return true;
       } catch (error) {
         console.error('SignIn error:', error);
@@ -107,4 +109,3 @@ const handler = NextAuth({
 });
 
 export { handler as GET, handler as POST };
-
