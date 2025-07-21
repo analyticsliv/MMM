@@ -1,6 +1,7 @@
 // next.config.mjs
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    output: 'standalone',  // Add this line for Cloud Run deployment
     reactStrictMode: false,
     experimental: {
         appDir: true,
