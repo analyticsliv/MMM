@@ -50,7 +50,7 @@ const useDv360Advertisers = (accessToken: string | null) => {
 
         // Step 2: Fetch Advertisers for the first Partner ID (if available)
         if (partnersData.length > 0) {
-          const partnerId = partnersData[0].partnerId; // Use the first partner's ID
+          const partnerId = partnersData[1].partnerId; // Use the first partner's ID
           const advertisersResponse = await axios.get(`https://displayvideo.googleapis.com/v3/advertisers?partnerId=${partnerId}`, {
             headers: {
               Authorization: `Bearer ${accessToken}`,

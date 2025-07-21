@@ -45,8 +45,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     }, [pathname, menuItems]);
 
     return (
-        <div className="flex">
-            <aside className={`${toggle ? "w-[50px]" : "lg:w-[270px]"} select-none h-screen bg-[#30486A] transition-all duration-200 text-white`}>
+        <div className="flex min-h-screen">
+            <aside className={`${toggle ? "w-[50px]" : "lg:w-[220px] 2xl:w-[240px]"} fixed top-0 left-0 z-40 select-none h-screen bg-[#30486A] transition-all duration-200 text-white`}>
                 <div className="flex flex-col justify-between h-full">
                     <div>
                         <div className="p-4 py-10 text-xl mx-auto font-semibold border-gray-700">
@@ -146,7 +146,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     </div>
                 </div>
             </aside>
-            <main className="bg-white w-full">
+            <main
+                className={`${!toggle && "ml-[224px] lg:ml-[220px] 2xl:ml-[240px]"} w-full min-h-screen overflow-y-auto bg-white`}
+            >
                 {/* <header className="p-4 text-2xl font-semibold border-b border-gray-200">
                     {currentLabel}
                 </header> */}

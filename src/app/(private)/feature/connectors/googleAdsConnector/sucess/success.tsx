@@ -153,6 +153,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
             display: 'flex',
             flexDirection: 'column',
             overflow: 'auto',
+            zIndex:'50'
           }}>
 
           <div className={`fixed inset-0 flex items-center justify-center p-5 ${isModalOpen ? '' : 'hidden'}`}>

@@ -86,7 +86,7 @@ export default function CustomDatepicker({ onDateRangeChange }: CustomDatepicker
   };
 
   return (
-    <div>
+    <div className='z-[1001]'>
 
       <div className="flex w-full h-[35px] rounded-l-[5px] rounded-r-[5px] text-xl font-semibold text-black bg-white border border-black ">
         <select
@@ -111,7 +111,7 @@ export default function CustomDatepicker({ onDateRangeChange }: CustomDatepicker
       <Dialog
         open={isModalOpen}
         onClose={closeModal}
-        className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75"
+        className="fixed z-[1001] inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75"
       >
         <div className="bg-white p-6 rounded-lg shadow-lg">
           <Dialog.Title className="text-2xl mb-4">Select Date Range</Dialog.Title>
