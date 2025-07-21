@@ -21,7 +21,7 @@ steps:
         --build-arg LINKEDIN_CLIENT_SECRET="$LINKEDIN_CLIENT_SECRET" \
         --build-arg LINKEDIN_REDIRECT_URI="https://mmm-tool-135392845747.asia-south1.run.app/feature/connectors/linkedInConnector/sucess" \
         --build-arg DEVELOPER_TOKEN="$DEVELOPER_TOKEN" \
-        -t gcr.io/$PROJECT_ID/nextjs-app:$COMMIT_SHA .
+        -t gcr.io/dx-api-project/nextjs-app:$COMMIT_SHA .
     secretEnv: 
       - 'GOOGLE_CLIENT_ID'
       - 'GOOGLE_CLIENT_SECRET'
@@ -35,7 +35,7 @@ steps:
   
   # Push the container image to Container Registry
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/$PROJECT_ID/nextjs-app:$COMMIT_SHA']
+    args: ['push', 'gcr.io/dx-api-project/nextjs-app:$COMMIT_SHA']
   
   # Deploy container image to Cloud Run
   - name: 'gcr.io/cloud-builders/gcloud'
@@ -44,7 +44,7 @@ steps:
     - 'deploy'
     - 'nextjs-app'
     - '--image'
-    - 'gcr.io/$PROJECT_ID/nextjs-app:$COMMIT_SHA'
+    - 'gcr.io/dx-api-project/nextjs-app:$COMMIT_SHA'
     - '--region'
     - 'us-central1'
     - '--platform'
@@ -56,27 +56,27 @@ steps:
 # Make secrets available to the build step
 availableSecrets:
   secretManager:
-  - versionName: projects/$PROJECT_ID/secrets/GOOGLE_CLIENT_ID/versions/latest
+  - versionName: projects/dx-api-project/secrets/GOOGLE_CLIENT_ID/versions/latest
     env: 'GOOGLE_CLIENT_ID'
-  - versionName: projects/$PROJECT_ID/secrets/GOOGLE_CLIENT_SECRET/versions/latest
+  - versionName: projects/dx-api-project/secrets/GOOGLE_CLIENT_SECRET/versions/latest
     env: 'GOOGLE_CLIENT_SECRET'
-  - versionName: projects/$PROJECT_ID/secrets/NEXTAUTH_SECRET/versions/latest
+  - versionName: projects/dx-api-project/secrets/NEXTAUTH_SECRET/versions/latest
     env: 'NEXTAUTH_SECRET'
-  - versionName: projects/$PROJECT_ID/secrets/FACEBOOK_CLIENT_ID/versions/latest
+  - versionName: projects/dx-api-project/secrets/FACEBOOK_CLIENT_ID/versions/latest
     env: 'FACEBOOK_CLIENT_ID'
-  - versionName: projects/$PROJECT_ID/secrets/FACEBOOK_CLIENT_SECRET/versions/latest
+  - versionName: projects/dx-api-project/secrets/FACEBOOK_CLIENT_SECRET/versions/latest
     env: 'FACEBOOK_CLIENT_SECRET'
-  - versionName: projects/$PROJECT_ID/secrets/MONGODB_URI/versions/latest
+  - versionName: projects/dx-api-project/secrets/MONGODB_URI/versions/latest
     env: 'MONGODB_URI'
-  - versionName: projects/$PROJECT_ID/secrets/LINKEDIN_CLIENT_ID/versions/latest
+  - versionName: projects/dx-api-project/secrets/LINKEDIN_CLIENT_ID/versions/latest
     env: 'LINKEDIN_CLIENT_ID'
-  - versionName: projects/$PROJECT_ID/secrets/LINKEDIN_CLIENT_SECRET/versions/latest
+  - versionName: projects/dx-api-project/secrets/LINKEDIN_CLIENT_SECRET/versions/latest
     env: 'LINKEDIN_CLIENT_SECRET'
-  - versionName: projects/$PROJECT_ID/secrets/DEVELOPER_TOKEN/versions/latest
+  - versionName: projects/dx-api-project/secrets/DEVELOPER_TOKEN/versions/latest
     env: 'DEVELOPER_TOKEN'
 
 images:
-- gcr.io/$PROJECT_ID/nextjs-app:$COMMIT_SHA
+- gcr.io/dx-api-project/nextjs-app:$COMMIT_SHA
 
 options:
   logging: CLOUD_LOGGING_ONLY
