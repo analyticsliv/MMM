@@ -4,8 +4,8 @@ export async function GET() {
   console.log('Running on server side, NODE_ENV:', process.env.NODE_ENV);
   
   return Response.json({
-    GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || 'undefined',
-    GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET ? 'SET' : 'NOT_SET',
+    NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || 'undefined',
+    NEXT_PUBLIC_GOOGLE_CLIENT_SECRET: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET ? 'SET' : 'NOT_SET',
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET ? 'SET' : 'NOT_SET',
     MONGODB_URI: process.env.MONGODB_URI ? 'SET' : 'NOT_SET',
     
