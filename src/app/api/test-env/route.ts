@@ -1,34 +1,18 @@
-// Create: src/app/api/debug-env/route.js
+// Make sure this is a server-side route
 export async function GET() {
+  // Force server-side execution
+  console.log('Running on server side, NODE_ENV:', process.env.NODE_ENV);
+  
   return Response.json({
-    // All environment variables (be careful with this in production)
-    allEnvVars: Object.keys(process.env),
+    GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || 'undefined',
+    GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET ? 'SET' : 'NOT_SET',
+    NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET ? 'SET' : 'NOT_SET',
+    MONGODB_URI: process.env.MONGODB_URI ? 'SET' : 'NOT_SET',
     
-    // Specific checks
+    // Debug info
     nodeEnv: process.env.NODE_ENV,
-    
-    // Your variables with existence check
-    secrets: {
-      GOOGLE_CLIENT_ID: {
-        exists: !!process.env.GOOGLE_CLIENT_ID,
-        value: process.env.GOOGLE_CLIENT_ID ? 'SET' : 'NOT_SET',
-        length: process.env.GOOGLE_CLIENT_ID?.length || 0
-      },
-      GOOGLE_CLIENT_SECRET: {
-        exists: !!process.env.GOOGLE_CLIENT_SECRET,
-        value: process.env.GOOGLE_CLIENT_SECRET ? 'SET' : 'NOT_SET',
-        length: process.env.GOOGLE_CLIENT_SECRET?.length || 0
-      },
-      NEXTAUTH_SECRET: {
-        exists: !!process.env.NEXTAUTH_SECRET,
-        value: process.env.NEXTAUTH_SECRET ? 'SET' : 'NOT_SET',
-        length: process.env.NEXTAUTH_SECRET?.length || 0
-      },
-      MONGODB_URI: {
-        exists: !!process.env.MONGODB_URI,
-        value: process.env.MONGODB_URI ? 'SET' : 'NOT_SET',
-        length: process.env.MONGODB_URI?.length || 0
-      }
-    }
+    runtime: process.env.NEXT_RUNTIME,
+    // Check if we're actually in server context
+    isServer: typeof window === 'undefined'
   });
 }
