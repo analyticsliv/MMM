@@ -125,7 +125,7 @@ const Page: React.FC = () => {
         <div>{statusMessage}</div>
       ) : statusCheck === "inProgress" ? (
         <div>in progress</div>
-      ) : jobData?.message === "Job not found" ? (
+      ) : jobData?.message === "Job not found" || jobData?.job?.status === 'failed' ? (
         <IntegrationCard
           icon={<BarChart3 className="w-16 h-16" />}
           title="Google Analytics 4 Integration"

@@ -84,7 +84,7 @@ const Page: React.FC = () => {
         <FullScreenLoader message="Verifying connector job..." />
       ) : statusMessage ? (
         <div>{statusMessage}</div> // Display success or error message here
-      ) : jobData?.message == "Job not found" ? (
+      ) : jobData?.message == "Job not found" || jobData?.job?.status === 'failed' ? (
         <IntegrationCard
           icon={<BarChart3 className="w-16 h-16" />}
           title="Meta Ads Integration"
