@@ -1,7 +1,9 @@
 // next.config.mjs
+import path from 'path';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    output: 'standalone',  // Add this line for Cloud Run deployment
+    output: 'standalone',
     reactStrictMode: false,
     experimental: {
         appDir: true,
@@ -10,6 +12,16 @@ const nextConfig = {
         ignoreBuildErrors: true,
     },
     webpack: (config, { isServer }) => {
+        // Add path aliases
+        config.resolve.alias = {
+            ...config.resolve.alias,
+            '@': path.join(process.cwd(), 'src'),
+            '@/components': path.join(process.cwd(), 'src/components'),
+            '@/utils': path.join(process.cwd(), 'src/utils'),
+            '@/hooks': path.join(process.cwd(), 'src/hooks'),
+            '@/lib': path.join(process.cwd(), 'src/lib'),
+        };
+
         if (!isServer) {
             config.resolve.fallback = {
                 ...config.resolve.fallback,
