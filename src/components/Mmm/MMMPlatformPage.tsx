@@ -154,7 +154,7 @@ const MMMPlatformPage = ({ platformName }) => {
     setUniqueId(unique_ada_id);
     const today = new Date();
     const endDate = new Date(today.setDate(today.getDate() - 2));
-    const startDate = new Date(today.setDate(today.getDate() - 730));
+    const startDate = new Date(today.setDate(today.getDate() - 725));
     const formatDate = (d) => d.toISOString().split("T")[0];
 
     const data = {
@@ -190,7 +190,7 @@ const MMMPlatformPage = ({ platformName }) => {
 
     const today = new Date();
     const endDate = new Date(today.setDate(today.getDate() - 2));
-    const startDate = new Date(today.setDate(today.getDate() - 730));
+    const startDate = new Date(today.setDate(today.getDate() - 725));
     const formatDate = (d) => d.toISOString().split("T")[0];
 
     const data = {
@@ -222,7 +222,7 @@ const MMMPlatformPage = ({ platformName }) => {
 
     if (connectorRes) {
       const createMmmJobId = generateUniqueId("mmm_campaign_report", user?.email, selectedCustomerId, isGoogle ? "googleAds" : "dv360");
-      const response = await GetCampaignData({ unique_ada_id: unique_ada_id, connector_type: isGoogle ? "googleAds" : "dv360", jobId: mmmJobId });
+      const response = await GetCampaignData({ unique_ada_id: unique_ada_id, connector_type: isGoogle ? "googleAds" : "dv360", jobId: createMmmJobId });
       // const response = await GetCampaignData({ unique_ada_id: '123rtyihgfg', connector_type: isGoogle ? "googleAds" : "dv360", jobId: '123' });
       if (response) {
         setMmmJobId(createMmmJobId);
