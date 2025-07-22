@@ -14,6 +14,7 @@ import { reportOptionsLinkedin } from "@/utils/const";
 import { createJobId, generateUniqueId } from "@/utils/helper";
 import useLinkedInConnector from "@/components/hooks/connectors/useLinkedInConnector";
 import useLinkedinSummaries from "@/components/hooks/connectors/linkedinAccountList";
+import useLinkedinAccountProperties from "@/components/hooks/connectors/useLinkedinAccountProperties";
 
 interface SuccessModalProps {
   isModalOpen: boolean;
@@ -59,7 +60,6 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
 
   const {
     accountSummaries,
-    accountIds,
     loading: accountsLoading,
     error: accountsError,
   } = useLinkedinSummaries(accessToken);
@@ -79,11 +79,10 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
   };
 
   const {
-    properties,
-    propertyIds,
+    propertySummaries,
     loading: propertiesLoading,
     error: propertiesError,
-  } = useAccountProperties(selectedAccount, accountSummaries, accessToken);
+  } = useLinkedinAccountProperties(accessToken, selectedAccount);
 
   const [dateRange, setDateRange] = useState<{ startDate: Date | null; endDate: Date | null }>({
     startDate: null,
@@ -110,10 +109,14 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
       notify('Please select an account first!', 'error');
       return;
     }
-    // if (!selectedCampaign) {
-    //   notify('Please select a property first!', 'error');
-    //   return;
-    // }
+
+    if (selectedReport == 'campaign_analytics') {
+      if (!selectedCampaign) {
+        notify('Please select campaign!', 'error');
+        return;
+      }
+    }
+
     if (!selectedReport) {
       notify('Please select the report!', 'error');
       return;
@@ -128,8 +131,8 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
       access_token: accessToken || "N/A",
       account_id: selectedAccount,
       // account_id: selectedAccount,
-      campaign_id: "207314706",
-      report_name: 'campaigns',
+      campaign_id: selectedReport == 'campaign_analytics' ? selectedCampaign : 'None',
+      report_name: selectedReport,
       // campaign_id: selectedCampaign,
       start_date: formattedStartDate,
       end_date: formattedEndDate,
@@ -177,7 +180,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
             display: 'flex',
             flexDirection: 'column',
             overflow: 'auto',
-            zIndex:'50'
+            zIndex: '50'
           }}>
 
           <div className={`fixed inset-0 flex items-center justify-center p-5 ${isModalOpen ? '' : 'hidden'}`}>
@@ -210,9 +213,9 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
                     ) : (
                       <>
                         <option value="" disabled>Select an account</option>
-                        {accountIds?.map((account, index) => (
-                          <option key={index} className="bg-white" value={account}>
-                            {account}
+                        {accountSummaries?.map((account, index) => (
+                          <option key={index} className="bg-white" value={account?.id}>
+                            {account?.name}
                           </option>
                         ))}
                       </>
@@ -242,16 +245,21 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
                         onChange={handlePropertyChange}
                         value={selectedCampaign || ""}
                         className="p-2 h-14 text-xl font-semibold cursor-pointer text-black bg-white border border-black px-4 rounded-[5px] w-full"
-                        disabled={!selectedAccount} // Disable if no account is selected
+                        disabled={!selectedAccount || propertiesLoading}
                         required
                       >
-                        <option value="" disabled>Select a property</option>
-                        {properties.map((property, index) => (
-                          <option key={property.property} className="bg-white" value={propertyIds[index]}>
-                            {property.displayName}
-                          </option>
-                        ))}
-
+                        {propertiesLoading ? (
+                          <option>Loading...</option>
+                        ) : (
+                          <>
+                            <option value="" disabled>Select a property</option>
+                            {propertySummaries?.map((property, index) => (
+                              <option key={property?.id} className="bg-white" value={property?.id}>
+                                {property?.name}
+                              </option>
+                            ))}
+                          </>
+                        )}
                       </select>
                     }
                   </div>

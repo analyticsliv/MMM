@@ -9,7 +9,9 @@ interface AccountIds {
 }
 
 interface AccountSummariesResponse {
-  accountSummaries: AccountSummary[];
+  adAccountData: {
+    elements: AccountSummary[];
+  };
 }
 interface AccountIdsResponse {
   accountIds: AccountIds[];
@@ -17,7 +19,6 @@ interface AccountIdsResponse {
 
 const useLinkedinSummaries = (accessToken: string | null) => {
   const [accountSummaries, setAccountSummaries] = useState<AccountSummary[]>([]);
-  const [accountIds, setAccountIds] = useState<AccountIdsResponse[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,9 +32,7 @@ const useLinkedinSummaries = (accessToken: string | null) => {
 
         const response = await fetch("/api/linkedin/account-summaries", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ access_token: accessToken }),
         });
 
@@ -42,9 +41,9 @@ const useLinkedinSummaries = (accessToken: string | null) => {
         }
 
         const data: AccountSummariesResponse = await response.json();
-        setAccountSummaries(data?.accountSummaries || []);
-        setAccountIds(data?.adAccountId || []);
-        console.log("objectdatadatadata----",data, accountIds)
+        const elements = data?.adAccountData?.elements || [];
+
+        setAccountSummaries(elements);
       } catch (err: any) {
         setError(err.message);
       } finally {
@@ -55,7 +54,7 @@ const useLinkedinSummaries = (accessToken: string | null) => {
     fetchAccountSummaries();
   }, [accessToken]);
 
-  return { accountSummaries, accountIds, loading, error };
+  return { accountSummaries, loading, error };
 };
 
 export default useLinkedinSummaries;
