@@ -124,21 +124,31 @@ steps:
   # Push the container image to Container Registry
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/dx-api-project/nextjs-app:$COMMIT_SHA']
-  
-  # Deploy container image to Cloud Run with environment variables
+
+  # Deploy container image to Cloud Run
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+    - 'run'
+    - 'deploy'
+    - 'nextjs-app'
+    - '--image'
+    - 'gcr.io/dx-api-project/nextjs-app:$COMMIT_SHA'
+    - '--region'
+    - 'asia-south1'
+    - '--platform'
+    - 'managed'
+    - '--allow-unauthenticated'
+
+  # Set environment variables using secrets
   - name: 'gcr.io/cloud-builders/gcloud'
     entrypoint: 'bash'
     args:
     - '-c'
     - |
-      gcloud run deploy nextjs-app \
-        --image gcr.io/dx-api-project/nextjs-app:$COMMIT_SHA \
-        --region asia-south1 \
-        --platform managed \
-        --allow-unauthenticated \
-        --set-env-vars "NODE_ENV=production,NEXTAUTH_URL=https://mmm-tool-135392845747.asia-south1.run.app,GA4_REDIRECT_URI=https://mmm-tool-135392845747.asia-south1.run.app/feature/connectors/ga4Connector/sucess,FACEBOOK_REDIRECT_URI=https://mmm-tool-135392845747.asia-south1.run.app/api/facebook-callback,GOOGLE_ADS_REDIRECT_URI=https://mmm-tool-135392845747.asia-south1.run.app/feature/connectors/googleAdsConnector/sucess,LINKEDIN_REDIRECT_URI=https://mmm-tool-135392845747.asia-south1.run.app/feature/connectors/linkedInConnector/sucess,DV360_REDIRECT_URI=https://mmm-tool-135392845747.asia-south1.run.app/feature/connectors/dv360Connector/sucess,BASE_API_URL=https://mmm-tool-135392845747.asia-south1.run.app/" \
-        --update-secrets "NEXT_PUBLIC_GOOGLE_CLIENT_ID=NEXT_PUBLIC_GOOGLE_CLIENT_ID:latest,NEXT_PUBLIC_GOOGLE_CLIENT_SECRET=NEXT_PUBLIC_GOOGLE_CLIENT_SECRET:latest,NEXTAUTH_SECRET=NEXTAUTH_SECRET:latest,FACEBOOK_CLIENT_ID=FACEBOOK_CLIENT_ID:latest,FACEBOOK_CLIENT_SECRET=FACEBOOK_CLIENT_SECRET:latest,MONGODB_URI=MONGODB_URI:latest,LINKEDIN_CLIENT_ID=LINKEDIN_CLIENT_ID:latest,LINKEDIN_CLIENT_SECRET=LINKEDIN_CLIENT_SECRET:latest,DEVELOPER_TOKEN=DEVELOPER_TOKEN:latest"
-    secretEnv: 
+      gcloud run services update nextjs-app \
+        --region=asia-south1 \
+        --update-env-vars="NODE_ENV=production,NEXTAUTH_URL=https://mmm-tool-135392845747.asia-south1.run.app,GA4_REDIRECT_URI=https://mmm-tool-135392845747.asia-south1.run.app/feature/connectors/ga4Connector/sucess,FACEBOOK_REDIRECT_URI=https://mmm-tool-135392845747.asia-south1.run.app/api/facebook-callback,GOOGLE_ADS_REDIRECT_URI=https://mmm-tool-135392845747.asia-south1.run.app/feature/connectors/googleAdsConnector/sucess,LINKEDIN_REDIRECT_URI=https://mmm-tool-135392845747.asia-south1.run.app/feature/connectors/linkedInConnector/sucess,DV360_REDIRECT_URI=https://mmm-tool-135392845747.asia-south1.run.app/feature/connectors/dv360Connector/sucess,BASE_API_URL=https://mmm-tool-135392845747.asia-south1.run.app/,NEXT_PUBLIC_GOOGLE_CLIENT_ID=$NEXT_PUBLIC_GOOGLE_CLIENT_ID,NEXT_PUBLIC_GOOGLE_CLIENT_SECRET=$NEXT_PUBLIC_GOOGLE_CLIENT_SECRET,NEXTAUTH_SECRET=$NEXTAUTH_SECRET,FACEBOOK_CLIENT_ID=$FACEBOOK_CLIENT_ID,FACEBOOK_CLIENT_SECRET=$FACEBOOK_CLIENT_SECRET,MONGODB_URI=$MONGODB_URI,LINKEDIN_CLIENT_ID=$LINKEDIN_CLIENT_ID,LINKEDIN_CLIENT_SECRET=$LINKEDIN_CLIENT_SECRET,DEVELOPER_TOKEN=$DEVELOPER_TOKEN"
+    secretEnv:
       - 'NEXT_PUBLIC_GOOGLE_CLIENT_ID'
       - 'NEXT_PUBLIC_GOOGLE_CLIENT_SECRET'
       - 'NEXTAUTH_SECRET'
