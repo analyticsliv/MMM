@@ -11,8 +11,8 @@ export function validateEnvVars() {
     ];
 
     const requiredClientVars = [
-        'NEXTPUBLIC_GOOGLE_CLIENT_ID',
-        'NEXTPUBLIC_GOOGLE_CLIENT_SECRET'
+        'NEXT_PUBLIC_GOOGLE_CLIENT_ID',
+        'NEXT_PUBLIC_GOOGLE_CLIENT_SECRET'
     ];
 
     const requiredUrlVars = [

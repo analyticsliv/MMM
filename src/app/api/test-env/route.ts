@@ -4,8 +4,8 @@
 //   console.log('Running on server side, NODE_ENV:', process.env.NODE_ENV);
   
 //   return Response.json({
-//     NEXTPUBLIC_GOOGLE_CLIENT_ID: process.env.NEXTPUBLIC_GOOGLE_CLIENT_ID || 'undefined',
-//     NEXTPUBLIC_GOOGLE_CLIENT_SECRET: process.env.NEXTPUBLIC_GOOGLE_CLIENT_SECRET ? 'SET' : 'NOT_SET',
+//     NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || 'undefined',
+//     NEXT_PUBLIC_GOOGLE_CLIENT_SECRET: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET ? 'SET' : 'NOT_SET',
 //     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET ? 'SET' : 'NOT_SET',
 //     MONGODB_URI: process.env.MONGODB_URI ? 'SET' : 'NOT_SET',
     
@@ -35,8 +35,8 @@ export async function GET(request: NextRequest) {
         NODE_ENV: process.env.NODE_ENV,
         
         // Public vars (safe to show)
-        NEXTPUBLIC_GOOGLE_CLIENT_ID: process.env.NEXTPUBLIC_GOOGLE_CLIENT_ID ? 'SET' : 'NOT_SET',
-        NEXTPUBLIC_GOOGLE_CLIENT_SECRET: process.env.NEXTPUBLIC_GOOGLE_CLIENT_SECRET ? 'SET' : 'NOT_SET',
+        NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ? 'SET' : 'NOT_SET',
+        NEXT_PUBLIC_GOOGLE_CLIENT_SECRET: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET ? 'SET' : 'NOT_SET',
         
         // Server vars (show only if set/not set)
         NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET ? 'SET' : 'NOT_SET',
