@@ -1,3 +1,90 @@
+# steps:
+#   # Build the container image with secrets injected as build args
+#   - name: 'gcr.io/cloud-builders/docker'
+#     entrypoint: 'bash'
+#     args:
+#     - '-c'
+#     - |
+#       docker build \
+#         --build-arg NEXTPUBLIC_GOOGLE_CLIENT_ID="$NEXTPUBLIC_GOOGLE_CLIENT_ID" \
+#         --build-arg NEXTPUBLIC_GOOGLE_CLIENT_SECRET="$NEXTPUBLIC_GOOGLE_CLIENT_SECRET" \
+#         --build-arg NEXTAUTH_SECRET="$NEXTAUTH_SECRET" \
+#         --build-arg GA4_REDIRECT_URI="https://mmm-tool-135392845747.asia-south1.run.app/feature/connectors/ga4Connector/sucess" \
+#         --build-arg FACEBOOK_CLIENT_ID="$FACEBOOK_CLIENT_ID" \
+#         --build-arg FACEBOOK_CLIENT_SECRET="$FACEBOOK_CLIENT_SECRET" \
+#         --build-arg FACEBOOK_REDIRECT_URI="https://mmm-tool-135392845747.asia-south1.run.app/api/facebook-callback" \
+#         --build-arg MONGODB_URI="$MONGODB_URI" \
+#         --build-arg BASE_API_URL="https://mmm-tool-135392845747.asia-south1.run.app/" \
+#         --build-arg GOOGLE_ADS_REDIRECT_URI="https://mmm-tool-135392845747.asia-south1.run.app/feature/connectors/googleAdsConnector/sucess" \
+#         --build-arg DV360_REDIRECT_URI="https://mmm-tool-135392845747.asia-south1.run.app/feature/connectors/dv360Connector/sucess" \
+#         --build-arg LINKEDIN_CLIENT_ID="$LINKEDIN_CLIENT_ID" \
+#         --build-arg LINKEDIN_CLIENT_SECRET="$LINKEDIN_CLIENT_SECRET" \
+#         --build-arg LINKEDIN_REDIRECT_URI="https://mmm-tool-135392845747.asia-south1.run.app/feature/connectors/linkedInConnector/sucess" \
+#         --build-arg DEVELOPER_TOKEN="$DEVELOPER_TOKEN" \
+#         -t gcr.io/dx-api-project/nextjs-app:$COMMIT_SHA .
+#     secretEnv: 
+#       - 'NEXTPUBLIC_GOOGLE_CLIENT_ID'
+#       - 'NEXTPUBLIC_GOOGLE_CLIENT_SECRET'
+#       - 'NEXTAUTH_SECRET'
+#       - 'FACEBOOK_CLIENT_ID'
+#       - 'FACEBOOK_CLIENT_SECRET'
+#       - 'MONGODB_URI'
+#       - 'LINKEDIN_CLIENT_ID'
+#       - 'LINKEDIN_CLIENT_SECRET'
+#       - 'DEVELOPER_TOKEN'
+  
+#   # Push the container image to Container Registry
+#   - name: 'gcr.io/cloud-builders/docker'
+#     args: ['push', 'gcr.io/dx-api-project/nextjs-app:$COMMIT_SHA']
+  
+#   # Deploy container image to Cloud Run
+#   - name: 'gcr.io/cloud-builders/gcloud'
+#     args:
+#     - 'run'
+#     - 'deploy'
+#     - 'nextjs-app'
+#     - '--image'
+#     - 'gcr.io/dx-api-project/nextjs-app:$COMMIT_SHA'
+#     - '--region'
+#     - 'us-central1'
+#     - '--platform'
+#     - 'managed'
+#     - '--allow-unauthenticated'
+#     - '--set-env-vars'
+#     - 'NODE_ENV=production'
+
+# # Make secrets available to the build step
+# availableSecrets:
+#   secretManager:
+#   - versionName: projects/dx-api-project/secrets/NEXTPUBLIC_GOOGLE_CLIENT_ID/versions/latest
+#     env: 'NEXTPUBLIC_GOOGLE_CLIENT_ID'
+#   - versionName: projects/dx-api-project/secrets/NEXTPUBLIC_GOOGLE_CLIENT_SECRET/versions/latest
+#     env: 'NEXTPUBLIC_GOOGLE_CLIENT_SECRET'
+#   - versionName: projects/dx-api-project/secrets/NEXTAUTH_SECRET/versions/latest
+#     env: 'NEXTAUTH_SECRET'
+#   - versionName: projects/dx-api-project/secrets/FACEBOOK_CLIENT_ID/versions/latest
+#     env: 'FACEBOOK_CLIENT_ID'
+#   - versionName: projects/dx-api-project/secrets/FACEBOOK_CLIENT_SECRET/versions/latest
+#     env: 'FACEBOOK_CLIENT_SECRET'
+#   - versionName: projects/dx-api-project/secrets/MONGODB_URI/versions/latest
+#     env: 'MONGODB_URI'
+#   - versionName: projects/dx-api-project/secrets/LINKEDIN_CLIENT_ID/versions/latest
+#     env: 'LINKEDIN_CLIENT_ID'
+#   - versionName: projects/dx-api-project/secrets/LINKEDIN_CLIENT_SECRET/versions/latest
+#     env: 'LINKEDIN_CLIENT_SECRET'
+#   - versionName: projects/dx-api-project/secrets/DEVELOPER_TOKEN/versions/latest
+#     env: 'DEVELOPER_TOKEN'
+
+# images:
+# - gcr.io/dx-api-project/nextjs-app:$COMMIT_SHA
+
+# options:
+#   logging: CLOUD_LOGGING_ONLY
+
+
+
+
+
 steps:
   # Build the container image with secrets injected as build args
   - name: 'gcr.io/cloud-builders/docker'
@@ -21,6 +108,7 @@ steps:
         --build-arg LINKEDIN_CLIENT_SECRET="$LINKEDIN_CLIENT_SECRET" \
         --build-arg LINKEDIN_REDIRECT_URI="https://mmm-tool-135392845747.asia-south1.run.app/feature/connectors/linkedInConnector/sucess" \
         --build-arg DEVELOPER_TOKEN="$DEVELOPER_TOKEN" \
+        --build-arg NEXTAUTH_URL="https://mmm-tool-135392845747.asia-south1.run.app" \
         -t gcr.io/dx-api-project/nextjs-app:$COMMIT_SHA .
     secretEnv: 
       - 'NEXTPUBLIC_GOOGLE_CLIENT_ID'
@@ -37,21 +125,29 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/dx-api-project/nextjs-app:$COMMIT_SHA']
   
-  # Deploy container image to Cloud Run
+  # Deploy container image to Cloud Run with environment variables
   - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
     args:
-    - 'run'
-    - 'deploy'
-    - 'nextjs-app'
-    - '--image'
-    - 'gcr.io/dx-api-project/nextjs-app:$COMMIT_SHA'
-    - '--region'
-    - 'us-central1'
-    - '--platform'
-    - 'managed'
-    - '--allow-unauthenticated'
-    - '--set-env-vars'
-    - 'NODE_ENV=production'
+    - '-c'
+    - |
+      gcloud run deploy nextjs-app \
+        --image gcr.io/dx-api-project/nextjs-app:$COMMIT_SHA \
+        --region asia-south1 \
+        --platform managed \
+        --allow-unauthenticated \
+        --set-env-vars "NODE_ENV=production,NEXTAUTH_URL=https://mmm-tool-135392845747.asia-south1.run.app,GA4_REDIRECT_URI=https://mmm-tool-135392845747.asia-south1.run.app/feature/connectors/ga4Connector/sucess,FACEBOOK_REDIRECT_URI=https://mmm-tool-135392845747.asia-south1.run.app/api/facebook-callback,GOOGLE_ADS_REDIRECT_URI=https://mmm-tool-135392845747.asia-south1.run.app/feature/connectors/googleAdsConnector/sucess,LINKEDIN_REDIRECT_URI=https://mmm-tool-135392845747.asia-south1.run.app/feature/connectors/linkedInConnector/sucess,DV360_REDIRECT_URI=https://mmm-tool-135392845747.asia-south1.run.app/feature/connectors/dv360Connector/sucess,BASE_API_URL=https://mmm-tool-135392845747.asia-south1.run.app/" \
+        --update-secrets "NEXTPUBLIC_GOOGLE_CLIENT_ID=NEXTPUBLIC_GOOGLE_CLIENT_ID:latest,NEXTPUBLIC_GOOGLE_CLIENT_SECRET=NEXTPUBLIC_GOOGLE_CLIENT_SECRET:latest,NEXTAUTH_SECRET=NEXTAUTH_SECRET:latest,FACEBOOK_CLIENT_ID=FACEBOOK_CLIENT_ID:latest,FACEBOOK_CLIENT_SECRET=FACEBOOK_CLIENT_SECRET:latest,MONGODB_URI=MONGODB_URI:latest,LINKEDIN_CLIENT_ID=LINKEDIN_CLIENT_ID:latest,LINKEDIN_CLIENT_SECRET=LINKEDIN_CLIENT_SECRET:latest,DEVELOPER_TOKEN=DEVELOPER_TOKEN:latest"
+    secretEnv: 
+      - 'NEXTPUBLIC_GOOGLE_CLIENT_ID'
+      - 'NEXTPUBLIC_GOOGLE_CLIENT_SECRET'
+      - 'NEXTAUTH_SECRET'
+      - 'FACEBOOK_CLIENT_ID'
+      - 'FACEBOOK_CLIENT_SECRET'
+      - 'MONGODB_URI'
+      - 'LINKEDIN_CLIENT_ID'
+      - 'LINKEDIN_CLIENT_SECRET'
+      - 'DEVELOPER_TOKEN'
 
 # Make secrets available to the build step
 availableSecrets:
