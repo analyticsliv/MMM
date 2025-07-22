@@ -8,8 +8,8 @@ import User from "@/Models/User";
 const handler = NextAuth({
   providers: [
     GoogleProvider({
-      clientId: process.env.NEXTPUBLIC_GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.NEXTPUBLIC_GOOGLE_CLIENT_SECRET!,
+      clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET!,
       profile(profile) {
         return {
           id: profile.id || profile.sub,
