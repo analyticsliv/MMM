@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
         
         // Redirect URIs
         BASE_API_URL: process.env.BASE_API_URL || 'NOT_SET',
-        GA4_REDIRECT_URI: process.env.GA4_REDIRECT_URI || 'NOT_SET',
+        NEXT_PUBLIC_GA4_REDIRECT_URI: process.env.NEXT_PUBLIC_GA4_REDIRECT_URI || 'NOT_SET',
         FACEBOOK_REDIRECT_URI: process.env.FACEBOOK_REDIRECT_URI || 'NOT_SET',
         GOOGLE_ADS_REDIRECT_URI: process.env.GOOGLE_ADS_REDIRECT_URI || 'NOT_SET',
         LINKEDIN_REDIRECT_URI: process.env.LINKEDIN_REDIRECT_URI || 'NOT_SET',
