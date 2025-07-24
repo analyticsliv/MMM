@@ -32,6 +32,7 @@ const useLinkedinAccountProperties = (accessToken: string | null, account: strin
                 });
 
                 if (!response.ok) {
+                    setPropertySummaries([]);
                     throw new Error(`Error: ${response.status} ${response.statusText}`);
                 }
 
@@ -40,6 +41,7 @@ const useLinkedinAccountProperties = (accessToken: string | null, account: strin
 
                 setPropertySummaries(elements);
             } catch (err: any) {
+                setPropertySummaries([]);
                 setError(err.message);
             } finally {
                 setLoading(false);

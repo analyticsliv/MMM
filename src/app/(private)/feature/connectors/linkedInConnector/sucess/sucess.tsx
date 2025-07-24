@@ -110,7 +110,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
       return;
     }
 
-    if (selectedReport == 'campaign_analytics') {
+    if (selectedReport == 'campaign_analytics' && propertySummaries?.length > 0) {
       if (!selectedCampaign) {
         notify('Please select campaign!', 'error');
         return;
@@ -131,7 +131,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
       access_token: accessToken || "N/A",
       account_id: selectedAccount,
       // account_id: selectedAccount,
-      campaign_id: selectedReport == 'campaign_analytics' ? selectedCampaign : 'None',
+      campaign_id: selectedReport == 'campaign_analytics' && propertySummaries?.length > 0 ? selectedCampaign : 'None',
       report_name: selectedReport,
       // campaign_id: selectedCampaign,
       start_date: formattedStartDate,
@@ -250,16 +250,19 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
                       >
                         {propertiesLoading ? (
                           <option>Loading...</option>
-                        ) : (
-                          <>
-                            <option value="" disabled>Select a property</option>
-                            {propertySummaries?.map((property, index) => (
-                              <option key={property?.id} className="bg-white" value={property?.id}>
-                                {property?.name}
-                              </option>
-                            ))}
-                          </>
-                        )}
+                        ) : propertySummaries?.length < 1 ? (
+                          <option value="" disabled>No properties found</option>)
+                          :
+                          (
+                            <>
+                              <option value="" disabled>Select a property</option>
+                              {propertySummaries?.map((property, index) => (
+                                <option key={property?.id} className="bg-white" value={property?.id}>
+                                  {property?.name}
+                                </option>
+                              ))}
+                            </>
+                          )}
                       </select>
                     }
                   </div>
