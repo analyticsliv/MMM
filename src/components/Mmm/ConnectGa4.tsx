@@ -86,7 +86,7 @@ const ConnectGa4: React.FC<ConnectGa4Props> = ({
         const today = new Date();
         const formatDate = (d) => d.toISOString().split("T")[0];
         const endDate = new Date(today.setDate(today.getDate() - 2));
-        const startDate = new Date(today.setDate(today.getDate() - 725));
+        const startDate = new Date(today.setDate(today.getDate() - 715));
 
         if (!selectedAccount) {
             notify('Please select an account first!', 'error');
@@ -340,7 +340,7 @@ const ConnectGa4: React.FC<ConnectGa4Props> = ({
                             <div>
                                 <h4 className="font-semibold text-blue-800 mb-1">Data Collection Period</h4>
                                 <p className="text-blue-700 text-sm">
-                                    We'll collect data from the last 2 years (725 days) ending 2 days ago to ensure complete data availability.
+                                    We'll collect data from the last 2 years (715 days) ending 2 days ago to ensure complete data availability.
                                 </p>
                             </div>
                         </div>

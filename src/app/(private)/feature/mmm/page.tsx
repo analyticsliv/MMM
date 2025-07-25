@@ -18,32 +18,36 @@ const MMMSelectionPage = () => {
         setReportLevel,
         setGoogleAdsRefreshToken,
         setDv360RefreshToken,
-    } = useMMMStore()
+        setMetaAccessToken
+    } = useMMMStore();
 
     const handleContinue = async () => {
         if (!user?.email || !platform || !reportLevel) return;
 
         setLoading(true);
-        const connectorKey = platform === 'google-ads' ? 'googleAds' : 'dv360';
-        const authUrlEndpoint = platform === 'google-ads'
-            ? '/api/googleAds-auth-url'
-            : '/api/dv360-auth-url';
+        const connectorKey = platform === 'google-ads' ? 'googleAds' : platform === 'dv360' ? 'dv360' : platform === 'meta' ? 'facebook' : '';
+        const authUrlEndpoint = platform === 'google-ads' ? '/api/googleAds-auth-url'
+            : platform === 'dv360' ? '/api/dv360-auth-url'
+            : platform === 'meta' ? '/api/facebook-auth-url' : '';
 
         try {
             const authStatus = await getConnectorData(connectorKey, user?.email);
 
-            if (authStatus && authStatus.refreshToken) {
+            if (authStatus && authStatus.refreshToken || authStatus.accessToken) {
                 if (platform === 'google-ads') {
                     setGoogleAdsRefreshToken(authStatus.refreshToken);
                 } else if (platform === 'dv360') {
                     setDv360RefreshToken(authStatus.refreshToken);
+                } else if (platform === 'meta') {
+                    setMetaAccessToken(authStatus.accessToken);
                 }
                 router.push(`/feature/mmm/${reportLevel}/${platform}`);
             } else {
                 const res = await fetch(authUrlEndpoint);
                 const data = await res.json();
                 if (data.authUrl) {
-                    router.push(data.authUrl);
+                    // router.push(data.authUrl);
+                    console.log("got it--",data.authUrl)
                 }
             }
         } catch (error) {
@@ -192,7 +196,7 @@ const MMMSelectionPage = () => {
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-6">
+                    <div className="grid grid-cols-3 gap-4">
                         {/* Google Ads */}
                         <div
                             onClick={() => setPlatform('google-ads')}
@@ -276,6 +280,49 @@ const MMMSelectionPage = () => {
                                 </div>
                             )}
                         </div>
+
+                        {/* Facebook */}
+                        <div
+                            onClick={() => setPlatform('meta')}
+                            className={`relative border-2 rounded-xl px-6 py-4 2xl:py-6 flex flex-col items-center justify-center transition-all duration-300 transform hover:scale-105 cursor-pointer group ${platform === 'meta'
+                                ? 'border-blue-500 bg-blue-50 shadow-lg'
+                                : 'border-gray-200 bg-white hover:border-blue-300 hover:shadow-md'
+                                }`}
+                        >
+                            <div className="space-y-2 2xl:space-y-3 text-center">
+                                <div className={`w-14 h-14 rounded-xl flex items-center justify-center mx-auto transition-all duration-300 ${platform === 'meta'
+                                    ? 'bg-blue-200 shadow-lg'
+                                    : 'bg-gray-100 group-hover:bg-blue-100'
+                                    }`}>
+                                    <Image
+                                        src="/assets/meta_logo.png"
+                                        alt="meta"
+                                        width={20}
+                                        height={20}
+                                        className="object-contain"
+                                    />
+                                </div>
+                                <div>
+                                    <h3 className={`text-base 2xl:text-lg font-semibold ${platform === 'meta' ? 'text-blue-700' : 'text-gray-700'
+                                        }`}>
+                                        Meta
+                                    </h3>
+                                    <p className="text-xs 2xl:text-sm text-gray-600">
+                                        Meta ads
+                                    </p>
+                                </div>
+                            </div>
+                            {platform === 'meta' && (
+                                <div className="absolute top-3 right-3">
+                                    <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                                        <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
                     </div>
                 </div>
 
@@ -319,10 +366,10 @@ const MMMSelectionPage = () => {
                         className={`w-full py-4 text-lg font-bold rounded-xl transition-all duration-300 transform ${loading
                             ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
                             : isFormValid
-                                ? platform === 'google-ads'
+                                ? (platform === 'google-ads' || platform === 'meta'
                                     ? 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg hover:shadow-xl hover:scale-105'
                                     : 'bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white shadow-lg hover:shadow-xl hover:scale-105'
-                                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                ): 'bg-gray-300 text-gray-500 cursor-not-allowed'
                             }`}
                     >
                         {loading ? (
@@ -342,7 +389,7 @@ const MMMSelectionPage = () => {
                                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                                 </svg>
-                                Continue to {platform === 'google-ads' ? 'Google Ads' : 'DV360'}
+                                Continue to {platform === 'google-ads' ? 'Google Ads' : platform === 'dv360' ? 'DV360' : platform === 'meta' ? 'Meta' : ''}
                             </div>
                         )}
                     </button>

@@ -26,6 +26,7 @@ const MMMPlatformPage = ({ platformName }) => {
   const [showRetryConnector, setShowRetryConnector] = useState(false);
   const [mmmFileContent, setMmmFileContent] = useState("");
   const [showMmmIframe, setShowMmmIframe] = useState(false);
+  const [metaLoading, setMetaLoading] = useState(false);
   const [mmmStatus, setMmmStatus] = useState("");
 
   const {
@@ -35,6 +36,8 @@ const MMMPlatformPage = ({ platformName }) => {
 
   const store = useMMMStore();
   const isGoogle = platformName === "googleAds";
+  const isDv360 = platformName === "dv360Ads";
+  const isMeta = platformName === "meta";
 
   const {
     selectedGoogleCustomer,
@@ -43,8 +46,11 @@ const MMMPlatformPage = ({ platformName }) => {
     setSelectedGoogleAdvertiser,
     selectedDv360Advertiser,
     setSelectedDv360Advertiser,
+    selectedMetaAccount,
+    setSelectedMetaAccount,
     googleAdsRefreshToken,
     dv360RefreshToken,
+    metaAccessToken,
     isSubmittingGoogle,
     isSubmittingDv360,
     setIsSubmittingGoogle,
@@ -56,8 +62,12 @@ const MMMPlatformPage = ({ platformName }) => {
     platform
   } = store;
 
-  const selectedId = isGoogle ? selectedGoogleAdvertiser : selectedDv360Advertiser;
-  const setSelectedId = isGoogle ? setSelectedGoogleAdvertiser : setSelectedDv360Advertiser;
+  const metaAccounts = useMMMStore((state) => state.metaAccounts);
+  const setMetaAccounts = useMMMStore((state) => state.setMetaAccounts);
+
+
+  const selectedId = isGoogle ? selectedGoogleAdvertiser : isDv360 ? selectedDv360Advertiser : isMeta ? selectedMetaAccount : '';
+  const setSelectedId = isGoogle ? setSelectedGoogleAdvertiser : isDv360 ? setSelectedDv360Advertiser : isMeta ? setSelectedMetaAccount : '';
   const selectedCustomerId = isGoogle ? selectedGoogleCustomer : selectedDv360Advertiser;
   const setSelectedCustomerId = isGoogle ? setSelectedGoogleCustomer : setSelectedDv360Advertiser;
   const isSubmitting = isGoogle ? isSubmittingGoogle : isSubmittingDv360;
@@ -83,6 +93,32 @@ const MMMPlatformPage = ({ platformName }) => {
 
   const { customerSummaries, loading: dropdownLoading } = useCustomerSummaries(accessToken);
   const { advertisers, loading: advertiserLoading } = useDv360Advertisers(accessToken);
+
+  useEffect(() => {
+    if (platform === 'meta' && metaAccessToken) {
+      fetchUserAccounts(metaAccessToken);
+    }
+  }, [metaAccessToken]);
+
+  const fetchUserAccounts = async (accessToken: string) => {
+    setMetaLoading(true);
+    try {
+      const response = await fetch(`https://graph.facebook.com/v11.0/me/adaccounts?fields=id,name&access_token=${accessToken}`);
+      const data = await response.json();
+      console.log("doing work",data)
+      if (data?.data) {
+        setMetaAccounts(data.data); // Zustand async state
+      }
+    } catch (error) {
+      console.error('Error fetching accounts:', error);
+    } finally {
+      setMetaLoading(false);
+    }
+  };
+useEffect(() => {
+  console.log("✅ Zustand metaAccounts updated:", metaAccounts);
+}, [metaAccounts]);
+
   const options = isGoogle ? customerSummaries : advertisers;
   const isLoading = isGoogle ? dropdownLoading : advertiserLoading;
 
@@ -154,7 +190,7 @@ const MMMPlatformPage = ({ platformName }) => {
     setUniqueId(unique_ada_id);
     const today = new Date();
     const endDate = new Date(today.setDate(today.getDate() - 2));
-    const startDate = new Date(today.setDate(today.getDate() - 725));
+    const startDate = new Date(today.setDate(today.getDate() - 715));
     const formatDate = (d) => d.toISOString().split("T")[0];
 
     const data = {
@@ -190,7 +226,7 @@ const MMMPlatformPage = ({ platformName }) => {
 
     const today = new Date();
     const endDate = new Date(today.setDate(today.getDate() - 2));
-    const startDate = new Date(today.setDate(today.getDate() - 725));
+    const startDate = new Date(today.setDate(today.getDate() - 715));
     const formatDate = (d) => d.toISOString().split("T")[0];
 
     const data = {
@@ -274,7 +310,7 @@ const MMMPlatformPage = ({ platformName }) => {
       );
     }
     return (
-      <div className="w-12 h-12 flex justify-center items-center rounded-lg bg-gradient-to-br from-purple-200 to-purple-300 flex items-center justify-center text-white font-bold text-xl shadow-lg">
+      <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-200 to-purple-300 flex items-center justify-center text-white font-bold text-xl shadow-lg">
         <Image
           src="/assets/dv360_logo (2).png"
           alt="DV360"
@@ -413,7 +449,7 @@ const MMMPlatformPage = ({ platformName }) => {
                     );
                   })()}
                 </div>
-              ) : (
+              ) : isDv360 ? (
                 // DV360 Flow
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -445,7 +481,38 @@ const MMMPlatformPage = ({ platformName }) => {
                     ))}
                   </select>
                 </div>
-              )}
+              ) : isMeta ? (
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Select Meta Account
+                  </label>
+                  <select
+                    onChange={(e) => {
+                      const selectedVal = e.target.value;
+                      setSelectedMetaAccount(selectedVal);
+                      setSelectedId(selectedVal);
+                      setSelectedCustomerId(selectedVal);
+                      setMmmFileContent("");
+                      setShowMmmIframe(false);
+                      setMmmStatus("");
+                    }}
+                    value={selectedId || ""}
+                    disabled={metaLoading || isSubmitting}
+                    className={`w-full border-2 border-gray-200 px-4 py-3 text-lg rounded-xl transition-all duration-300
+                    ${isSubmitting || metaLoading ? 'cursor-not-allowed bg-gray-50' : 'focus:border-purple-500 focus:ring-2 focus:ring-purple-200 hover:border-purple-300'}`}
+                    required
+                  >
+                    <option value="" disabled>
+                      {metaLoading ? '🔄 Loading Accounts...' : '📺 Select a Meta Account'}
+                    </option>
+                    {metaAccounts?.map((acc) => (
+                      <option key={acc?.id} value={acc?.id}>
+                        {acc?.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ) : <></>}
 
               {/* Submit Button */}
               <div className="pt-4">

@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-type Platform = "google-ads" | "dv360" | null;
+type Platform = "google-ads" | "dv360" | "meta" | null;
 type ReportLevel = "campaign" | "channel" | null;
 
 interface CustomerSummary {
@@ -35,6 +35,8 @@ interface MMMStore {
 
     dv360RefreshToken: string | null;
     setDv360RefreshToken: (token: string) => void;
+    metaAccessToken: string | null;
+    setMetaAccessToken: (token: string) => void;
 
     // Google Ads
     googleCustomers: CustomerSummary[];
@@ -55,6 +57,14 @@ interface MMMStore {
     setSelectedDv360Advertiser: (id: string) => void;
     isSubmittingDv360: boolean;
     setIsSubmittingDv360: (val: boolean) => void;
+
+    // Facebook(Meta)
+    metaAccounts: Advertiser[];
+    setMetaAccounts: (advertisers: Advertiser[]) => void;
+    selectedMetaAccount: string | null;
+    setSelectedMetaAccount: (id: string) => void;
+    isSubmittingMeta: boolean;
+    setIsSubmittingMeta: (val: boolean) => void;
 
     uniqueId: string | null;
     setUniqueId: (id: string) => void;
@@ -118,6 +128,8 @@ export const useMMMStore = create<MMMStore>()(
 
             dv360RefreshToken: null,
             setDv360RefreshToken: (token) => set({ dv360RefreshToken: token }),
+            metaAccessToken: null,
+            setMetaAccessToken: (token) => set({ metaAccessToken: token }),
 
             // Google
             googleCustomers: [],
@@ -139,6 +151,15 @@ export const useMMMStore = create<MMMStore>()(
                 set({ selectedDv360Advertiser: id }),
             isSubmittingDv360: false,
             setIsSubmittingDv360: (val) => set({ isSubmittingDv360: val }),
+
+            // Facebook
+            metaAccounts: [],
+            setMetaAccounts: (advertisers) => set({ metaAccounts: advertisers }),
+            selectedMetaAccount: null,
+            setSelectedMetaAccount: (id) =>
+                set({ selectedMetaAccount: id }),
+            isSubmittingMeta: false,
+            setIsSubmittingMeta: (val) => set({ isSubmittingMeta: val }),
 
             uniqueId: null,
             setUniqueId: (id) => set({ uniqueId: id }),
@@ -192,13 +213,16 @@ export const useMMMStore = create<MMMStore>()(
                     reportLevel: "campaign",
                     googleAdsRefreshToken: null,
                     dv360RefreshToken: null,
+                    metaAccessToken: null,
                     googleCustomers: [],
+                    metaAccounts: [],
                     selectedGoogleCustomer: null,
                     googleAdvertiser: [],
                     selectedGoogleAdvertiser: null,
                     advertisers: [],
                     selectedDv360Advertiser: null,
                     selectedCampaigns: [],
+                    selectedMetaAccount: null,
                     ga4Linked: null,
                     roiMean: 0.2,
                     roiSigma: 0.9,
@@ -214,6 +238,7 @@ export const useMMMStore = create<MMMStore>()(
             partialize: (state) => ({
                 googleAdsRefreshToken: state.googleAdsRefreshToken,
                 dv360RefreshToken: state.dv360RefreshToken,
+                metaAccessToken: state.metaAccessToken,
             }),
         }
     )
