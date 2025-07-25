@@ -5,9 +5,9 @@
   
 //   return Response.json({
 //     NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || 'undefined',
-//     NEXT_PUBLIC_GOOGLE_CLIENT_SECRET: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET ? 'SET' : 'NOT_SET',
-//     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET ? 'SET' : 'NOT_SET',
-//     MONGODB_URI: process.env.MONGODB_URI ? 'SET' : 'NOT_SET',
+//     NEXT_PUBLIC_GOOGLE_CLIENT_SECRET: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET ,
+//     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET ,
+//     MONGODB_URI: process.env.MONGODB_URI ,
     
 //     // Debug info
 //     nodeEnv: process.env.NODE_ENV,
@@ -35,13 +35,13 @@ export async function GET(request: NextRequest) {
         NODE_ENV: process.env.NODE_ENV,
         
         // Public vars (safe to show)
-        NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ? 'SET' : 'NOT_SET',
-        NEXT_PUBLIC_GOOGLE_CLIENT_SECRET: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET ? 'SET' : 'NOT_SET',
+        NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ,
+        NEXT_PUBLIC_GOOGLE_CLIENT_SECRET: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET ,
         
         // Server vars (show only if set/not set)
-        NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET ? 'SET' : 'NOT_SET',
+        NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET ,
         NEXTAUTH_URL: process.env.NEXTAUTH_URL || 'NOT_SET',
-        MONGODB_URI: process.env.MONGODB_URI ? 'SET' : 'NOT_SET',
+        MONGODB_URI: process.env.MONGODB_URI ,
         
         // Redirect URIs
         BASE_API_URL: process.env.BASE_API_URL || 'NOT_SET',
@@ -52,11 +52,11 @@ export async function GET(request: NextRequest) {
         DV360_REDIRECT_URI: process.env.DV360_REDIRECT_URI || 'NOT_SET',
         
         // OAuth credentials (show only if set/not set)
-        FACEBOOK_CLIENT_ID: process.env.FACEBOOK_CLIENT_ID ? 'SET' : 'NOT_SET',
-        FACEBOOK_CLIENT_SECRET: process.env.FACEBOOK_CLIENT_SECRET ? 'SET' : 'NOT_SET',
-        LINKEDIN_CLIENT_ID: process.env.LINKEDIN_CLIENT_ID ? 'SET' : 'NOT_SET',
-        LINKEDIN_CLIENT_SECRET: process.env.LINKEDIN_CLIENT_SECRET ? 'SET' : 'NOT_SET',
-        DEVELOPER_TOKEN: process.env.DEVELOPER_TOKEN ? 'SET' : 'NOT_SET',
+        FACEBOOK_CLIENT_ID: process.env.FACEBOOK_CLIENT_ID ,
+        FACEBOOK_CLIENT_SECRET: process.env.FACEBOOK_CLIENT_SECRET ,
+        LINKEDIN_CLIENT_ID: process.env.LINKEDIN_CLIENT_ID ,
+        LINKEDIN_CLIENT_SECRET: process.env.LINKEDIN_CLIENT_SECRET ,
+        DEVELOPER_TOKEN: process.env.DEVELOPER_TOKEN ,
         
         // Runtime info
         isServer: typeof window === 'undefined',
