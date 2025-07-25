@@ -19,7 +19,7 @@ COPY . .
 # Set NEXT_PUBLIC_ variables for build time (these get embedded in the bundle)
 ENV NEXT_PUBLIC_GOOGLE_CLIENT_ID="360569391935-r3jj5sot4a9fg1aev0i40ujntcfl7cpt.apps.googleusercontent.com"
 ENV NEXT_PUBLIC_GOOGLE_CLIENT_SECRET="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"
-ENV NEXT_PUBLIC_GA4_REDIRECT_URI = "https://mmm-tool-135392845747.asia-south1.run.app/feature/connectors/ga4Connector/sucess"
+ENV NEXT_PUBLIC_GA4_REDIRECT_URI="https://mmm-tool-135392845747.asia-south1.run.app/feature/connectors/ga4Connector/sucess"
 
 # Build the application
 RUN npm run build
