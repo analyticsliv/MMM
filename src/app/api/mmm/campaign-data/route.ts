@@ -7,10 +7,10 @@ export async function POST(req: NextRequest) {
     try {
         const payload = await req.json(); // ✅ get the JSON body
 
-        const clientId = payload?.client_id;
+        const clientId = payload?.unique_ada_id;
 
         if (!clientId) {
-            return NextResponse.json({ error: 'Missing client_id' }, { status: 400 });
+            return NextResponse.json({ error: 'Missing unique_ada_id' }, { status: 400 });
         }
 
         const response = await axios.post('https://meridian-mmm-ga-135392845747.us-central1.run.app/campaign-data', payload, {

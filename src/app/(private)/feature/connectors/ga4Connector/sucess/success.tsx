@@ -13,7 +13,8 @@ import { ToastContainer } from "react-toastify";
 import { format } from 'date-fns';
 import { reportOptions } from "@/utils/const";
 import useGa4Connector from "@/components/hooks/connectors/useGa4Connector";
-import { createJobId } from "@/utils/helper";
+import { createJobId, generateUniqueId } from "@/utils/helper";
+import useUserSession from "@/components/hooks/useUserSession";
 
 interface SuccessModalProps {
   isModalOpen: boolean;
@@ -34,12 +35,12 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
   // const [refreshToken, setRefreshToken] = useState<string | null>(null);
   const dropdownRef = useRef(null);
   // const { user } = useUser();
+  const { user, setUser } = useUserSession();
   const searchParams = useSearchParams();
   const code = searchParams.get("code");
   // const refreshTokenParam = searchParams.get("refresh_token");
   // const { updateOrCreateConnector, getConnectorData, error, loading } = useConnector();
   const { ga4Connector } = useGa4Connector();
-  const user = JSON.parse(localStorage.getItem('userSession') || '{}')?.user;
   const jobId = createJobId('ga4', user?.email);
 
   const handleOutsideClick = (event) => {
@@ -122,6 +123,12 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
       notify('Please select at least one report!', 'error');
       return;
     }
+    const createGa4UniqueId = generateUniqueId(
+      "connector",
+      `${user?.email}`,
+      selectedProperty,
+      "ga4"
+    );
     const data = {
       refresh_token: refreshToken || "N/A",
       property_id: selectedProperty,
@@ -131,7 +138,8 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
       end_date: formattedEndDate,
       reports_list: selectedReport,
       jobId: jobId,
-      email: user?.email
+      email: user?.email,
+      unique_ada_id: createGa4UniqueId
     };
 
     try {
@@ -174,6 +182,7 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
             display: 'flex',
             flexDirection: 'column',
             overflow: 'auto',
+            zIndex:'50'
           }}>
 
           <div className={`fixed inset-0 flex items-center justify-center p-5 ${isModalOpen ? '' : 'hidden'}`}>
@@ -290,89 +299,3 @@ const Page: React.FC<SuccessModalProps> = ({ isModalOpen, closeModal, onSubmitSu
 };
 
 export default Page;
-
-
-
-// async function getStatusDetail(jobId: string) {
-// try {
-//   const response = await fetch('/api/connectors/jobStatus', {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json',
-//     },
-//     body: JSON.stringify({ jobId }), // Sending jobId in the body
-//   });
-
-//   if (!response.ok) {
-//     throw new Error(`HTTP error! status: ${response.status}`);
-//   }
-
-//   // const data = await response.json();
-//   // setJobData(data); // Store jobId in state
-//   // console.log("API response:", data);
-
-//   const data = await response.json();
-//   setJobData(data);
-//   const { status } = data?.status;
-//   setJobStatus(status);
-//   console.log("API response status:", status);
-// } catch (error) {
-//   console.error('Error fetching auth URL:', error);
-// }
-// }
-
-// if (jobId) {
-//   console.log("Calling getStatusDetail...");
-//   getStatusDetail(jobId);
-// }
-// if (!jobId) {
-//   console.log("NONO Calling getStatusDetail...");
-//   getStatusDetail(jobId);
-// }
-
-// useEffect(() => {
-//   // this function is responsible to genrate acesstoken if user comes first time...
-//   async function getTokenFromCode(code: string) {
-//     try {
-//       const response = await fetch(`/api/auth/ga4-auth?code=${code}`);
-//       const data = await response.json();
-//       setAccessToken(data?.access_token || null);
-//       setRefreshToken(data?.refresh_token);
-//       // const user = JSON.parse(localStorage.getItem('userSession'))?.user;
-//       const connectorData = {
-//         refreshToken: data?.refresh_token,
-//         expriyTime: data?.expiry_date
-//       }
-
-//       updateOrCreateConnector(user?.email, 'ga4', connectorData);
-//     } catch (error) {
-//       console.error("Error getting tokens:", error);
-//     }
-//   }
-
-//   // this functuon is responsible to genrate acesstoken using refresh token recvived from db
-//   async function getTokenFromRefreshToken(refreshToken: string) {
-//     try {
-//       const response = await fetch(`/api/auth/ga4-refresh-token`, {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({ refresh_token: refreshToken }),
-//       });
-
-//       const data = await response.json();
-//       setAccessToken(data?.access_token || null);
-//     } catch (error) {
-//       console.error("Error getting access token using refresh token:", error);
-//     }
-//   }
-
-//   if (code && !accessToken) {
-//     getTokenFromCode(code);
-//   }
-//   else if (refreshTokenParam && !accessToken) {
-//     getTokenFromRefreshToken(refreshTokenParam);
-//     setRefreshToken(refreshTokenParam);
-//   }
-// }, [code, refreshTokenParam]);

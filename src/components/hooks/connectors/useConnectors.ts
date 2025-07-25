@@ -41,13 +41,22 @@ const useConnector = () => {
             const response = await fetch(`/api/connectors/connectorCheck?email=${encodeURIComponent(email)}&connectorName=${encodeURIComponent(connectorName)}`);
 
             if (!response.ok) {
+                const errorText = await response.text();
+                console.error("❌ Connector fetch failed:", errorText);
                 throw new Error('Failed to fetch connector data');
             }
 
             const result = await response.json();
-            return result.data || false;
-        } catch (err) {
-            setError(err.message);
+
+            if (result && result.data) {
+                return result.data;
+            } else {
+                console.warn("⚠️ No connector data found (empty or null).");
+                return false;
+            }
+        } catch (err: any) {
+            console.error("❌ Error in getConnectorData:", err.message || err);
+            setError(err.message || 'Unknown error');
             return false;
         } finally {
             setLoading(false);
